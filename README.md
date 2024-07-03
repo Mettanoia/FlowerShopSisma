@@ -21,14 +21,17 @@ classDiagram
     class FlowerRepository {
         +FlowerDTO getFlower()
         +void saveFlower(FlowerDTO)
+        +void deleteFlower(FlowerDTO)
     }
     class TreeRepository {
         +TreeDTO getTree()
         +void saveTree(TreeDTO)
+        +void deleteTree(TreeDTO)
     }
     class DecorationRepository {
         +DecorationDTO getDecoration()
         +void saveDecoration(DecorationDTO)
+        +void deleteDecoration(DecorationDTO)
     }
     class TicketRepository {
         +TicketDTO getTicket()
