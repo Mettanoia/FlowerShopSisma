@@ -94,6 +94,7 @@ gradle
 gradlew
 gradlew.bat
 FloweChopSisma.iml
+test
 
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all
