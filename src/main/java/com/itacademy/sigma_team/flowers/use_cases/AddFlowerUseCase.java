@@ -1,15 +1,19 @@
 package com.itacademy.sigma_team.flowers.use_cases;
 
-import java.util.List;
+import com.itacademy.sigma_team.domain.Flower;
+
+import java.util.function.Consumer;
 
 public final class AddFlowerUseCase {
 
-    private final List<FlowerDTO> flowerDTOList;
+    private final Consumer<Flower> addFlowerMixin;
 
-    public AddFlowerUseCase(List<FlowerDTO> flowerDTOList) {
-        this.flowerDTOList = flowerDTOList;
+    public AddFlowerUseCase(Consumer<Flower> addFlowerMixin) {
+        this.addFlowerMixin = addFlowerMixin;
     }
 
-
+    public void exec(Flower flower) {
+        this.addFlowerMixin.accept(flower);
+    }
 
 }
