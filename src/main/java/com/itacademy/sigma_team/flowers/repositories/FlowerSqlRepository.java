@@ -1,7 +1,6 @@
 package com.itacademy.sigma_team.flowers.repositories;
 
-import com.itacademy.sigma_team.flowers.use_cases.FlowerDTO;
-import com.itacademy.sigma_team.flowers.use_cases.FlowerGateway;
+import com.itacademy.sigma_team.gateways.FlowerGateway;
 
 public final class FlowerSqlRepository implements FlowerGateway {
     @Override

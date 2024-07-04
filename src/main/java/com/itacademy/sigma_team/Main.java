@@ -8,8 +8,8 @@ import com.itacademy.sigma_team.decorations.use_cases.DeleteDecorationUseCase;
 import com.itacademy.sigma_team.flowers.FlowerMapper;
 import com.itacademy.sigma_team.flowers.use_cases.AddFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.DeleteFlowerUseCase;
-import com.itacademy.sigma_team.flowers.use_cases.FlowerDTO;
-import com.itacademy.sigma_team.flowers.use_cases.FlowerGateway;
+import com.itacademy.sigma_team.flowers.repositories.FlowerDTO;
+import com.itacademy.sigma_team.gateways.FlowerGateway;
 import com.itacademy.sigma_team.gateways.DecorationGateway;
 
 public class Main {

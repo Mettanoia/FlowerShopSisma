@@ -1,7 +1,7 @@
 package com.itacademy.sigma_team.flowers;
 
 import com.itacademy.sigma_team.domain.Flower;
-import com.itacademy.sigma_team.flowers.use_cases.FlowerDTO;
+import com.itacademy.sigma_team.flowers.repositories.FlowerDTO;
 
 public final class FlowerMapper {
 

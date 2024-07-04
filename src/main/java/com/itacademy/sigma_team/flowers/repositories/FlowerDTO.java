@@ -1,4 +1,4 @@
-package com.itacademy.sigma_team.flowers.use_cases;
+package com.itacademy.sigma_team.flowers.repositories;
 
 public record FlowerDTO(String color, double price) {
 }
