@@ -3,6 +3,7 @@ package com.itacademy.sigma_team;
 import com.itacademy.sigma_team.cli_controller.CliController;
 import com.itacademy.sigma_team.flowers.FlowerMapper;
 import com.itacademy.sigma_team.flowers.use_cases.AddFlowerUseCase;
+import com.itacademy.sigma_team.flowers.use_cases.DeleteFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.FlowerDTO;
 import com.itacademy.sigma_team.flowers.use_cases.FlowerGateway;
 
@@ -27,9 +28,8 @@ public class Main {
         };
 
         CliController cliController = new CliController(
-                new AddFlowerUseCase(
-                        flower -> flowerGateway.addFlower(FlowerMapper.toDto(flower))
-                )
+                new AddFlowerUseCase(flower -> flowerGateway.addFlower(FlowerMapper.toDto(flower))),
+                new DeleteFlowerUseCase(flower -> flowerGateway.deleteFlower(FlowerMapper.toDto(flower)))
         );
 
     }
