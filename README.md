@@ -19,7 +19,7 @@ classDiagram
     }
 
     class FlowerRepository {
-        +FlowerDTO getFlower()
+        +FlowerDTO getFlower(Long)
         +void saveFlower(FlowerDTO)
         +void deleteFlower(FlowerDTO)
     }
