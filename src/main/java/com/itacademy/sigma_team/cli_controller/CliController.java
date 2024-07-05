@@ -4,10 +4,12 @@ import com.itacademy.sigma_team.decorations.use_cases.AddDecorationUseCase;
 import com.itacademy.sigma_team.decorations.use_cases.DeleteDecorationUseCase;
 import com.itacademy.sigma_team.domain.Decoration;
 import com.itacademy.sigma_team.domain.Flower;
+import com.itacademy.sigma_team.domain.Tree;
 import com.itacademy.sigma_team.flower_shop.FlowerShop;
 import com.itacademy.sigma_team.flowers.use_cases.AddFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.DeleteFlowerUseCase;
 import com.itacademy.sigma_team.print_stock.use_cases.PrintStockUseCase;
+import com.itacademy.sigma_team.trees.use_cases.AddTreeUseCase;
 
 public final class CliController {
 
@@ -16,13 +18,15 @@ public final class CliController {
     private final AddDecorationUseCase addDecorationUseCase;
     private final DeleteDecorationUseCase deleteDecorationUseCase;
     private final PrintStockUseCase printStockUseCase;
+    private final AddTreeUseCase addTreeUseCase;
 
-    public CliController(AddFlowerUseCase addFlowerUseCase, DeleteFlowerUseCase deleteFlowerUseCase, AddDecorationUseCase addDecorationUseCase, DeleteDecorationUseCase deleteDecorationUseCase, PrintStockUseCase printStockUseCase) {
+    public CliController(AddFlowerUseCase addFlowerUseCase, DeleteFlowerUseCase deleteFlowerUseCase, AddDecorationUseCase addDecorationUseCase, DeleteDecorationUseCase deleteDecorationUseCase, PrintStockUseCase printStockUseCase, AddTreeUseCase addTreeUseCase) {
         this.addFlowerUseCase = addFlowerUseCase;
         this.deleteFlowerUseCase = deleteFlowerUseCase;
         this.addDecorationUseCase = addDecorationUseCase;
         this.deleteDecorationUseCase = deleteDecorationUseCase;
         this.printStockUseCase = printStockUseCase;
+        this.addTreeUseCase = addTreeUseCase;
     }
 
     private void createFlowerShop(){}
@@ -31,7 +35,7 @@ public final class CliController {
         this.addFlowerUseCase.exec(flower);
     }
 
-    private void addTree() {}
+    private void addTree(Tree tree) { this.addTreeUseCase.exec(tree); }
     private void addDecoration(Decoration decoration) { this.addDecorationUseCase.exec(decoration); }
     private void addTicket() {}
     private void deleteFlower(Flower flower) { this.deleteFlowerUseCase.exec(flower); }

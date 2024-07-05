@@ -17,6 +17,10 @@ import com.itacademy.sigma_team.flowers.use_cases.DeleteFlowerUseCase;
 import com.itacademy.sigma_team.gateways.DecorationGateway;
 import com.itacademy.sigma_team.gateways.FlowerGateway;
 import com.itacademy.sigma_team.print_stock.use_cases.PrintStockUseCase;
+import com.itacademy.sigma_team.trees.TreeMapper;
+import com.itacademy.sigma_team.trees.repositories.TreeDTO;
+import com.itacademy.sigma_team.trees.use_cases.AddTreeUseCase;
+import com.itacademy.sigma_team.trees.use_cases.TreeGateway;
 
 import java.util.Arrays;
 import java.util.List;
@@ -52,6 +56,8 @@ public final class App {
             public void addDecoration(DecorationDTO decorationDTO) { throw new UnsupportedOperationException(); }
         };
 
+        TreeGateway treeGateway = treeDTO -> { throw new UnsupportedOperationException(); };
+
         // Sample data
         List<Flower> flowers = Arrays.asList(
                 new Flower("Red", 10.0),
@@ -59,8 +65,8 @@ public final class App {
         );
 
         List<Tree> trees = Arrays.asList(
-                new Tree(5.5),
-                new Tree(3.0)
+                new Tree("Oak", 3.2, 15.5),
+                new Tree("Elm", 4.2, 12.5)
         );
 
         List<Decoration> decorations = Arrays.asList(
@@ -81,7 +87,8 @@ public final class App {
                 new DeleteFlowerUseCase(flower -> flowerGateway.deleteFlower(FlowerMapper.toDto(flower))),
                 new AddDecorationUseCase(decoration -> decorationGateway.addDecoration(DecorationMapper.toDto(decoration))),
                 new DeleteDecorationUseCase(decoration -> decorationGateway.deleteDecoration(DecorationMapper.toDto(decoration))),
-                new PrintStockUseCase(flowerShop)
+                new PrintStockUseCase(flowerShop),
+                new AddTreeUseCase(tree -> treeGateway.addTree(TreeMapper.toDto(tree)))
         );
 
         cliController.printStock();
