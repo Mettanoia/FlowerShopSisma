@@ -21,6 +21,14 @@ public final class Flower implements Buyable {
         this.calculatePriceStrategy = calculatePriceStrategy;
     }
 
+    public String getColor() {
+        return color;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
     @Override
     public double calculatePrice() {
         return this.calculatePriceStrategy.apply(this.price);
