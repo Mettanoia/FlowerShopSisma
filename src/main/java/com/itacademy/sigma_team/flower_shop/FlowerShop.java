@@ -10,10 +10,10 @@ import java.util.Set;
 
 public final class FlowerShop extends ShopAbstract {
 
-    final String name;
-    final Collection<Flower> flowers;
-    final Collection<Tree> trees;
-    final Collection<Decoration> decorations;
+    public final String name;
+    public final Collection<Flower> flowers;
+    public final Collection<Tree> trees;
+    public final Collection<Decoration> decorations;
 
     private FlowerShop(FlowerShopBuilder builder){
         this.name = builder.flowerShopName;
@@ -22,28 +22,28 @@ public final class FlowerShop extends ShopAbstract {
         this.decorations = builder.decorations;
     }
 
-    static final class FlowerShopBuilder extends Builder<FlowerShopBuilder> {
+    static public final class FlowerShopBuilder extends Builder<FlowerShopBuilder> {
 
         private final String flowerShopName;
         private Collection<Flower> flowers = Set.of();
         private Collection<Tree> trees = Set.of();
         private Collection<Decoration> decorations = Set.of();
 
-        FlowerShopBuilder(String flowerShopName) {
+        public FlowerShopBuilder(String flowerShopName) {
             this.flowerShopName = flowerShopName;
         }
 
-        FlowerShopBuilder flowers(Collection<Flower> flowers) {
+        public FlowerShopBuilder flowers(Collection<Flower> flowers) {
             this.flowers = Set.copyOf(flowers);
             return self();
         }
 
-        FlowerShopBuilder trees(Collection<Tree> trees) {
+        public FlowerShopBuilder trees(Collection<Tree> trees) {
             this.trees = Set.copyOf(trees);
             return self();
         }
 
-        FlowerShopBuilder decorations(Collection<Decoration> decorations) {
+        public FlowerShopBuilder decorations(Collection<Decoration> decorations) {
             this.decorations = Set.copyOf(decorations);
             return self();
         }
