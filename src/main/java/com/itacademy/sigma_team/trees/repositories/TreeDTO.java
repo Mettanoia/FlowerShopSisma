@@ -1,4 +1,6 @@
 package com.itacademy.sigma_team.trees.repositories;
 
-public class TreeDTO {
+
+public record TreeDTO(String species, double price) {
 }
+
