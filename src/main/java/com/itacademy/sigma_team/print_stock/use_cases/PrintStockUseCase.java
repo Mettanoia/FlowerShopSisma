@@ -26,7 +26,7 @@ public final class PrintStockUseCase {
 
         System.out.println("Trees:");
         for (Tree tree : flowerShop.trees) {
-            System.out.println(" - Height: " + tree.height() + " meters");
+            System.out.println(" - Height: " + tree.getHeight() + " meters");
         }
         System.out.println();
 
