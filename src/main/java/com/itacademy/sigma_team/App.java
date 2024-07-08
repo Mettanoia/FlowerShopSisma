@@ -19,10 +19,14 @@ import com.itacademy.sigma_team.gateways.FlowerGateway;
 import com.itacademy.sigma_team.gateways.TreeGateway;
 import com.itacademy.sigma_team.print_stock.use_cases.PrintStockUseCase;
 import com.itacademy.sigma_team.tickets.repositories.TicketDTO;
+import com.itacademy.sigma_team.tickets.repositories.TicketMappers;
+import com.itacademy.sigma_team.tickets.use_cases.AddTicketUseCase;
+import com.itacademy.sigma_team.tickets.use_cases.DeleteTicketUseCase;
 import com.itacademy.sigma_team.tickets.use_cases.TicketGateway;
 import com.itacademy.sigma_team.trees.TreeMapper;
 import com.itacademy.sigma_team.trees.repositories.TreeDTO;
 import com.itacademy.sigma_team.trees.use_cases.AddTreeUseCase;
+import com.itacademy.sigma_team.trees.use_cases.DeleteTreeUseCase;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -127,6 +131,21 @@ public final class App {
                 new DeleteDecorationUseCase(decoration -> decorationGateway.deleteDecoration(DecorationMapper.toDto(decoration))),
                 new PrintStockUseCase(flowerShop),
                 new AddTreeUseCase(tree -> treeGateway.addTree(TreeMapper.toDto(tree))),
+                new AddTicketUseCase(ticket -> {
+                    try {
+                        ticketGateway.add(TicketMappers.toDto(ticket));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e); // TODO we need to add a Logger here and also take care of checked exceptions in all other cases
+                    }
+                }),
+                new DeleteTicketUseCase(ticket -> {
+                    try {
+                        ticketGateway.delete(TicketMappers.toDto(ticket));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }),
+                new DeleteTreeUseCase(tree -> treeGateway.deleteTree(TreeMapper.toDto(tree)))
         );
 
         cliController.printStock();
