@@ -9,11 +9,7 @@ public final class FlowerGatewayFactory {
 
     public static FlowerGateway getRepository() {
 
-        try {
-            return new FlowerSqlRepository(SqlDatabaseConnection.getConnection());
-        } catch (SQLException e) {
-            throw new RuntimeException(e); // TODO Log the error
-        }
+        return new FlowerSqlRepository();
 
     }
 
