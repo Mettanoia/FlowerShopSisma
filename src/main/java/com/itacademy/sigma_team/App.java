@@ -14,8 +14,8 @@ import com.itacademy.sigma_team.flowers.FlowerMapper;
 import com.itacademy.sigma_team.flowers.repositories.FlowerDTO;
 import com.itacademy.sigma_team.flowers.use_cases.AddFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.DeleteFlowerUseCase;
+import com.itacademy.sigma_team.flowers.use_cases.FlowerGateway;
 import com.itacademy.sigma_team.gateways.DecorationGateway;
-import com.itacademy.sigma_team.gateways.FlowerGateway;
 import com.itacademy.sigma_team.gateways.TreeGateway;
 import com.itacademy.sigma_team.print_stock.use_cases.PrintStockUseCase;
 import com.itacademy.sigma_team.tickets.repositories.TicketDTO;
@@ -43,7 +43,7 @@ public final class App {
             }
 
             @Override
-            public FlowerDTO getFlower(Long flowerId) {
+            public FlowerDTO getFlower(String flowerId) {
                 throw new UnsupportedOperationException("Not yet implemented.");
             }
 
