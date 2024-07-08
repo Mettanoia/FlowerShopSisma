@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.SQLException;
 
-public class TableCreator {
+final class TableCreator {
 
     public static void createDatabaseAndTables() {
         createDatabaseIfNotExists();
@@ -13,7 +13,7 @@ public class TableCreator {
 
     private static void createDatabaseIfNotExists() {
         String databaseName = "floristeria_db";
-        try (Connection connection = DatabaseConnection.getConnection();
+        try (Connection connection = SqlDatabaseConnection.getConnection();
              Statement statement = connection.createStatement()) {
             String createDatabaseQuery = "CREATE DATABASE IF NOT EXISTS " + databaseName;
             statement.executeUpdate(createDatabaseQuery);
@@ -24,7 +24,7 @@ public class TableCreator {
     }
 
     private static void createTables() {
-        try (Connection connection = DatabaseConnection.getConnection();
+        try (Connection connection = SqlDatabaseConnection.getConnection();
              Statement statement = connection.createStatement()) {
 
             String createFlowerShopTable = """

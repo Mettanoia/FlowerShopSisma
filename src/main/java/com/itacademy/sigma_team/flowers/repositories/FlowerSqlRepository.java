@@ -7,7 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public final class FlowerSqlRepository implements FlowerGateway {
+final class FlowerSqlRepository implements FlowerGateway {
 
     @Override
     public void addFlower(FlowerDTO flowerDTO) {
