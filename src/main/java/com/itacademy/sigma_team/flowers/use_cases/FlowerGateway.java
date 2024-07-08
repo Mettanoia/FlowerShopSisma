@@ -1,9 +1,8 @@
 package com.itacademy.sigma_team.flowers.use_cases;
 
 import com.itacademy.sigma_team.flowers.repositories.FlowerDTO;
+import com.itacademy.sigma_team.gateways.readers.Adder;
+import com.itacademy.sigma_team.gateways.readers.Deleter;
+import com.itacademy.sigma_team.gateways.readers.Reader;
 
-public interface FlowerGateway {
-    void addFlower(FlowerDTO flowerDTO);
-    FlowerDTO getFlower(String flowerId);
-    void deleteFlower(FlowerDTO flowerDTO);
-}
+public interface FlowerGateway extends Adder<FlowerDTO>, Reader<FlowerDTO>, Deleter<FlowerDTO> { }
