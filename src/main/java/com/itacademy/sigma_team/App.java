@@ -102,8 +102,8 @@ public final class App {
 
         // Sample data
         List<Flower> flowers = Arrays.asList(
-                new Flower("Red", 10.0),
-                new Flower("Blue", 12.5, price -> price * 0.9) // Discounted flower
+                //new Flower("Red", 10.0),
+                //new Flower("Blue", 12.5, price -> price * 0.9) // Discounted flower
         );
 
         List<Tree> trees = Arrays.asList(

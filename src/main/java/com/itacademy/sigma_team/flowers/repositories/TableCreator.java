@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.SQLException;
 
-final class TableCreator {
+public class TableCreator {
 
     public static void createDatabaseAndTables() {
         createDatabaseIfNotExists();
@@ -70,8 +70,7 @@ final class TableCreator {
                     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     product_type ENUM('tree', 'flower', 'decoration') NOT NULL,
                     product_id VARCHAR(36) NOT NULL,
-                    quantity INT NOT NULL,
-                    price DECIMAL(10, 2) NOT NULL
+                    quantity INT NOT NULL  
                 );
             """;
 
