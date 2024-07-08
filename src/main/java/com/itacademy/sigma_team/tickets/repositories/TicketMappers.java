@@ -5,11 +5,11 @@ import com.itacademy.sigma_team.domain.Ticket;
 public final class TicketMappers {
 
     public static TicketDTO toDto(Ticket entity) {
-        return new TicketDTO();
+        return new TicketDTO(entity.id(), entity.ticketItems());
     }
 
     public static Ticket toDomain(TicketDTO dto) {
-        return new Ticket();
+        return new Ticket(dto.id(), dto.ticketItems());
     }
 
 }
