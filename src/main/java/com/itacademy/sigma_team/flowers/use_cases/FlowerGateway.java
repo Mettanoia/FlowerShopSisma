@@ -1,4 +1,4 @@
-package com.itacademy.sigma_team.gateways;
+package com.itacademy.sigma_team.flowers.use_cases;
 
 import com.itacademy.sigma_team.flowers.repositories.FlowerDTO;
 
