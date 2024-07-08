@@ -4,6 +4,6 @@ import com.itacademy.sigma_team.flowers.repositories.FlowerDTO;
 
 public interface FlowerGateway {
     void addFlower(FlowerDTO flowerDTO);
-    FlowerDTO getFlower(Long flowerId);
+    FlowerDTO getFlower(String flowerId);
     void deleteFlower(FlowerDTO flowerDTO);
 }
