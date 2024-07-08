@@ -10,7 +10,7 @@ import java.sql.SQLException;
 final class FlowerSqlRepository implements FlowerGateway {
 
     @Override
-    public void addFlower(FlowerDTO flowerDTO) {
+    public void add(FlowerDTO flowerDTO) {
         String sql = "INSERT INTO Flower (id, name, color, price, stock) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = SqlDatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -24,10 +24,11 @@ final class FlowerSqlRepository implements FlowerGateway {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
 
     @Override
-    public FlowerDTO getFlower(String flowerId) {
+    public FlowerDTO get(String flowerId) {
         String sql = "SELECT * FROM Flower WHERE id = ?";
         try (Connection conn = SqlDatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -49,7 +50,7 @@ final class FlowerSqlRepository implements FlowerGateway {
     }
 
     @Override
-    public void deleteFlower(FlowerDTO flowerDTO) {
+    public void delete(FlowerDTO flowerDTO) {
         String sql = "DELETE FROM Flower WHERE id = ?";
         try (Connection conn = SqlDatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
