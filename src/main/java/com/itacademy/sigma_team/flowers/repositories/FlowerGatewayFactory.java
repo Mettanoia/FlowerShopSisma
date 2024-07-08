@@ -6,9 +6,10 @@ import com.itacademy.sigma_team.flowers.use_cases.FlowerGateway;
 
 import java.sql.SQLException;
 
-public final class FlowerGatewayFactory {
+public final class FlowerGatewayFactory implements com.itacademy.sigma_team.flowers.use_cases.FlowerGatewayFactory {
 
-    public static FlowerGateway getRepository() {
+    @Override
+    public FlowerGateway getRepository() {
 
         return new FlowerSqlRepository();
 
