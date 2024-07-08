@@ -4,5 +4,5 @@ import java.io.IOException;
 
 @FunctionalInterface
 public interface Adder<T> {
-    T add(T dto) throws IOException;
+    void add(T dto) throws IOException;
 }
