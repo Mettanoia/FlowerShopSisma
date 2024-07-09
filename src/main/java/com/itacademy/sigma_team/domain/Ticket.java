@@ -1,7 +1,10 @@
 package com.itacademy.sigma_team.domain;
 
+import com.itacademy.sigma_team.dtos.TicketItem;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -9,12 +12,20 @@ public final class Ticket {
 
     private final String id;
     private final LocalDateTime dateTime;
-    private final List<TicketItem> items;
+    private final Collection<TicketItem> items;
 
     public Ticket() {
-        this.id = UUID.randomUUID().toString();
-        this.dateTime = LocalDateTime.now();
-        this.items = new ArrayList<>();
+        this(UUID.randomUUID().toString(), LocalDateTime.now(), new ArrayList<>());
+    }
+
+    public Ticket(String id, LocalDateTime dateTime, Collection<TicketItem> items) {
+        this.id = id;
+        this.dateTime = dateTime;
+        this.items = items;
+    }
+
+    public Ticket(String id, Collection<TicketItem> items) {
+        this(id, LocalDateTime.now(), items);
     }
 
     public String getId() {
