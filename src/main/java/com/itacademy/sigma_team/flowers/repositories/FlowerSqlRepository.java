@@ -1,5 +1,6 @@
 package com.itacademy.sigma_team.flowers.repositories;
 
+import com.itacademy.sigma_team.dtos.FlowerDTO;
 import com.itacademy.sigma_team.flowers.use_cases.FlowerGateway;
 
 import java.sql.Connection;

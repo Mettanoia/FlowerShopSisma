@@ -1,5 +1,6 @@
 package com.itacademy.sigma_team.decorations.repositories;
 
+import com.itacademy.sigma_team.dtos.DecorationDTO;
 import com.itacademy.sigma_team.gateways.DecorationGateway;
 
 public final class DecorationMongoRepository implements DecorationGateway {

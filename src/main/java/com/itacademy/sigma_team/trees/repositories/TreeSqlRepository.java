@@ -1,6 +1,7 @@
 package com.itacademy.sigma_team.trees.repositories;
 
 
+import com.itacademy.sigma_team.dtos.TreeDTO;
 import com.itacademy.sigma_team.gateways.TreeGateway;
 
 public final class TreeSqlRepository implements TreeGateway {
