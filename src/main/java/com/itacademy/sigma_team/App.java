@@ -112,8 +112,9 @@ public final class App {
         );
 
         List<Tree> trees = Arrays.asList(
-                new Tree("Oak", 3.2, 15.5),
-                new Tree("Elm", 4.2, 12.5)
+                new Tree(1,"Pine",20.5,45.0),
+                new Tree(2, "Oak", 15.5,35.0)
+
         );
 
         List<Decoration> decorations = Arrays.asList(
