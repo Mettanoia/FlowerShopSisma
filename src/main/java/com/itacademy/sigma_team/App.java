@@ -2,7 +2,7 @@ package com.itacademy.sigma_team;
 
 import com.itacademy.sigma_team.cli_controller.CliController;
 import com.itacademy.sigma_team.decorations.DecorationMapper;
-import com.itacademy.sigma_team.decorations.repositories.DecorationDTO;
+import com.itacademy.sigma_team.dtos.DecorationDTO;
 import com.itacademy.sigma_team.decorations.use_cases.AddDecorationUseCase;
 import com.itacademy.sigma_team.decorations.use_cases.DeleteDecorationUseCase;
 import com.itacademy.sigma_team.domain.Decoration;
@@ -11,7 +11,7 @@ import com.itacademy.sigma_team.domain.Material;
 import com.itacademy.sigma_team.domain.Tree;
 import com.itacademy.sigma_team.flower_shop.FlowerShop;
 import com.itacademy.sigma_team.flowers.FlowerMapper;
-import com.itacademy.sigma_team.flowers.repositories.FlowerDTO;
+import com.itacademy.sigma_team.dtos.FlowerDTO;
 import com.itacademy.sigma_team.flowers.use_cases.AddFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.DeleteFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.FlowerGateway;
@@ -24,7 +24,7 @@ import com.itacademy.sigma_team.tickets.use_cases.AddTicketUseCase;
 import com.itacademy.sigma_team.tickets.use_cases.DeleteTicketUseCase;
 import com.itacademy.sigma_team.tickets.use_cases.TicketGateway;
 import com.itacademy.sigma_team.trees.TreeMapper;
-import com.itacademy.sigma_team.trees.repositories.TreeDTO;
+import com.itacademy.sigma_team.dtos.TreeDTO;
 import com.itacademy.sigma_team.trees.use_cases.AddTreeUseCase;
 import com.itacademy.sigma_team.trees.use_cases.DeleteTreeUseCase;
 
@@ -112,13 +112,13 @@ public final class App {
         );
 
         List<Tree> trees = Arrays.asList(
-                new Tree("Oak", 3.2, 15.5),
-                new Tree("Elm", 4.2, 12.5)
+                new Tree("0","Oak", 3.2, 15.5),
+                new Tree("1", "Elm", 4.2, 12.5)
         );
 
         List<Decoration> decorations = Arrays.asList(
-                new Decoration(Material.WOOD),
-                new Decoration(Material.PLASTIC)
+                new Decoration("0", "Wood", Material.WOOD),
+                new Decoration("1", "Plastic", Material.PLASTIC)
         );
 
         // Building the FlowerShop
