@@ -1,99 +1,59 @@
 package com.itacademy.sigma_team.tickets.repositories;
 
-import com.itacademy.sigma_team.dtos.DecorationDTO;
-import com.itacademy.sigma_team.dtos.TicketItem;
-import com.itacademy.sigma_team.dtos.FlowerDTO;
+import com.itacademy.sigma_team.domain.TicketItem;
 import com.itacademy.sigma_team.flowers.repositories.SqlDatabaseConnection;
-import com.itacademy.sigma_team.tickets.use_cases.TicketGateway;
-import com.itacademy.sigma_team.dtos.TreeDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.itacademy.sigma_team.services.TicketRepository;
 
-import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
-public final class TicketSqlRepository implements TicketGateway {
-
-    private static final Logger logger = LoggerFactory.getLogger(TicketSqlRepository.class);
+public final class TicketSqlRepository implements TicketRepository {
 
     @Override
-    public void add(TicketDTO dto) {
-
-        try (Connection connection = SqlDatabaseConnection.getConnection();
-             Statement statement = connection.createStatement()) {
-
-            // Disable auto-commit mode
-            connection.setAutoCommit(false);
-
-            // Insert into TicketDTO table
-            String insertTicketDto = "INSERT INTO TicketDTO (id) VALUES ('" + dto.id() + "');";
-            statement.executeUpdate(insertTicketDto);
-
-            for (TicketItem ticketItem : dto.ticketItems()) {
-
-                String insertStatement = getInsertStatement(ticketItem);
-
-                statement.executeUpdate(insertStatement);
-
-            }
-
-            connection.commit();
-
+    public void saveItem(TicketItem item) {
+        String sql = "INSERT INTO TicketItem (ticket_id, product_id, product_type, quantity, price) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = SqlDatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, item.ticketId());
+            pstmt.setString(2, item.productId());
+            pstmt.setString(3, item.productType());
+            pstmt.setInt(4, item.quantity());
+            pstmt.setDouble(5, item.price());
+            pstmt.executeUpdate();
         } catch (SQLException e) {
-
-            logger.error("SQL Exception occurred while adding TicketDTO: {}", dto.id(), e);
-            rollback();
-
+            e.printStackTrace();
         }
-
     }
 
-    private String getInsertStatement(TicketItem ticketItem) {
-
-        return switch (ticketItem) {
-
-            case FlowerDTO flower -> "INSERT INTO FlowerDTO (id, name, color, price, stock) " +
-                    "VALUES ('" + flower.id() + "', '" + flower.name() + "', '" + flower.color() + "', " +
-                    flower.price() + ", " + flower.stock() + ");";
-
-            case TreeDTO tree -> "INSERT INTO TreeDTO (id, species, height, price) " +
-                    "VALUES ('" + tree.id() + "', '" + tree.species() + "', " + tree.height() + ", " + tree.price() + ");";
-
-            case DecorationDTO decoration -> "INSERT INTO DecorationDTO (id, material) " +
-                    "VALUES (" + decoration.id() + ", '" + decoration.material() + "');";
-
-        };
-
-    }
-
-    private void rollback() {
-
-        try (Connection connection = SqlDatabaseConnection.getConnection()) {
-            if (connection != null) {
-
-                connection.rollback();
-                logger.info("Transaction rolled back successfully.");
-
+    @Override
+    public List<TicketItem> findItemsByTicketId(String ticketId) {
+        List<TicketItem> items = new ArrayList<>();
+        String sql = "SELECT * FROM TicketItem WHERE ticket_id = ?";
+        try (Connection conn = SqlDatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, ticketId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                TicketItem item = new TicketItem(
+                        rs.getString("ticket_id"),
+                        rs.getString("product_id"),
+                        rs.getString("product_type"),
+                        rs.getInt("quantity"),
+                        rs.getDouble("price")
+                );
+                items.add(item);
             }
-        } catch (SQLException rollbackEx) {
-
-            logger.error("Failed to rollback transaction", rollbackEx);
-            throw new RuntimeException("Failed to rollback transaction", rollbackEx);
-
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
+        return items;
     }
+}
 
-    @Override
-    public void delete(TicketDTO dto) throws IOException {
-        throw new UnsupportedOperationException("Not yet implemented.");
-    }
-
-    @Override
-    public TicketDTO get(String id) {
-        return null;
-    }
 
 }
+

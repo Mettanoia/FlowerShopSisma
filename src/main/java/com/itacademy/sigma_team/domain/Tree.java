@@ -3,7 +3,7 @@ package com.itacademy.sigma_team.domain;
 import java.util.UUID;
 import java.util.function.Function;
 
-public final class Tree implements Buyable {
+public final class Tree implements Buyable  {
 
     private final String id;
     private final String name;
@@ -11,6 +11,10 @@ public final class Tree implements Buyable {
     private final double price;
     private int stock;
     private final Function<Double, Double> calculatePriceStrategy;
+
+    public Tree(String name, double height, double price, int stock) {
+        this(UUID.randomUUID().toString(), name, height, price, stock);
+    }
 
     public Tree(String id, String name, double height, double price, int stock) {
         this.id = id;
@@ -21,17 +25,14 @@ public final class Tree implements Buyable {
         this.calculatePriceStrategy = aDouble -> aDouble; // Función identidad
     }
 
-    public Tree(String id, String name, double height, double price, Function<Double, Double> calculatePriceStrategy) {
-        this.id = id;
-        this.name = name;
-        this.height = height;
-        this.price = price;
-        this.calculatePriceStrategy = calculatePriceStrategy;
-    }
-
     public String getId() {
         return id;
     }
+
+    public String getName() {
+        return name;
+    }
+
     public double getHeight() {
         return height;
     }
