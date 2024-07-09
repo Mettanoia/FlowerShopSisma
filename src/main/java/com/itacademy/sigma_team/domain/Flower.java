@@ -45,6 +45,7 @@ public final class Flower implements Buyable, TicketItem {
         return stock;
     }
 
+
     public void setStock(int stock) {
         this.stock = stock;
     }
