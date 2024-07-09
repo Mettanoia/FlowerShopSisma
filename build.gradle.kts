@@ -14,6 +14,8 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     implementation("mysql:mysql-connector-java:8.0.26")
+    testImplementation("com.h2database:h2:2.2.224")
+    implementation("org.slf4j:slf4j-api:2.0.13")
 }
 
 tasks.test {
