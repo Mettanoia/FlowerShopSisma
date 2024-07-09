@@ -11,10 +11,7 @@ public final class TicketMongoRepository implements TicketGateway {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    @Override
-    public void delete(TicketDTO dto) throws IOException {
-        throw new UnsupportedOperationException("Not yet implemented.");
-    }
+}
 
     @Override
     public TicketDTO get(String id) {

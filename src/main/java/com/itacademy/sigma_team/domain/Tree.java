@@ -3,7 +3,7 @@ package com.itacademy.sigma_team.domain;
 import java.util.UUID;
 import java.util.function.Function;
 
-public final class Tree implements Buyable, TicketItem {
+public final class Tree implements Buyable  {
 
     private final String id;
     private final String name;
@@ -52,11 +52,6 @@ public final class Tree implements Buyable, TicketItem {
     @Override
     public double calculatePrice() {
         return this.calculatePriceStrategy.apply(this.price);
-    }
-
-    @Override
-    public void accept(TicketItemVisitor ticketItemVisitor) {
-        ticketItemVisitor.visit(this);
     }
 
     @Override

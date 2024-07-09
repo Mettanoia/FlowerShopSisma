@@ -1,15 +1,25 @@
 package com.itacademy.sigma_team.tickets.repositories;
 
 import com.itacademy.sigma_team.domain.Ticket;
+import com.itacademy.sigma_team.domain.TicketItem;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public final class TicketMappers {
 
     public static TicketDTO toDto(Ticket entity) {
-        return new TicketDTO(entity.id(), entity.ticketItems());
+        List<TicketItemDTO> items = entity.getItems().stream()
+                .map(item -> new TicketItemDTO(item.getProductId(), item.getProductType(), item.getQuantity(), item.getPrice()))
+                .collect(Collectors.toList());
+        return new TicketDTO(entity.getId(), entity.getDateTime(), items, entity.getTotal());
     }
 
     public static Ticket toDomain(TicketDTO dto) {
-        return new Ticket(dto.id(), dto.ticketItems());
+        List<TicketItem> items = dto.items().stream()
+                .map(item -> new TicketItem(dto.id(), item.getProductId(), item.getProductType(), item.getQuantity(), item.getPrice()))
+                .collect(Collectors.toList());
+        return new Ticket(dto.id(), dto.dateTime(), items, dto.total());
     }
-
 }
+
