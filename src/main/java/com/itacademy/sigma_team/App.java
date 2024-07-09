@@ -38,17 +38,17 @@ public final class App {
         FlowerGateway flowerGateway = new FlowerGateway() {
 
             @Override
-            public void addFlower(FlowerDTO flowerDTO) {
+            public FlowerDTO get(String id) {
                 throw new UnsupportedOperationException("Not yet implemented.");
             }
 
             @Override
-            public FlowerDTO getFlower(String flowerId) {
+            public void delete(FlowerDTO dto) throws IOException {
                 throw new UnsupportedOperationException("Not yet implemented.");
             }
 
             @Override
-            public void deleteFlower(FlowerDTO flowerDTO) {
+            public void add(FlowerDTO dto) throws IOException {
                 throw new UnsupportedOperationException("Not yet implemented.");
             }
 
@@ -90,7 +90,12 @@ public final class App {
 
         TicketGateway ticketGateway = new TicketGateway() {
             @Override
-            public TicketDTO add(TicketDTO dto) throws IOException {
+            public TicketDTO get(String id) {
+                throw new UnsupportedOperationException("Not yet implemented.");
+            }
+
+            @Override
+            public void add(TicketDTO dto) throws IOException {
                 throw new UnsupportedOperationException("Not yet implemented.");
             }
 
@@ -125,8 +130,20 @@ public final class App {
 
 
         CliController cliController = new CliController(
-                new AddFlowerUseCase(flower -> flowerGateway.addFlower(FlowerMapper.toDto(flower))),
-                new DeleteFlowerUseCase(flower -> flowerGateway.deleteFlower(FlowerMapper.toDto(flower))),
+                new AddFlowerUseCase(flower -> {
+                    try {
+                        flowerGateway.add(FlowerMapper.toDto(flower));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }),
+                new DeleteFlowerUseCase(flower -> {
+                    try {
+                        flowerGateway.delete(FlowerMapper.toDto(flower));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }),
                 new AddDecorationUseCase(decoration -> decorationGateway.addDecoration(DecorationMapper.toDto(decoration))),
                 new DeleteDecorationUseCase(decoration -> decorationGateway.deleteDecoration(DecorationMapper.toDto(decoration))),
                 new PrintStockUseCase(flowerShop),

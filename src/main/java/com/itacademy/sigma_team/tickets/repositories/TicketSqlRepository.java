@@ -7,7 +7,7 @@ import java.io.IOException;
 public final class TicketSqlRepository implements TicketGateway {
 
     @Override
-    public TicketDTO add(TicketDTO dto) throws IOException {
+    public void add(TicketDTO dto) throws IOException {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
@@ -16,4 +16,8 @@ public final class TicketSqlRepository implements TicketGateway {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
+    @Override
+    public TicketDTO get(String id) {
+        return null;
+    }
 }
