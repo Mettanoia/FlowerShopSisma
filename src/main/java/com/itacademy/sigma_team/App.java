@@ -7,7 +7,6 @@ import com.itacademy.sigma_team.decorations.use_cases.AddDecorationUseCase;
 import com.itacademy.sigma_team.decorations.use_cases.DeleteDecorationUseCase;
 import com.itacademy.sigma_team.domain.Decoration;
 import com.itacademy.sigma_team.domain.Flower;
-import com.itacademy.sigma_team.domain.Material;
 import com.itacademy.sigma_team.domain.Tree;
 import com.itacademy.sigma_team.flower_shop.FlowerShop;
 import com.itacademy.sigma_team.flowers.FlowerMapper;
@@ -56,9 +55,10 @@ public final class App {
 
         DecorationGateway decorationGateway = new DecorationGateway() {
             @Override
-            public DecorationDTO getDecoration(Long decorationId) {
-                throw new UnsupportedOperationException("Not yet implemented.");
+            public DecorationDTO getDecoration(String decorationId) {
+                return null;
             }
+
 
             @Override
             public void deleteDecoration(DecorationDTO decorationDTO) {
@@ -78,7 +78,7 @@ public final class App {
             }
 
             @Override
-            public TreeDTO getTree(Long treeId) {
+            public TreeDTO getTree(String treeId) {
                 throw new UnsupportedOperationException("Not yet implemented.");
             }
 
@@ -112,13 +112,13 @@ public final class App {
         );
 
         List<Tree> trees = Arrays.asList(
-                new Tree("Oak", 3.2, 15.5),
-                new Tree("Elm", 4.2, 12.5)
+                //new Tree("Oak", 3.2, 15.5),
+                //new Tree("Elm", 4.2, 12.5)
         );
 
         List<Decoration> decorations = Arrays.asList(
-                new Decoration(Material.WOOD),
-                new Decoration(Material.PLASTIC)
+               // new Decoration(Material.WOOD),
+                //new Decoration(Material.PLASTIC)
         );
 
         // Building the FlowerShop

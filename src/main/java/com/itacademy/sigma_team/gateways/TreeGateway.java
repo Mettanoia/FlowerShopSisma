@@ -5,7 +5,12 @@ import com.itacademy.sigma_team.trees.repositories.TreeDTO;
 
 public interface TreeGateway {
     void addTree(TreeDTO treeDTO);
-    TreeDTO getTree(Long treeId);
+
+
+    TreeDTO getTree(String treeId);
+
+
+
     void deleteTree(TreeDTO treeDTO);
 }
 
