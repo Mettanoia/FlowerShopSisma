@@ -44,9 +44,7 @@ public final class Ticket {
         items.add(item);
     }
 
-    public void removeItem(TicketItem item) {
-        items.remove(item);
-    }
+
 
     @Override
     public String toString() {
