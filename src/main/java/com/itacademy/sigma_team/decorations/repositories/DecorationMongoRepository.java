@@ -5,7 +5,7 @@ import com.itacademy.sigma_team.gateways.DecorationGateway;
 
 public final class DecorationMongoRepository implements DecorationGateway {
     @Override
-    public DecorationDTO getDecoration(Long decorationId) {
+    public DecorationDTO getDecoration(String decorationId) {
         return null;
     }
 

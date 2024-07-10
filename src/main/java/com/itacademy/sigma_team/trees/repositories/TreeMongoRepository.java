@@ -11,7 +11,7 @@ public final class TreeMongoRepository implements TreeGateway {
     }
 
     @Override
-    public TreeDTO getTree(Long treeId) {
+    public TreeDTO getTree(String treeId) {
         // Implementación para obtener un árbol de MongoDB
         return null;
     }

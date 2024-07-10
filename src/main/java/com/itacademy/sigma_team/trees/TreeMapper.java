@@ -8,10 +8,10 @@ import com.itacademy.sigma_team.dtos.TreeDTO;
 public final class TreeMapper {
 
     public static Tree toDomain(TreeDTO treeDTO) {
-        return new Tree(treeDTO.id(), treeDTO.species(), treeDTO.height(), treeDTO.price());
+        return new Tree(treeDTO.id(), treeDTO.name(), treeDTO.height(), treeDTO.price(), treeDTO.stock());
     }
 
     public static TreeDTO toDto(Tree tree) {
-        return new TreeDTO(tree.getId(), tree.getSpecies(), tree.getHeight(), tree.getPrice());
+        return new TreeDTO(tree.getId(), tree.getName(), tree.getHeight(), tree.getPrice(), tree.getStock());
     }
 }

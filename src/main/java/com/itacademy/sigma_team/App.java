@@ -2,16 +2,16 @@ package com.itacademy.sigma_team;
 
 import com.itacademy.sigma_team.cli_controller.CliController;
 import com.itacademy.sigma_team.decorations.DecorationMapper;
-import com.itacademy.sigma_team.dtos.DecorationDTO;
 import com.itacademy.sigma_team.decorations.use_cases.AddDecorationUseCase;
 import com.itacademy.sigma_team.decorations.use_cases.DeleteDecorationUseCase;
 import com.itacademy.sigma_team.domain.Decoration;
 import com.itacademy.sigma_team.domain.Flower;
-import com.itacademy.sigma_team.domain.Material;
 import com.itacademy.sigma_team.domain.Tree;
+import com.itacademy.sigma_team.dtos.DecorationDTO;
+import com.itacademy.sigma_team.dtos.FlowerDTO;
+import com.itacademy.sigma_team.dtos.TreeDTO;
 import com.itacademy.sigma_team.flower_shop.FlowerShop;
 import com.itacademy.sigma_team.flowers.FlowerMapper;
-import com.itacademy.sigma_team.dtos.FlowerDTO;
 import com.itacademy.sigma_team.flowers.use_cases.AddFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.DeleteFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.FlowerGateway;
@@ -24,102 +24,88 @@ import com.itacademy.sigma_team.tickets.use_cases.AddTicketUseCase;
 import com.itacademy.sigma_team.tickets.use_cases.DeleteTicketUseCase;
 import com.itacademy.sigma_team.tickets.use_cases.TicketGateway;
 import com.itacademy.sigma_team.trees.TreeMapper;
-import com.itacademy.sigma_team.dtos.TreeDTO;
 import com.itacademy.sigma_team.trees.use_cases.AddTreeUseCase;
 import com.itacademy.sigma_team.trees.use_cases.DeleteTreeUseCase;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
+import java.util.Set;
 
 public final class App {
     public static void run() {
 
         FlowerGateway flowerGateway = new FlowerGateway() {
-
             @Override
-            public FlowerDTO get(String id) {
-                throw new UnsupportedOperationException("Not yet implemented.");
+            public void add(FlowerDTO dto) throws IOException {
+
             }
 
             @Override
             public void delete(FlowerDTO dto) throws IOException {
-                throw new UnsupportedOperationException("Not yet implemented.");
+
             }
 
             @Override
-            public void add(FlowerDTO dto) throws IOException {
-                throw new UnsupportedOperationException("Not yet implemented.");
-            }
-
-        };
-
-        DecorationGateway decorationGateway = new DecorationGateway() {
-            @Override
-            public DecorationDTO getDecoration(Long decorationId) {
-                throw new UnsupportedOperationException("Not yet implemented.");
-            }
-
-            @Override
-            public void deleteDecoration(DecorationDTO decorationDTO) {
-                throw new UnsupportedOperationException("Not yet implemented.");
-            }
-
-            @Override
-            public void addDecoration(DecorationDTO decorationDTO) {
-                throw new UnsupportedOperationException("Not yet implemented.");
+            public FlowerDTO get(String id) {
+                return null;
             }
         };
 
         TreeGateway treeGateway = new TreeGateway() {
             @Override
             public void addTree(TreeDTO treeDTO) {
-                throw new UnsupportedOperationException("Not yet implemented.");
+
             }
 
             @Override
-            public TreeDTO getTree(Long treeId) {
-                throw new UnsupportedOperationException("Not yet implemented.");
+            public TreeDTO getTree(String treeId) {
+                return null;
             }
 
             @Override
             public void deleteTree(TreeDTO treeDTO) {
-                throw new UnsupportedOperationException("Not yet implemented.");
+
+            }
+        };
+
+        DecorationGateway decorationGateway = new DecorationGateway() {
+            @Override
+            public DecorationDTO getDecoration(String decorationId) {
+                return null;
+            }
+
+            @Override
+            public void deleteDecoration(DecorationDTO decorationDTO) {
+
+            }
+
+            @Override
+            public void addDecoration(DecorationDTO decorationDTO) {
+
             }
         };
 
         TicketGateway ticketGateway = new TicketGateway() {
             @Override
-            public TicketDTO get(String id) {
-                throw new UnsupportedOperationException("Not yet implemented.");
-            }
-
-            @Override
             public void add(TicketDTO dto) throws IOException {
-                throw new UnsupportedOperationException("Not yet implemented.");
+
             }
 
             @Override
             public void delete(TicketDTO dto) throws IOException {
-                throw new UnsupportedOperationException("Not yet implemented.");
+
+            }
+
+            @Override
+            public TicketDTO get(String id) {
+                return null;
             }
         };
 
         // Sample data
-        List<Flower> flowers = Arrays.asList(
-                //new Flower("Red", 10.0),
-                //new Flower("Blue", 12.5, price -> price * 0.9) // Discounted flower
-        );
-
-        List<Tree> trees = Arrays.asList(
-                new Tree("0","Oak", 3.2, 15.5),
-                new Tree("1", "Elm", 4.2, 12.5)
-        );
-
-        List<Decoration> decorations = Arrays.asList(
-                new Decoration("0", "Wood", Material.WOOD),
-                new Decoration("1", "Plastic", Material.PLASTIC)
-        );
+        Collection<Flower> flowers = Set.of();
+        Collection<Tree> trees = Set.of();
+        Collection<Decoration> decorations = Set.of();
 
         // Building the FlowerShop
         FlowerShop flowerShop = new FlowerShop.FlowerShopBuilder("Sigma Flower Shop")

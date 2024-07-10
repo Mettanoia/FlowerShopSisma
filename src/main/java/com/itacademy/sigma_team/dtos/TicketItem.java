@@ -1,3 +1,5 @@
 package com.itacademy.sigma_team.dtos;
 
-sealed public interface TicketItem permits FlowerDTO, TreeDTO, DecorationDTO {}
+import com.itacademy.sigma_team.domain.Tree;
+
+sealed public interface TicketItem permits Tree, DecorationDTO, FlowerDTO, TreeDTO {}
