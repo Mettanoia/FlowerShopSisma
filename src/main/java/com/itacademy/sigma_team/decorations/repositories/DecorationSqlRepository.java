@@ -51,10 +51,8 @@ public final class DecorationSqlRepository implements DecorationGateway {
         return null;
     }
 
-    @Override
-    public DecorationDTO getDecoration(Long decorationId) {
-        return null;
-    }
+
+
 
     @Override
     public void deleteDecoration(DecorationDTO decorationDTO) {

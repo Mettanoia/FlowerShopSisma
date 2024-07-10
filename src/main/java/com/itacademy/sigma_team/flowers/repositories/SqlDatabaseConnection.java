@@ -24,5 +24,10 @@ public final class SqlDatabaseConnection {
         }
         return connection;
     }
+
+    public static Connection getInitialConnection() throws SQLException {
+        String initialUrl = "jdbc:mysql://localhost:3306";
+        return DriverManager.getConnection(initialUrl, USER, PASSWORD);
+    }
 }
 

@@ -18,11 +18,11 @@ public final class TicketSqlRepository implements TicketRepository {
         String sql = "INSERT INTO TicketItem (ticket_id, product_id, product_type, quantity, price) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = SqlDatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, item.ticketId());
-            pstmt.setString(2, item.productId());
-            pstmt.setString(3, item.productType());
-            pstmt.setInt(4, item.quantity());
-            pstmt.setDouble(5, item.price());
+            pstmt.setString(1, item.getTicketId());
+            pstmt.setString(2, item.getProductId());
+            pstmt.setString(3, item.getProductType());
+            pstmt.setInt(4, item.getQuantity());
+            pstmt.setDouble(5, item.getPrice());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -55,5 +55,5 @@ public final class TicketSqlRepository implements TicketRepository {
 }
 
 
-}
+
 

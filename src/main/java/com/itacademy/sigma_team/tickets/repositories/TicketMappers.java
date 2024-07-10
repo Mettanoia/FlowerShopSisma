@@ -16,10 +16,11 @@ public final class TicketMappers {
     }
 
     public static Ticket toDomain(TicketDTO dto) {
-        List<TicketItem> items = dto.items().stream()
-                .map(item -> new TicketItem(dto.id(), item.getProductId(), item.getProductType(), item.getQuantity(), item.getPrice()))
+        List<TicketItem> items = dto.getItems().stream()
+                .map(item -> new TicketItem(dto.getId(), item.productId(), item.productType(), item.quantity(), item.price()))
                 .collect(Collectors.toList());
-        return new Ticket(dto.id(), dto.dateTime(), items, dto.total());
+        return new Ticket(dto.getId(), dto.getDateTime(), items, dto.getTotal());
     }
 }
+
 
