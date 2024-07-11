@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public final class FlowerSqlRepository implements FlowerGateway {
 
@@ -48,6 +50,29 @@ public final class FlowerSqlRepository implements FlowerGateway {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public Collection<FlowerDTO> getAll() {
+        String sql = "SELECT * FROM Flower";
+        Collection<FlowerDTO> flowers = new ArrayList<>();
+        try (Connection conn = SqlDatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                FlowerDTO flower = new FlowerDTO(
+                        rs.getString("id"),
+                        rs.getString("name"),
+                        rs.getString("color"),
+                        rs.getDouble("price"),
+                        rs.getInt("stock")
+                );
+                flowers.add(flower);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return flowers;
     }
 
     @Override

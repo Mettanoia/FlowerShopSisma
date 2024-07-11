@@ -1,0 +1,635 @@
+Index: src/main/java/com/itacademy/sigma_team/domain/Flower.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/itacademy/sigma_team/domain/Flower.java b/src/main/java/com/itacademy/sigma_team/domain/Flower.java
+--- a/src/main/java/com/itacademy/sigma_team/domain/Flower.java	(revision ab844f65c85b1ce34225eb8b402c3770f5e934c3)
++++ b/src/main/java/com/itacademy/sigma_team/domain/Flower.java	(revision 92e4eacb932f572b34ce1c09be7d44517fbc5fd3)
+@@ -3,7 +3,7 @@
+ import java.util.UUID;
+ import java.util.function.Function;
+ 
+-public final class Flower implements Buyable{
++public final class Flower implements Buyable {
+ 
+     private final String id;
+     private final String name;
+@@ -55,4 +55,6 @@
+         return this.calculatePriceStrategy.apply(this.price);
+     }
+ 
++
++
+ }
+Index: src/main/java/com/itacademy/sigma_team/domain/Ticket.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/itacademy/sigma_team/domain/Ticket.java b/src/main/java/com/itacademy/sigma_team/domain/Ticket.java
+--- a/src/main/java/com/itacademy/sigma_team/domain/Ticket.java	(revision ab844f65c85b1ce34225eb8b402c3770f5e934c3)
++++ b/src/main/java/com/itacademy/sigma_team/domain/Ticket.java	(revision 92e4eacb932f572b34ce1c09be7d44517fbc5fd3)
+@@ -1,10 +1,7 @@
+ package com.itacademy.sigma_team.domain;
+ 
+-import com.itacademy.sigma_team.dtos.TicketItem;
+-
+ import java.time.LocalDateTime;
+ import java.util.ArrayList;
+-import java.util.Collection;
+ import java.util.List;
+ import java.util.UUID;
+ 
+@@ -12,20 +9,14 @@
+ 
+     private final String id;
+     private final LocalDateTime dateTime;
+-    private final Collection<TicketItem> items;
++    private final List<TicketItem> items;
++    private double total;
+ 
+-    public Ticket() {
+-        this(UUID.randomUUID().toString(), LocalDateTime.now(), new ArrayList<>());
+-    }
+-
+-    public Ticket(String id, LocalDateTime dateTime, Collection<TicketItem> items) {
++    public Ticket(String id, LocalDateTime dateTime, List<TicketItem> items, double total) {
+         this.id = id;
+         this.dateTime = dateTime;
+-        this.items = items;
+-    }
+-
+-    public Ticket(String id, Collection<TicketItem> items) {
+-        this(id, LocalDateTime.now(), items);
++        this.items = new ArrayList<>(items);
++        this.total = total;
+     }
+ 
+     public String getId() {
+@@ -40,8 +31,18 @@
+         return new ArrayList<>(items);
+     }
+ 
++    public double getTotal() {
++        return total;
++    }
++
+     public void addItem(TicketItem item) {
+         items.add(item);
++        total += item.calculateTotalPrice();
++    }
++
++    public void removeItem(TicketItem item) {
++        items.remove(item);
++        total -= item.calculateTotalPrice();
+     }
+ 
+ 
+@@ -52,6 +53,7 @@
+                 "id='" + id + '\'' +
+                 ", dateTime=" + dateTime +
+                 ", items=" + items +
++                ", total=" + total +
+                 '}';
+     }
+ }
+Index: src/main/java/com/itacademy/sigma_team/domain/TicketItem.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/itacademy/sigma_team/domain/TicketItem.java b/src/main/java/com/itacademy/sigma_team/domain/TicketItem.java
+new file mode 100644
+--- /dev/null	(revision 92e4eacb932f572b34ce1c09be7d44517fbc5fd3)
++++ b/src/main/java/com/itacademy/sigma_team/domain/TicketItem.java	(revision 92e4eacb932f572b34ce1c09be7d44517fbc5fd3)
+@@ -0,0 +1,74 @@
++package com.itacademy.sigma_team.domain;
++
++public class TicketItem {
++    private String ticketId;
++    private String productId;
++    private String productType;
++    private int quantity;
++    private double price;
++
++    public TicketItem(String ticketId, String productId, String productType, int quantity, double price) {
++        this.ticketId = ticketId;
++        this.productId = productId;
++        this.productType = productType;
++        this.quantity = quantity;
++        this.price = price;
++    }
++
++    public String getTicketId() {
++        return ticketId;
++    }
++
++    public void setTicketId(String ticketId) {
++        this.ticketId = ticketId;
++    }
++
++    public String getProductId() {
++        return productId;
++    }
++
++    public void setProductId(String productId) {
++        this.productId = productId;
++    }
++
++    public String getProductType() {
++        return productType;
++    }
++
++    public void setProductType(String productType) {
++        this.productType = productType;
++    }
++
++    public int getQuantity() {
++        return quantity;
++    }
++
++    public void setQuantity(int quantity) {
++        this.quantity = quantity;
++    }
++
++    public double getPrice() {
++        return price;
++    }
++
++    public void setPrice(double price) {
++        this.price = price;
++    }
++
++    public double calculateTotalPrice() {
++        return price * quantity;
++    }
++
++    @Override
++    public String toString() {
++        return "TicketItem{" +
++                "ticketId='" + ticketId + '\'' +
++                ", productId='" + productId + '\'' +
++                ", productType='" + productType + '\'' +
++                ", quantity=" + quantity +
++                ", price=" + price +
++                '}';
++    }
++}
++
++
+Index: src/main/java/com/itacademy/sigma_team/domain/Tree.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/itacademy/sigma_team/domain/Tree.java b/src/main/java/com/itacademy/sigma_team/domain/Tree.java
+--- a/src/main/java/com/itacademy/sigma_team/domain/Tree.java	(revision ab844f65c85b1ce34225eb8b402c3770f5e934c3)
++++ b/src/main/java/com/itacademy/sigma_team/domain/Tree.java	(revision 92e4eacb932f572b34ce1c09be7d44517fbc5fd3)
+@@ -3,7 +3,7 @@
+ import java.util.UUID;
+ import java.util.function.Function;
+ 
+-public final class Tree implements Buyable {
++public final class Tree implements Buyable  {
+ 
+     private final String id;
+     private final String name;
+@@ -12,6 +12,10 @@
+     private int stock;
+     private final Function<Double, Double> calculatePriceStrategy;
+ 
++    public Tree(String name, double height, double price, int stock) {
++        this(UUID.randomUUID().toString(), name, height, price, stock);
++    }
++
+     public Tree(String id, String name, double height, double price, int stock) {
+         this.id = id;
+         this.name = name;
+@@ -21,17 +25,14 @@
+         this.calculatePriceStrategy = aDouble -> aDouble; // Función identidad
+     }
+ 
+-    public Tree(String id, String name, double height, double price, Function<Double, Double> calculatePriceStrategy) {
+-        this.id = id;
+-        this.name = name;
+-        this.height = height;
+-        this.price = price;
+-        this.calculatePriceStrategy = calculatePriceStrategy;
+-    }
+-
+     public String getId() {
+         return id;
+     }
++
++    public String getName() {
++        return name;
++    }
++
+     public double getHeight() {
+         return height;
+     }
+Index: src/main/java/com/itacademy/sigma_team/flowers/repositories/FlowerSqlRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/itacademy/sigma_team/flowers/repositories/FlowerSqlRepository.java b/src/main/java/com/itacademy/sigma_team/flowers/repositories/FlowerSqlRepository.java
+--- a/src/main/java/com/itacademy/sigma_team/flowers/repositories/FlowerSqlRepository.java	(revision ab844f65c85b1ce34225eb8b402c3770f5e934c3)
++++ b/src/main/java/com/itacademy/sigma_team/flowers/repositories/FlowerSqlRepository.java	(revision 92e4eacb932f572b34ce1c09be7d44517fbc5fd3)
+@@ -8,7 +8,7 @@
+ import java.sql.ResultSet;
+ import java.sql.SQLException;
+ 
+-final class FlowerSqlRepository implements FlowerGateway {
++public final class FlowerSqlRepository implements FlowerGateway {
+ 
+     @Override
+     public void add(FlowerDTO flowerDTO) {
+Index: src/main/java/com/itacademy/sigma_team/services/TicketRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/itacademy/sigma_team/services/TicketRepository.java b/src/main/java/com/itacademy/sigma_team/services/TicketRepository.java
+new file mode 100644
+--- /dev/null	(revision 92e4eacb932f572b34ce1c09be7d44517fbc5fd3)
++++ b/src/main/java/com/itacademy/sigma_team/services/TicketRepository.java	(revision 92e4eacb932f572b34ce1c09be7d44517fbc5fd3)
+@@ -0,0 +1,11 @@
++package com.itacademy.sigma_team.services;
++
++import com.itacademy.sigma_team.domain.TicketItem;
++
++import java.util.List;
++
++public interface TicketRepository {
++    void saveItem(TicketItem item);
++    List<TicketItem> findItemsByTicketId(String ticketId);
++}
++
+Index: src/main/java/com/itacademy/sigma_team/services/TicketService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/itacademy/sigma_team/services/TicketService.java b/src/main/java/com/itacademy/sigma_team/services/TicketService.java
+new file mode 100644
+--- /dev/null	(revision 92e4eacb932f572b34ce1c09be7d44517fbc5fd3)
++++ b/src/main/java/com/itacademy/sigma_team/services/TicketService.java	(revision 92e4eacb932f572b34ce1c09be7d44517fbc5fd3)
+@@ -0,0 +1,64 @@
++package com.itacademy.sigma_team.services;
++
++import com.itacademy.sigma_team.domain.*;
++import com.itacademy.sigma_team.repositories.TicketRepository;
++import com.itacademy.sigma_team.tickets.repositories.TicketItemDTO;
++
++import java.time.LocalDateTime;
++import java.util.List;
++import java.util.UUID;
++import java.util.stream.Collectors;
++
++public final class TicketService {
++
++    private final TicketRepository ticketRepository;
++
++    public TicketService(TicketRepository ticketRepository) {
++        this.ticketRepository = ticketRepository;
++    }
++
++    public String generateTicketId() {
++        return UUID.randomUUID().toString();
++    }
++
++    public void addItemToTicket(String ticketId, TicketItemDTO itemDTO) {
++        TicketItem item = new TicketItem(ticketId, itemDTO.productId(), itemDTO.productType(), itemDTO.quantity());
++        ticketRepository.saveItem(item);
++    }
++
++    public Ticket getTicket(String ticketId, List<Flower> flowers, List<Tree> trees, List<Decoration> decorations) {
++        List<TicketItem> items = ticketRepository.findItemsByTicketId(ticketId);
++        double total = calculateTotal(items, flowers, trees, decorations);
++        return new Ticket(ticketId, LocalDateTime.now(), items, total);
++    }
++
++    private double calculateTotal(List<TicketItem> items, List<Flower> flowers, List<Tree> trees, List<Decoration> decorations) {
++        double total = 0.0;
++        for (TicketItem item : items) {
++            switch (item.getProductType()) {
++                case "flower":
++                    total += flowers.stream()
++                            .filter(f -> f.getId().equals(item.getProductId()))
++                            .mapToDouble(f -> f.getPrice() * item.getQuantity())
++                            .sum();
++                    break;
++                case "tree":
++                    total += trees.stream()
++                            .filter(t -> t.getId().equals(item.getProductId()))
++                            .mapToDouble(t -> t.getPrice() * item.getQuantity())
++                            .sum();
++                    break;
++                case "decoration":
++                    total += decorations.stream()
++                            .filter(d -> d.getId().equals(item.getProductId()))
++                            .mapToDouble(d -> d.getPrice() * item.getQuantity())
++                            .sum();
++                    break;
++            }
++        }
++        return total;
++    }
++}
++
++
++
+Index: src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketDTO.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketDTO.java b/src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketDTO.java
+--- a/src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketDTO.java	(revision ab844f65c85b1ce34225eb8b402c3770f5e934c3)
++++ b/src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketDTO.java	(revision 92e4eacb932f572b34ce1c09be7d44517fbc5fd3)
+@@ -1,7 +1,60 @@
+ package com.itacademy.sigma_team.tickets.repositories;
+ 
+-import com.itacademy.sigma_team.dtos.TicketItem;
++import java.time.LocalDateTime;
++import java.util.List;
++
++public class TicketDTO {
++    private String id;
++    private LocalDateTime dateTime;
++    private List<TicketItemDTO> items;
++    private double total;
+ 
+-import java.util.Collection;
++    public TicketDTO(String id, LocalDateTime dateTime, List<TicketItemDTO> items, double total) {
++        this.id = id;
++        this.dateTime = dateTime;
++        this.items = items;
++        this.total = total;
++    }
+ 
+-public record TicketDTO(String id, Collection<TicketItem> ticketItems) { }
++    public String getId() {
++        return id;
++    }
++
++    public void setId(String id) {
++        this.id = id;
++    }
++
++    public LocalDateTime getDateTime() {
++        return dateTime;
++    }
++
++    public void setDateTime(LocalDateTime dateTime) {
++        this.dateTime = dateTime;
++    }
++
++    public List<TicketItemDTO> getItems() {
++        return items;
++    }
++
++    public void setItems(List<TicketItemDTO> items) {
++        this.items = items;
++    }
++
++    public double getTotal() {
++        return total;
++    }
++
++    public void setTotal(double total) {
++        this.total = total;
++    }
++
++    @Override
++    public String toString() {
++        return "TicketDTO{" +
++                "id='" + id + '\'' +
++                ", dateTime=" + dateTime +
++                ", items=" + items +
++                ", total=" + total +
++                '}';
++    }
++}
+Index: src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketItemDTO.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketItemDTO.java b/src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketItemDTO.java
+new file mode 100644
+--- /dev/null	(revision 92e4eacb932f572b34ce1c09be7d44517fbc5fd3)
++++ b/src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketItemDTO.java	(revision 92e4eacb932f572b34ce1c09be7d44517fbc5fd3)
+@@ -0,0 +1,6 @@
++package com.itacademy.sigma_team.tickets.repositories;
++
++public record TicketItemDTO(String productId, String productType, int quantity) {
++}
++
++
+Index: src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketMappers.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketMappers.java b/src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketMappers.java
+--- a/src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketMappers.java	(revision ab844f65c85b1ce34225eb8b402c3770f5e934c3)
++++ b/src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketMappers.java	(revision 92e4eacb932f572b34ce1c09be7d44517fbc5fd3)
+@@ -1,15 +1,25 @@
+ package com.itacademy.sigma_team.tickets.repositories;
+ 
+ import com.itacademy.sigma_team.domain.Ticket;
++import com.itacademy.sigma_team.domain.TicketItem;
++
++import java.util.List;
++import java.util.stream.Collectors;
+ 
+ public final class TicketMappers {
+ 
+     public static TicketDTO toDto(Ticket entity) {
+-        return new TicketDTO(entity.getId(), entity.getItems());
++        List<TicketItemDTO> items = entity.getItems().stream()
++                .map(item -> new TicketItemDTO(item.getProductId(), item.getProductType(), item.getQuantity(), item.getPrice()))
++                .collect(Collectors.toList());
++        return new TicketDTO(entity.getId(), entity.getDateTime(), items, entity.getTotal());
+     }
+ 
+     public static Ticket toDomain(TicketDTO dto) {
+-        return new Ticket(dto.id(), dto.ticketItems());
++        List<TicketItem> items = dto.items().stream()
++                .map(item -> new TicketItem(dto.id(), item.getProductId(), item.getProductType(), item.getQuantity(), item.getPrice()))
++                .collect(Collectors.toList());
++        return new Ticket(dto.id(), dto.dateTime(), items, dto.total());
+     }
+-
+ }
++
+Index: src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketMongoRepository.java
+===================================================================
+diff --git a/src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketMongoRepository.java b/src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketMongoRepository.java
+--- a/src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketMongoRepository.java	(revision ab844f65c85b1ce34225eb8b402c3770f5e934c3)
++++ b/src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketMongoRepository.java	(revision 92e4eacb932f572b34ce1c09be7d44517fbc5fd3)
+@@ -11,10 +11,7 @@
+         throw new UnsupportedOperationException("Not yet implemented.");
+     }
+ 
+-    @Override
+-    public void delete(TicketDTO dto) throws IOException {
+-        throw new UnsupportedOperationException("Not yet implemented.");
+-    }
++}
+ 
+     @Override
+     public TicketDTO get(String id) {
+Index: src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketSqlRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketSqlRepository.java b/src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketSqlRepository.java
+--- a/src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketSqlRepository.java	(revision ab844f65c85b1ce34225eb8b402c3770f5e934c3)
++++ b/src/main/java/com/itacademy/sigma_team/tickets/repositories/TicketSqlRepository.java	(revision 92e4eacb932f572b34ce1c09be7d44517fbc5fd3)
+@@ -1,99 +1,59 @@
+ package com.itacademy.sigma_team.tickets.repositories;
+ 
+-import com.itacademy.sigma_team.dtos.DecorationDTO;
+-import com.itacademy.sigma_team.dtos.TicketItem;
+-import com.itacademy.sigma_team.dtos.FlowerDTO;
++import com.itacademy.sigma_team.domain.TicketItem;
+ import com.itacademy.sigma_team.flowers.repositories.SqlDatabaseConnection;
+-import com.itacademy.sigma_team.tickets.use_cases.TicketGateway;
+-import com.itacademy.sigma_team.dtos.TreeDTO;
+-import org.slf4j.Logger;
+-import org.slf4j.LoggerFactory;
++import com.itacademy.sigma_team.services.TicketRepository;
+ 
+-import java.io.IOException;
+ import java.sql.Connection;
++import java.sql.PreparedStatement;
++import java.sql.ResultSet;
+ import java.sql.SQLException;
+-import java.sql.Statement;
++import java.util.ArrayList;
++import java.util.List;
+ 
+-public final class TicketSqlRepository implements TicketGateway {
+-
+-    private static final Logger logger = LoggerFactory.getLogger(TicketSqlRepository.class);
++public final class TicketSqlRepository implements TicketRepository {
+ 
+     @Override
+-    public void add(TicketDTO dto) {
+-
+-        try (Connection connection = SqlDatabaseConnection.getConnection();
+-             Statement statement = connection.createStatement()) {
+-
+-            // Disable auto-commit mode
+-            connection.setAutoCommit(false);
+-
+-            // Insert into TicketDTO table
+-            String insertTicketDto = "INSERT INTO TicketDTO (id) VALUES ('" + dto.id() + "');";
+-            statement.executeUpdate(insertTicketDto);
+-
+-            for (TicketItem ticketItem : dto.ticketItems()) {
+-
+-                String insertStatement = getInsertStatement(ticketItem);
+-
+-                statement.executeUpdate(insertStatement);
+-
+-            }
+-
+-            connection.commit();
+-
++    public void saveItem(TicketItem item) {
++        String sql = "INSERT INTO TicketItem (ticket_id, product_id, product_type, quantity, price) VALUES (?, ?, ?, ?, ?)";
++        try (Connection conn = SqlDatabaseConnection.getConnection();
++             PreparedStatement pstmt = conn.prepareStatement(sql)) {
++            pstmt.setString(1, item.ticketId());
++            pstmt.setString(2, item.productId());
++            pstmt.setString(3, item.productType());
++            pstmt.setInt(4, item.quantity());
++            pstmt.setDouble(5, item.price());
++            pstmt.executeUpdate();
+         } catch (SQLException e) {
+-
+-            logger.error("SQL Exception occurred while adding TicketDTO: {}", dto.id(), e);
+-            rollback();
+-
++            e.printStackTrace();
+         }
+-
+     }
+-
+-    private String getInsertStatement(TicketItem ticketItem) {
+-
+-        return switch (ticketItem) {
+-
+-            case FlowerDTO flower -> "INSERT INTO FlowerDTO (id, name, color, price, stock) " +
+-                    "VALUES ('" + flower.id() + "', '" + flower.name() + "', '" + flower.color() + "', " +
+-                    flower.price() + ", " + flower.stock() + ");";
+-
+-            case TreeDTO tree -> "INSERT INTO TreeDTO (id, species, height, price) " +
+-                    "VALUES ('" + tree.id() + "', '" + tree.species() + "', " + tree.height() + ", " + tree.price() + ");";
+-
+-            case DecorationDTO decoration -> "INSERT INTO DecorationDTO (id, material) " +
+-                    "VALUES (" + decoration.id() + ", '" + decoration.material() + "');";
+-
+-        };
+-
+-    }
+-
+-    private void rollback() {
+-
+-        try (Connection connection = SqlDatabaseConnection.getConnection()) {
+-            if (connection != null) {
+-
+-                connection.rollback();
+-                logger.info("Transaction rolled back successfully.");
+-
+-            }
+-        } catch (SQLException rollbackEx) {
+-
+-            logger.error("Failed to rollback transaction", rollbackEx);
+-            throw new RuntimeException("Failed to rollback transaction", rollbackEx);
+-
+-        }
+-
+-    }
+-
+-    @Override
+-    public void delete(TicketDTO dto) throws IOException {
+-        throw new UnsupportedOperationException("Not yet implemented.");
+-    }
+ 
+     @Override
+-    public TicketDTO get(String id) {
+-        return null;
++    public List<TicketItem> findItemsByTicketId(String ticketId) {
++        List<TicketItem> items = new ArrayList<>();
++        String sql = "SELECT * FROM TicketItem WHERE ticket_id = ?";
++        try (Connection conn = SqlDatabaseConnection.getConnection();
++             PreparedStatement pstmt = conn.prepareStatement(sql)) {
++            pstmt.setString(1, ticketId);
++            ResultSet rs = pstmt.executeQuery();
++            while (rs.next()) {
++                TicketItem item = new TicketItem(
++                        rs.getString("ticket_id"),
++                        rs.getString("product_id"),
++                        rs.getString("product_type"),
++                        rs.getInt("quantity"),
++                        rs.getDouble("price")
++                );
++                items.add(item);
++            }
++        } catch (SQLException e) {
++            e.printStackTrace();
++        }
++        return items;
+     }
++}
++
+ 
+ }
++

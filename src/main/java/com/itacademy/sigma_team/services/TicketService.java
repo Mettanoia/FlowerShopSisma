@@ -31,7 +31,7 @@ public final class TicketService {
     }
 
     private double calculateTotal(List<TicketItem> items, List<Flower> flowers, List<Tree> trees, List<Decoration> decorations) {
-        double total = 0.0;
+        /*double total = 0.0;
         for (TicketItem item : items) {
             switch (item.getProductType()) {
                 case "flower":
@@ -53,8 +53,8 @@ public final class TicketService {
                             .sum();
                     break;
             }
-        }
-        return total;
+        }*/
+        return 0;
     }
 }
 

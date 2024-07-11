@@ -31,6 +31,4 @@ public class TicketItem {
         this.productId = productId;
     }
 
-    void accept(TicketItemVisitor ticketItemVisitor);
-
 }

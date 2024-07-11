@@ -31,8 +31,9 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
 
-public final class App {
+public final class App {/*
     public static void run() {
+
 
         FlowerGateway flowerGateway = new FlowerGateway() {
             @Override
@@ -47,6 +48,11 @@ public final class App {
 
             @Override
             public FlowerDTO get(String id) {
+                return null;
+            }
+
+            @Override
+            public Collection<FlowerDTO> getAll() {
                 return null;
             }
         };
@@ -98,6 +104,11 @@ public final class App {
 
             @Override
             public TicketDTO get(String id) {
+                return null;
+            }
+
+            @Override
+            public Collection<TicketDTO> getAll() {
                 return null;
             }
         };
@@ -153,5 +164,5 @@ public final class App {
 
         cliController.printStock();
 
-    }
+    }*/
 }

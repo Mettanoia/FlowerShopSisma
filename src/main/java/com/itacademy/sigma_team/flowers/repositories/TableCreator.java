@@ -58,7 +58,7 @@ public final class TableCreator {
                 CREATE TABLE IF NOT EXISTS Decoration (
                     id VARCHAR(36) PRIMARY KEY,
                     name VARCHAR(255) NOT NULL,
-                    material ENUM('wood', 'plastic') NOT NULL,
+                    material ENUM('WOOD', 'PLASTIC') NOT NULL,
                     price DECIMAL(10, 2) NOT NULL,
                     stock INT NOT NULL
                 );

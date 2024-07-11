@@ -37,12 +37,12 @@ public final class Ticket {
 
     public void addItem(TicketItem item) {
         items.add(item);
-        total += item.calculateTotalPrice();
+        //total += item.calculateTotalPrice();
     }
 
     public void removeItem(TicketItem item) {
         items.remove(item);
-        total -= item.calculateTotalPrice();
+        //total -= item.calculateTotalPrice();
     }
 
 

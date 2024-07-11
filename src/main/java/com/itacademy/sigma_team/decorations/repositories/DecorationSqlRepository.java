@@ -1,14 +1,16 @@
 package com.itacademy.sigma_team.decorations.repositories;
 
+import com.itacademy.sigma_team.dtos.DecorationDTO;
 import com.itacademy.sigma_team.domain.Material;
 import com.itacademy.sigma_team.flowers.repositories.SqlDatabaseConnection;
 import com.itacademy.sigma_team.gateways.DecorationGateway;
-
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public final class DecorationSqlRepository implements DecorationGateway {
 
@@ -19,7 +21,7 @@ public final class DecorationSqlRepository implements DecorationGateway {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, decorationDTO.id());
             pstmt.setString(2, decorationDTO.name());
-            pstmt.setString(3, decorationDTO.material().name());
+            pstmt.setString(3, decorationDTO.material().name()); // Convert enum to string
             pstmt.setDouble(4, decorationDTO.price());
             pstmt.setInt(5, decorationDTO.stock());
             pstmt.executeUpdate();
@@ -40,7 +42,7 @@ public final class DecorationSqlRepository implements DecorationGateway {
                 return new DecorationDTO(
                         rs.getString("id"),
                         rs.getString("name"),
-                        Material.valueOf(rs.getString("material")),
+                        Material.valueOf(rs.getString("material")), // Convert string to enum
                         rs.getDouble("price"),
                         rs.getInt("stock")
                 );
@@ -50,9 +52,6 @@ public final class DecorationSqlRepository implements DecorationGateway {
         }
         return null;
     }
-
-
-
 
     @Override
     public void deleteDecoration(DecorationDTO decorationDTO) {
@@ -66,5 +65,29 @@ public final class DecorationSqlRepository implements DecorationGateway {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public Collection<DecorationDTO> getAll() {
+        String sql = "SELECT * FROM Decoration";
+        Collection<DecorationDTO> decorations = new ArrayList<>();
+        try (Connection conn = SqlDatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                DecorationDTO decoration = new DecorationDTO(
+                        rs.getString("id"),
+                        rs.getString("name"),
+                        Material.valueOf(rs.getString("material")), // Convert string to enum
+                        rs.getDouble("price"),
+                        rs.getInt("stock")
+                );
+                decorations.add(decoration);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return decorations;
+    }
 }
+
 

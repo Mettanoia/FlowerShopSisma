@@ -1,5 +1,5 @@
 package com.itacademy.sigma_team.trees.repositories;
-
+import com.itacademy.sigma_team.dtos.TreeDTO;
 import com.itacademy.sigma_team.flowers.repositories.SqlDatabaseConnection;
 import com.itacademy.sigma_team.gateways.TreeGateway;
 
@@ -27,6 +27,7 @@ public final class TreeSqlRepository implements TreeGateway {
         }
     }
 
+
     @Override
     public TreeDTO getTree(String treeId) {
         String sql = "SELECT * FROM Tree WHERE id = ?";
@@ -48,6 +49,8 @@ public final class TreeSqlRepository implements TreeGateway {
         }
         return null;
     }
+
+
 
     @Override
     public void deleteTree(TreeDTO treeDTO) {
