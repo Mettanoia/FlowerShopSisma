@@ -1,13 +1,11 @@
 package com.itacademy.sigma_team.services;
 
 import com.itacademy.sigma_team.domain.*;
-import com.itacademy.sigma_team.repositories.TicketRepository;
 import com.itacademy.sigma_team.tickets.repositories.TicketItemDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public final class TicketService {
 
@@ -22,7 +20,7 @@ public final class TicketService {
     }
 
     public void addItemToTicket(String ticketId, TicketItemDTO itemDTO) {
-        TicketItem item = new TicketItem(ticketId, itemDTO.productId(), itemDTO.productType(), itemDTO.quantity());
+        TicketItem item = new TicketItem(ticketId, itemDTO.productId(), itemDTO.productType(), itemDTO.quantity(), itemDTO.price());
         ticketRepository.saveItem(item);
     }
 

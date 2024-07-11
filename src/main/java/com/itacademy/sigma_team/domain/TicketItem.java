@@ -31,44 +31,6 @@ public class TicketItem {
         this.productId = productId;
     }
 
-    public String getProductType() {
-        return productType;
-    }
+    void accept(TicketItemVisitor ticketItemVisitor);
 
-    public void setProductType(String productType) {
-        this.productType = productType;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public double calculateTotalPrice() {
-        return price * quantity;
-    }
-
-    @Override
-    public String toString() {
-        return "TicketItem{" +
-                "ticketId='" + ticketId + '\'' +
-                ", productId='" + productId + '\'' +
-                ", productType='" + productType + '\'' +
-                ", quantity=" + quantity +
-                ", price=" + price +
-                '}';
-    }
 }
-
-

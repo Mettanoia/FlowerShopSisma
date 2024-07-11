@@ -32,7 +32,7 @@ public final class PrintStockUseCase {
 
         System.out.println("Decorations:");
         for (Decoration decoration : flowerShop.decorations) {
-            System.out.println(" - Material: " + decoration.material());
+            System.out.println(" - Material: " + decoration.getMaterial());
         }
 
     }

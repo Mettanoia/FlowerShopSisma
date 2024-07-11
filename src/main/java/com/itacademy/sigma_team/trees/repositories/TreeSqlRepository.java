@@ -1,6 +1,5 @@
 package com.itacademy.sigma_team.trees.repositories;
 
-import com.itacademy.sigma_team.dtos.TreeDTO;
 import com.itacademy.sigma_team.flowers.repositories.SqlDatabaseConnection;
 import com.itacademy.sigma_team.gateways.TreeGateway;
 
@@ -22,7 +21,7 @@ public final class TreeSqlRepository implements TreeGateway {
             pstmt.setDouble(4, treeDTO.price());
             pstmt.setInt(5, treeDTO.stock());
             pstmt.executeUpdate();
-            System.out.println("Árbol insertado en la base de datos SQL");
+            System.out.println("Tree inserted into SQL database");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -57,7 +56,7 @@ public final class TreeSqlRepository implements TreeGateway {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, treeDTO.id());
             pstmt.executeUpdate();
-            System.out.println("Árbol eliminado de la base de datos SQL");
+            System.out.println("Tree deleted into SQL database");
         } catch (SQLException e) {
             e.printStackTrace();
         }

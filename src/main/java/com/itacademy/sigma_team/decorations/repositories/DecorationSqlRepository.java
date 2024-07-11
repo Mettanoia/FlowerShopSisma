@@ -1,7 +1,6 @@
 package com.itacademy.sigma_team.decorations.repositories;
 
 import com.itacademy.sigma_team.domain.Material;
-import com.itacademy.sigma_team.dtos.DecorationDTO;
 import com.itacademy.sigma_team.flowers.repositories.SqlDatabaseConnection;
 import com.itacademy.sigma_team.gateways.DecorationGateway;
 
@@ -52,6 +51,9 @@ public final class DecorationSqlRepository implements DecorationGateway {
         return null;
     }
 
+
+
+
     @Override
     public void deleteDecoration(DecorationDTO decorationDTO) {
         String sql = "DELETE FROM Decoration WHERE id = ?";
@@ -64,6 +66,5 @@ public final class DecorationSqlRepository implements DecorationGateway {
             e.printStackTrace();
         }
     }
-
 }
 

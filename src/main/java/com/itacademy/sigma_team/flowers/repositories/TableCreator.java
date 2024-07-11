@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.SQLException;
 
-public class TableCreator {
+public final class TableCreator {
 
     public static void createDatabaseAndTables() {
         createDatabaseIfNotExists();
@@ -13,7 +13,7 @@ public class TableCreator {
 
     private static void createDatabaseIfNotExists() {
         String databaseName = "floristeria_db";
-        try (Connection connection = SqlDatabaseConnection.getConnection();
+        try (Connection connection = SqlDatabaseConnection.getInitialConnection();
              Statement statement = connection.createStatement()) {
             String createDatabaseQuery = "CREATE DATABASE IF NOT EXISTS " + databaseName;
             statement.executeUpdate(createDatabaseQuery);
@@ -29,7 +29,7 @@ public class TableCreator {
 
             String createFlowerShopTable = """
                 CREATE TABLE IF NOT EXISTS FlowerShop (
-                    id VARCHAR(36) PRIMARY KEY,
+                    id INT AUTO_INCREMENT PRIMARY KEY,
                     name VARCHAR(255) NOT NULL
                 );
             """;
@@ -66,11 +66,11 @@ public class TableCreator {
 
             String createTicketItemTable = """
                 CREATE TABLE IF NOT EXISTS TicketItem (
-                    id VARCHAR(36) PRIMARY KEY,
-                    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    ticket_id VARCHAR(36),
+                    product_id VARCHAR(36),
                     product_type ENUM('tree', 'flower', 'decoration') NOT NULL,
-                    product_id VARCHAR(36) NOT NULL,
-                    quantity INT NOT NULL  
+                    quantity INT NOT NULL,
+                    PRIMARY KEY (ticket_id, product_id)
                 );
             """;
 

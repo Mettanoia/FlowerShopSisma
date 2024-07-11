@@ -1,10 +1,6 @@
 package com.itacademy.sigma_team.tickets.repositories;
 
 import com.itacademy.sigma_team.domain.Ticket;
-import com.itacademy.sigma_team.domain.TicketItem;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public final class TicketMappers {
 
@@ -22,4 +18,3 @@ public final class TicketMappers {
         return new Ticket(dto.id(), dto.dateTime(), items, dto.total());
     }
 }
-
