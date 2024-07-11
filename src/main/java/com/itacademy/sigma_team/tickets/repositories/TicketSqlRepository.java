@@ -1,8 +1,8 @@
 package com.itacademy.sigma_team.tickets.repositories;
 
 import com.itacademy.sigma_team.domain.TicketItem;
-import com.itacademy.sigma_team.flowers.repositories.SqlDatabaseConnection;
 import com.itacademy.sigma_team.services.TicketRepository;
+import com.itacademy.sigma_team.flowers.repositories.SqlDatabaseConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,18 +11,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class TicketSqlRepository implements TicketRepository {
+public class TicketSqlRepository implements TicketRepository {
 
     @Override
     public void saveItem(TicketItem item) {
-        String sql = "INSERT INTO TicketItem (ticket_id, product_id, product_type, quantity, price) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO TicketItem (ticket_id, product_id, product_type, quantity, timestamp) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = SqlDatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, item.getTicketId());
             pstmt.setString(2, item.getProductId());
             pstmt.setString(3, item.getProductType());
             pstmt.setInt(4, item.getQuantity());
-            pstmt.setDouble(5, item.getPrice());
+            pstmt.setTimestamp(5, java.sql.Timestamp.valueOf(item.getTimestamp()));
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -43,7 +43,8 @@ public final class TicketSqlRepository implements TicketRepository {
                         rs.getString("product_id"),
                         rs.getString("product_type"),
                         rs.getInt("quantity"),
-                        rs.getDouble("price")
+                        0.0, // El precio se calculará después
+                        rs.getTimestamp("timestamp").toLocalDateTime()
                 );
                 items.add(item);
             }
@@ -53,6 +54,8 @@ public final class TicketSqlRepository implements TicketRepository {
         return items;
     }
 }
+
+
 
 
 

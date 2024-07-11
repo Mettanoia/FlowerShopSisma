@@ -1,7 +1,10 @@
 package com.itacademy.sigma_team.tickets.repositories;
 
-public record TicketItemDTO(String productId, String productType, int quantity, double price) {
+import java.time.LocalDateTime;
+
+public record TicketItemDTO(String productId, String productType, int quantity, double price, LocalDateTime timestamp) {
 }
+
 
 
 

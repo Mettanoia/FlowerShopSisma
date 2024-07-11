@@ -70,6 +70,7 @@ public final class TableCreator {
                     product_id VARCHAR(36),
                     product_type ENUM('tree', 'flower', 'decoration') NOT NULL,
                     quantity INT NOT NULL,
+                    timestamp TIMESTAMP NOT NULL,
                     PRIMARY KEY (ticket_id, product_id)
                 );
             """;
@@ -87,3 +88,4 @@ public final class TableCreator {
         }
     }
 }
+

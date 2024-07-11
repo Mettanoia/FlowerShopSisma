@@ -1,6 +1,7 @@
 package com.itacademy.sigma_team.domain;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -49,12 +50,20 @@ public final class Ticket {
 
     @Override
     public String toString() {
-        return "Ticket{" +
-                "id='" + id + '\'' +
-                ", dateTime=" + dateTime +
-                ", items=" + items +
-                ", total=" + total +
-                '}';
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        StringBuilder sb = new StringBuilder();
+        sb.append("Ticket Date: ").append(dateTime.format(formatter)).append("\n");
+        sb.append("Items:\n");
+        for (TicketItem item : items) {
+            sb.append(String.format(" - %s: %s, Quantity: %d, Price: %.2f\n",
+                    item.getProductType(),
+                    item.getProductId(),
+                    item.getQuantity(),
+                    item.getPrice()));
+        }
+        sb.append(String.format("Total: %.2f\n", total));
+        sb.append("Thank you for your visit!");
+        return sb.toString();
     }
 }
 

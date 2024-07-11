@@ -1,18 +1,22 @@
 package com.itacademy.sigma_team.domain;
 
+import java.time.LocalDateTime;
+
 public class TicketItem {
     private String ticketId;
     private String productId;
     private String productType;
     private int quantity;
     private double price;
+    private LocalDateTime timestamp;
 
-    public TicketItem(String ticketId, String productId, String productType, int quantity, double price) {
+    public TicketItem(String ticketId, String productId, String productType, int quantity, double price, LocalDateTime timestamp) {
         this.ticketId = ticketId;
         this.productId = productId;
         this.productType = productType;
         this.quantity = quantity;
         this.price = price;
+        this.timestamp = timestamp;
     }
 
     public String getTicketId() {
@@ -55,21 +59,27 @@ public class TicketItem {
         this.price = price;
     }
 
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+
     public double calculateTotalPrice() {
         return price * quantity;
     }
 
     @Override
     public String toString() {
-        return "TicketItem{" +
-                "ticketId='" + ticketId + '\'' +
-                ", productId='" + productId + '\'' +
-                ", productType='" + productType + '\'' +
-                ", quantity=" + quantity +
-                ", price=" + price +
-                '}';
+        return String.format("%s, Quantity: %d, Price: %.2f",
+                productType,
+                quantity,
+                price);
     }
 }
+
 
 
 

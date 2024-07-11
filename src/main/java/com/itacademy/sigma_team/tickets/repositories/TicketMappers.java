@@ -10,14 +10,27 @@ public final class TicketMappers {
 
     public static TicketDTO toDto(Ticket entity) {
         List<TicketItemDTO> items = entity.getItems().stream()
-                .map(item -> new TicketItemDTO(item.getProductId(), item.getProductType(), item.getQuantity(), item.getPrice()))
+                .map(item -> new TicketItemDTO(
+                        item.getProductId(),
+                        item.getProductType(),
+                        item.getQuantity(),
+                        item.getPrice(),
+                        item.getTimestamp()
+                ))
                 .collect(Collectors.toList());
         return new TicketDTO(entity.getId(), entity.getDateTime(), items, entity.getTotal());
     }
 
     public static Ticket toDomain(TicketDTO dto) {
         List<TicketItem> items = dto.getItems().stream()
-                .map(item -> new TicketItem(dto.getId(), item.productId(), item.productType(), item.quantity(), item.price()))
+                .map(item -> new TicketItem(
+                        dto.getId(),
+                        item.productId(),
+                        item.productType(),
+                        item.quantity(),
+                        item.price(),
+                        item.timestamp()
+                ))
                 .collect(Collectors.toList());
         return new Ticket(dto.getId(), dto.getDateTime(), items, dto.getTotal());
     }
