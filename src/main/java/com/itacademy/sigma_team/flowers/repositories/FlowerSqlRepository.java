@@ -1,5 +1,6 @@
 package com.itacademy.sigma_team.flowers.repositories;
 
+import com.itacademy.sigma_team.dtos.FlowerDTO;
 import com.itacademy.sigma_team.flowers.use_cases.FlowerGateway;
 
 import java.sql.Connection;
@@ -7,7 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-final class FlowerSqlRepository implements FlowerGateway {
+public final class FlowerSqlRepository implements FlowerGateway {
 
     @Override
     public void add(FlowerDTO flowerDTO) {
