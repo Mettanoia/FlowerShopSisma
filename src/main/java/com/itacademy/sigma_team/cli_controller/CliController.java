@@ -15,6 +15,8 @@ import com.itacademy.sigma_team.tickets.use_cases.DeleteTicketUseCase;
 import com.itacademy.sigma_team.trees.use_cases.AddTreeUseCase;
 import com.itacademy.sigma_team.trees.use_cases.DeleteTreeUseCase;
 
+import java.util.List;
+
 public final class CliController {
 
     private final AddFlowerUseCase addFlowerUseCase;
@@ -26,7 +28,6 @@ public final class CliController {
     private final AddTicketUseCase addTicketUseCase;
     private final DeleteTicketUseCase deleteTicketUseCase;
     private final DeleteTreeUseCase deleteTreeUseCase;
-
 
     public CliController(AddFlowerUseCase addFlowerUseCase, DeleteFlowerUseCase deleteFlowerUseCase, AddDecorationUseCase addDecorationUseCase, DeleteDecorationUseCase deleteDecorationUseCase, PrintStockUseCase printStockUseCase, AddTreeUseCase addTreeUseCase, AddTicketUseCase addTicketUseCase, DeleteTicketUseCase deleteTicketUseCase, DeleteTreeUseCase deleteTreeUseCase) {
         this.addFlowerUseCase = addFlowerUseCase;
@@ -40,21 +41,69 @@ public final class CliController {
         this.deleteTreeUseCase = deleteTreeUseCase;
     }
 
-    private void createFlowerShop(){}
+    public void createFlowerShop(FlowerShop flowerShop) {
+        // Implementar lógica para crear una floristeria
+    }
 
-    private void addFlower(Flower flower) {
+    public void addFlower(Flower flower) {
         this.addFlowerUseCase.exec(flower);
     }
 
-    private void addTree(Tree tree) { this.addTreeUseCase.exec(tree); }
-    private void addDecoration(Decoration decoration) { this.addDecorationUseCase.exec(decoration); }
-    private void addTicket(Ticket ticket) { this.addTicketUseCase.exec(ticket); }
-    private void deleteFlower(Flower flower) { this.deleteFlowerUseCase.exec(flower); }
-    private void deleteTree(Tree tree) { this.deleteTreeUseCase.exec(tree); }
-    private void deleteDecoration(Decoration decoration) { this.deleteDecorationUseCase.exec(decoration); }
-    private void deleteTicket(Ticket ticket) { this.deleteTicketUseCase.exec(ticket); }
-    public void printStock() { this.printStockUseCase.exec(); }
-    private void printPurchaseHistory() {}
-    private void printBenefits() {}
+    public void addTree(Tree tree) {
+        this.addTreeUseCase.exec(tree);
+    }
 
+    public void addDecoration(Decoration decoration) {
+        this.addDecorationUseCase.exec(decoration);
+    }
+
+    public void addTicket(Ticket ticket) {
+        this.addTicketUseCase.exec(ticket);
+    }
+
+    public void deleteFlower(Flower flower) {
+        this.deleteFlowerUseCase.exec(flower);
+    }
+
+    public void deleteTree(Tree tree) {
+        this.deleteTreeUseCase.exec(tree);
+    }
+
+    public void deleteDecoration(Decoration decoration) {
+        this.deleteDecorationUseCase.exec(decoration);
+    }
+
+    public void deleteTicket(Ticket ticket) {
+        this.deleteTicketUseCase.exec(ticket);
+    }
+
+    public void printStock() {
+        this.printStockUseCase.exec();
+    }
+
+    public void printPurchaseHistory() {
+        // Implementar lógica para imprimir el historial de compras
+    }
+
+    public void printBenefits() {
+        // Implementar lógica para imprimir el valor total de la floristeria
+    }
+
+    public List<Flower> listFlowers() {
+        // Implementar lógica para listar flores
+        return List.of(); // Placeholder
+    }
+
+    public List<Tree> listTrees() {
+        // Implementar lógica para listar árboles
+        return List.of(); // Placeholder
+    }
+
+    public List<Decoration> listDecorations() {
+        // Implementar lógica para listar decoraciones
+        return List.of(); // Placeholder
+    }
 }
+
+
+

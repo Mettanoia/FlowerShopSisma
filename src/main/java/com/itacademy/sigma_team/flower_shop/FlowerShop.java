@@ -15,7 +15,7 @@ public final class FlowerShop extends ShopAbstract {
     public final Collection<Tree> trees;
     public final Collection<Decoration> decorations;
 
-    private FlowerShop(FlowerShopBuilder builder){
+    public FlowerShop(FlowerShopBuilder builder){
         this.name = builder.flowerShopName;
         this.flowers = builder.flowers;
         this.trees = builder.trees;
