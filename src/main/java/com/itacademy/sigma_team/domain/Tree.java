@@ -1,68 +1,40 @@
 package com.itacademy.sigma_team.domain;
 
-import java.util.UUID;
-import java.util.function.Function;
 
-public final class Tree implements Buyable  {
 
-    private final String id;
-    private final String name;
+public class Tree implements Buyable {
+    private final int id;
+    private final String species;
     private final double height;
     private final double price;
-    private int stock;
-    private final Function<Double, Double> calculatePriceStrategy;
 
-    public Tree(String name, double height, double price, int stock) {
-        this(UUID.randomUUID().toString(), name, height, price, stock);
-    }
-
-    public Tree(String id, String name, double height, double price, int stock) {
+    public Tree(int id, String species, double height, double price) {
         this.id = id;
-        this.name = name;
+        this.species = species;
         this.height = height;
         this.price = price;
-        this.stock = stock;
-        this.calculatePriceStrategy = aDouble -> aDouble; // Función identidad
     }
 
-    public String getId() {
+    @Override
+    public double calculatePrice() {
+        return 0;
+    }
+
+    @Override
+    public int getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getSpecies() {
+        return species;
     }
 
     public double getHeight() {
         return height;
     }
 
+    @Override
     public double getPrice() {
         return price;
     }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
-
-    @Override
-    public double calculatePrice() {
-        return this.calculatePriceStrategy.apply(this.price);
-    }
-
-    @Override
-    public String toString() {
-        return "Tree{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", height=" + height +
-                ", price=" + price +
-                ", stock=" + stock +
-                '}';
-    }
 }
-

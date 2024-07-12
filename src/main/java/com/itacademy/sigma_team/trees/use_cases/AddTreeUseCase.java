@@ -1,20 +1,21 @@
 package com.itacademy.sigma_team.trees.use_cases;
 
+import java.util.function.Consumer;
 
 import com.itacademy.sigma_team.domain.Tree;
 
-import java.util.function.Consumer;
+public class AddTreeUseCase {
 
-public final class AddTreeUseCase {
+    private final Consumer<Tree> onSuccess;
 
-    private final Consumer<Tree> addTreeMixin;
-
-    public AddTreeUseCase(Consumer<Tree> addTreeMixin) {
-        this.addTreeMixin = addTreeMixin;
+    public AddTreeUseCase(Consumer<Tree> onSuccess) {
+        this.onSuccess = onSuccess;
     }
 
     public void exec(Tree tree) {
-        this.addTreeMixin.accept(tree);
+        onSuccess.accept(tree);
     }
 }
+
+
 

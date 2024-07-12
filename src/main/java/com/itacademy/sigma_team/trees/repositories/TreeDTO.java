@@ -1,6 +1,6 @@
 package com.itacademy.sigma_team.trees.repositories;
 
 
-public record TreeDTO(String id, String name, double height, double price, int stock) {
+public record TreeDTO(int id, String species, double height, double price) {
+    // Los métodos de acceso se generan automáticamente con record
 }
-
