@@ -1,11 +1,12 @@
 package com.itacademy.sigma_team.trees.repositories;
 
-
+import com.itacademy.sigma_team.dtos.TreeDTO;
 import com.itacademy.sigma_team.gateways.TreeGateway;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -24,24 +25,31 @@ public final class TreeMongoRepository implements TreeGateway {
     @Override
     public void addTree(TreeDTO treeDTO) {
         Document document = new Document("id", treeDTO.id())
-                .append("species", treeDTO.species())
+                .append("species", treeDTO.name())
                 .append("height", treeDTO.height())
                 .append("price", treeDTO.price());
         collection.insertOne(document);
     }
 
+
+
     @Override
-    public TreeDTO getTree(Long treeId) {
-        Bson filter = eq("id", treeId);
+    public TreeDTO getTree(String treeId) {
+        Bson filter = Filters.eq("id", treeId);
         Document document = collection.find(filter).first();
         if (document != null) {
-            return new TreeDTO(Math.toIntExact(document.getLong("id")),
+            return new TreeDTO(
+                    document.getString("id"),
                     document.getString("species"),
                     document.getDouble("height"),
-                    document.getDouble("price"));
+                    document.getDouble("price"),
+                    document.getInteger("stock")
+            );
         }
         return null;
     }
+
+
 
     @Override
     public void deleteTree(TreeDTO treeDTO) {

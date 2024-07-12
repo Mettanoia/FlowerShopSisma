@@ -2,10 +2,7 @@ package com.itacademy.sigma_team.cli_controller;
 
 import com.itacademy.sigma_team.decorations.use_cases.AddDecorationUseCase;
 import com.itacademy.sigma_team.decorations.use_cases.DeleteDecorationUseCase;
-import com.itacademy.sigma_team.domain.Decoration;
-import com.itacademy.sigma_team.domain.Flower;
-import com.itacademy.sigma_team.domain.Ticket;
-import com.itacademy.sigma_team.domain.Tree;
+import com.itacademy.sigma_team.domain.*;
 import com.itacademy.sigma_team.flower_shop.FlowerShop;
 import com.itacademy.sigma_team.flowers.use_cases.AddFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.DeleteFlowerUseCase;
@@ -57,7 +54,7 @@ public final class CliController {
         this.addDecorationUseCase.exec(decoration);
     }
 
-    public void addTicket(Ticket ticket) {
+    public void addTicket(List<TicketItem> ticket) {
         this.addTicketUseCase.exec(ticket);
     }
 

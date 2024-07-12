@@ -4,16 +4,18 @@ import com.itacademy.sigma_team.cli_controller.CliController;
 import com.itacademy.sigma_team.domain.*;
 import com.itacademy.sigma_team.flower_shop.FlowerShop;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class MainMenu {
 
     private final CliController cliController;
     private final Scanner scanner;
 
-    public MainMenu(CliController cliController) {
-        this.cliController = cliController;
+    public MainMenu() {
+        this.cliController = new CliController();
         this.scanner = new Scanner(System.in);
     }
 
@@ -40,7 +42,7 @@ public class MainMenu {
             scanner.nextLine(); // Consume newline
 
             switch (option) {
-                case 1 -> createFlowerShop();
+               // case 1 -> createFlowerShop();
                 case 2 -> addTree();
                 case 3 -> addFlower();
                 case 4 -> addDecoration();
@@ -60,23 +62,25 @@ public class MainMenu {
         }
     }
 
-
+    /*
     private void createFlowerShop() {
         System.out.print("Enter the name of the flower shop: ");
         String name = scanner.nextLine();
         cliController.createFlowerShop(new FlowerShop(name));
         System.out.println("Flower shop created successfully.");
     }
-
+*/
     private void addTree() {
         System.out.print("Enter the species of the tree: ");
-        String species = scanner.nextLine();
+        String name = scanner.nextLine();
         System.out.print("Enter the height of the tree: ");
         double height = scanner.nextDouble();
         System.out.print("Enter the price of the tree: ");
         double price = scanner.nextDouble();
-        scanner.nextLine(); // Consume newline
-        cliController.addTree(new Tree(species, height, price, 10)); // Placeholder for stock
+        scanner.nextLine();
+        System.out.println("Enter the steco of the tree: ");
+        int stock =scanner.nextInt();
+        cliController.addTree(new Tree(name, height, price, stock)); // Placeholder for stock
         System.out.println("Tree added successfully.");
     }
 
@@ -108,7 +112,7 @@ public class MainMenu {
     private void deleteTree() {
         List<Tree> trees = cliController.listTrees();
         for (int i = 0; i < trees.size(); i++) {
-            System.out.println(i + ". " + trees.get(i).getName() + " - Height: " + trees.get(i).getHeight() + " - Price: " + trees.get(i).getPrice());
+            System.out.println(i + ". " + trees.get(i).getSpecies() + " - Height: " + trees.get(i).getHeight() + " - Price: " + trees.get(i).getPrice());
         }
         System.out.print("Select the index of the tree to remove: ");
         int index = scanner.nextInt();
@@ -154,12 +158,90 @@ public class MainMenu {
     }
 
     private void createTicket() {
-        System.out.print("Enter the ID of the ticket: ");
-        String ticketId = scanner.nextLine();
-        Ticket ticket = new Ticket();
-        // Assuming you have methods to add items to the ticket
-        // Add your logic to add items to the ticket
-        cliController.addTicket(ticket);
-        System.out.println("Ticket created successfully.");
+        String ticketId = UUID.randomUUID().toString();
+        List<TicketItem> items = new ArrayList<>();
+
+        while (true) {
+            System.out.println("Add an item to the ticket:");
+            System.out.println("1. Add Tree");
+            System.out.println("2. Add Flower");
+            System.out.println("3. Add Decoration");
+            System.out.println("4. Finish and Create Ticket");
+            System.out.print("Select an option: ");
+            int option = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (option) {
+                case 1 -> addTreeToTicket(items, ticketId);
+                case 2 -> addFlowerToTicket(items, ticketId);
+                case 3 -> addDecorationToTicket(items, ticketId);
+                case 4 -> {
+                    cliController.addTicket(items);
+                    System.out.println("Ticket created successfully.");
+                    return;
+                }
+                default -> System.out.println("Invalid option. Please try again.");
+            }
+        }
+    }
+
+    private void addTreeToTicket(List<TicketItem> items, String ticketId) {
+        List<Tree> trees = cliController.listTrees();
+        for (int i = 0; i < trees.size(); i++) {
+            System.out.println(i + ". " + trees.get(i).getSpecies() + " - Height: " + trees.get(i).getHeight() + " - Price: " + trees.get(i).getPrice());
+        }
+        System.out.print("Select the index of the tree to add: ");
+        int index = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        if (index >= 0 && index < trees.size()) {
+            System.out.print("Enter the quantity: ");
+            int quantity = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+            Tree tree = trees.get(index);
+            items.add(new TicketItem(ticketId, tree.getId(), "tree", quantity, tree.getPrice()));
+            System.out.println("Tree added to ticket.");
+        } else {
+            System.out.println("Invalid index.");
+        }
+    }
+
+    private void addFlowerToTicket(List<TicketItem> items, String ticketId) {
+        List<Flower> flowers = cliController.listFlowers();
+        for (int i = 0; i < flowers.size(); i++) {
+            System.out.println(i + ". " + flowers.get(i).getName() + " - Color: " + flowers.get(i).getColor() + " - Price: " + flowers.get(i).getPrice());
+        }
+        System.out.print("Select the index of the flower to add: ");
+        int index = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        if (index >= 0 && index < flowers.size()) {
+            System.out.print("Enter the quantity: ");
+            int quantity = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+            Flower flower = flowers.get(index);
+            items.add(new TicketItem(ticketId, flower.getId(), "flower", quantity, flower.getPrice()));
+            System.out.println("Flower added to ticket.");
+        } else {
+            System.out.println("Invalid index.");
+        }
+    }
+
+    private void addDecorationToTicket(List<TicketItem> items, String ticketId) {
+        List<Decoration> decorations = cliController.listDecorations();
+        for (int i = 0; i < decorations.size(); i++) {
+            System.out.println(i + ". " + decorations.get(i).getName() + " - Material: " + decorations.get(i).getMaterial() + " - Price: " + decorations.get(i).getPrice());
+        }
+        System.out.print("Select the index of the decoration to add: ");
+        int index = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        if (index >= 0 && index < decorations.size()) {
+            System.out.print("Enter the quantity: ");
+            int quantity = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+            Decoration decoration = decorations.get(index);
+            items.add(new TicketItem(ticketId, decoration.getId(), "decoration", quantity, decoration.getPrice()));
+            System.out.println("Decoration added to ticket.");
+        } else {
+            System.out.println("Invalid index.");
+        }
     }
 }

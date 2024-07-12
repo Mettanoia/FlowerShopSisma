@@ -4,7 +4,7 @@ public interface Buyable {
     double calculatePrice();
 
 
-    int getId();
+    String getId();
 
     double getPrice();
 }

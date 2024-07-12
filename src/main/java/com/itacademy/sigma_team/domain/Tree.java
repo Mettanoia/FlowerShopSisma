@@ -1,18 +1,24 @@
 package com.itacademy.sigma_team.domain;
 
 
+import java.util.UUID;
 
 public class Tree implements Buyable {
-    private final int id;
-    private final String species;
+    private final String id;
+    private final String name;
     private final double height;
     private final double price;
+    private final int stock;
+    public Tree(String name, double height, double price, int stock) {
+        this(UUID.randomUUID().toString(), name, height, price, stock);
+    }
 
-    public Tree(int id, String species, double height, double price) {
+    public Tree(String id, String name, double height, double price, int stock) {
         this.id = id;
-        this.species = species;
+        this.name = name;
         this.height = height;
         this.price = price;
+        this.stock = stock;
     }
 
     @Override
@@ -21,12 +27,12 @@ public class Tree implements Buyable {
     }
 
     @Override
-    public int getId() {
+    public String getId() {
         return id;
     }
 
     public String getSpecies() {
-        return species;
+        return name;
     }
 
     public double getHeight() {
