@@ -49,20 +49,8 @@ public final class TreeMongoRepository implements TreeGateway {
         collection.deleteOne(filter);
     }
 
-    @Override
-    public void addTree(com.itacademy.sigma_team.dtos.TreeDTO treeDTO) {
-
-    }
-
-    @Override
-    public com.itacademy.sigma_team.dtos.TreeDTO getTree(String treeId) {
-        return null;
-    }
-
-    @Override
-    public void deleteTree(com.itacademy.sigma_team.dtos.TreeDTO treeDTO) {
-
-    }
 }
+
+
 
 
