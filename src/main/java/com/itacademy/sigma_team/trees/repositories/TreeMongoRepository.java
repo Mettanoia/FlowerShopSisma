@@ -48,6 +48,9 @@ public final class TreeMongoRepository implements TreeGateway {
         Bson filter = eq("id", treeDTO.id());
         collection.deleteOne(filter);
     }
+
 }
+
+
 
 
