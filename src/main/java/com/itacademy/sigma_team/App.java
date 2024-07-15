@@ -4,6 +4,7 @@ import com.itacademy.sigma_team.cli_controller.CliController;
 import com.itacademy.sigma_team.decorations.repositories.DecorationMapper;
 import com.itacademy.sigma_team.decorations.use_cases.AddDecorationUseCase;
 import com.itacademy.sigma_team.decorations.use_cases.DeleteDecorationUseCase;
+import com.itacademy.sigma_team.decorations.use_cases.GetAllDecorationsUseCase;
 import com.itacademy.sigma_team.domain.Decoration;
 import com.itacademy.sigma_team.domain.Flower;
 import com.itacademy.sigma_team.domain.Tree;
@@ -16,16 +17,13 @@ import com.itacademy.sigma_team.decorations.use_cases.DecorationGateway;
 import com.itacademy.sigma_team.flowers.use_cases.GetAllFlowersUseCase;
 import com.itacademy.sigma_team.repositories_factories.DecorationRepositoryFactory;
 import com.itacademy.sigma_team.repositories_factories.TreeRepositoryFactory;
+import com.itacademy.sigma_team.tickets.use_cases.*;
 import com.itacademy.sigma_team.trees.use_cases.GetAllTreesUseCase;
 import com.itacademy.sigma_team.trees.use_cases.TreeGateway;
 import com.itacademy.sigma_team.print_stock.use_cases.PrintStockUseCase;
 import com.itacademy.sigma_team.repositories_factories.FlowerRepositoryFactory;
 import com.itacademy.sigma_team.tickets.repositories.TicketMappers;
 import com.itacademy.sigma_team.tickets.repositories.TicketSqlRepository;
-import com.itacademy.sigma_team.tickets.use_cases.AddTicketUseCase;
-import com.itacademy.sigma_team.tickets.use_cases.DeleteTicketUseCase;
-import com.itacademy.sigma_team.tickets.use_cases.GetTicketUseCase;
-import com.itacademy.sigma_team.tickets.use_cases.TicketGateway;
 import com.itacademy.sigma_team.repositories_factories.TicketRepositoryFactory;
 import com.itacademy.sigma_team.trees.repositories.TreeMapper;
 import com.itacademy.sigma_team.trees.use_cases.AddTreeUseCase;
@@ -110,6 +108,15 @@ public final class App {
                     } catch (IOException e) {logException();}
                 }),
 
+                new GetAllDecorationsUseCase(() -> {
+                    try {
+                        return decorationGateway.getAll().stream().map(DecorationMapper::toDomain).collect(Collectors.toSet());
+                    } catch (IOException e) {
+                        logException();
+                        return null;
+                    }
+                }),
+
                 new PrintStockUseCase(createFlowerShop("Our shop", flowerGateway, treeGateway, decorationGateway)),
 
                 new AddTreeUseCase(tree -> {
@@ -148,6 +155,15 @@ public final class App {
                 new GetTicketUseCase(ticketId -> {
                     try {
                         return TicketMappers.toDomain(ticketGateway.get(ticketId));
+                    } catch (IOException e) {
+                        logException();
+                        return null;
+                    }
+                }),
+
+                new GetAllTicketsUseCase(() -> {
+                    try {
+                        return ticketGateway.getAll().stream().map(TicketMappers::toDomain).collect(Collectors.toSet());
                     } catch (IOException e) {
                         logException();
                         return null;
