@@ -53,12 +53,20 @@ public final class App {
         Collection<Decoration> decorations = null;
         try {
 
-            flowers = flowerGateway.getAll().stream().map(FlowerMapper::toDomain).collect(Collectors.toSet());
-            trees = treeGateway.getAll().stream().map(TreeMapper::toDomain).collect(Collectors.toSet());
-            decorations = decorationGateway.getAll().stream().map(DecorationMapper::toDomain).collect(Collectors.toSet());
+            flowers = flowerGateway.getAll().stream()
+                    .map(FlowerMapper::toDomain)
+                    .collect(Collectors.toSet());
+
+            trees = treeGateway.getAll().stream()
+                    .map(TreeMapper::toDomain)
+                    .collect(Collectors.toSet());
+
+            decorations = decorationGateway.getAll().stream()
+                    .map(DecorationMapper::toDomain)
+                    .collect(Collectors.toSet());
 
         } catch (IOException e) {logException();}
-        
+
         // Building the FlowerShop
         FlowerShop flowerShop = new FlowerShop.FlowerShopBuilder("Sigma Flower Shop")
                 .flowers(flowers)
@@ -92,7 +100,7 @@ public final class App {
                     } catch (IOException e) {logException();}
                 }),
 
-                new PrintStockUseCase(flowerShop),
+                new PrintStockUseCase(createFlowerShop("Our shop", flowerGateway, treeGateway, decorationGateway)),
 
                 new AddTreeUseCase(tree -> {
                     try {
@@ -130,6 +138,38 @@ public final class App {
         );
 
     }
+
+    public static FlowerShop createFlowerShop(String flowerShopName, FlowerGateway flowerGateway, TreeGateway treeGateway, DecorationGateway decorationGateway) {
+
+        try {
+            return new FlowerShop.FlowerShopBuilder(flowerShopName)
+                    .trees(
+                            treeGateway.getAll().stream()
+                                    .map(TreeMapper::toDomain)
+                                    .collect(Collectors.toSet())
+                    )
+
+                    .flowers(
+                            flowerGateway.getAll().stream()
+                                    .map(FlowerMapper::toDomain)
+                                    .collect(Collectors.toSet())
+                    )
+
+                    .decorations(
+                            decorationGateway.getAll().stream()
+                                    .map(DecorationMapper::toDomain)
+                                    .collect(Collectors.toSet())
+                    )
+
+                    .build();
+
+        } catch (IOException e) {
+            logException();
+            return null;
+        }
+
+    }
+
 
     private static void logException() {
         logger.error("Exception thrown while calling the repository.");
