@@ -2,6 +2,7 @@ package com.itacademy.sigma_team.cli_controller;
 
 import com.itacademy.sigma_team.decorations.use_cases.AddDecorationUseCase;
 import com.itacademy.sigma_team.decorations.use_cases.DeleteDecorationUseCase;
+import com.itacademy.sigma_team.decorations.use_cases.GetAllDecorationsUseCase;
 import com.itacademy.sigma_team.domain.Decoration;
 import com.itacademy.sigma_team.domain.Flower;
 import com.itacademy.sigma_team.domain.Ticket;
@@ -29,6 +30,7 @@ public final class CliController {
     // Decoration use cases
     private final AddDecorationUseCase addDecorationUseCase;
     private final DeleteDecorationUseCase deleteDecorationUseCase;
+    private final GetAllDecorationsUseCase getAllDecorationsUseCase;
 
     // Printing use cases
     private final PrintStockUseCase printStockUseCase;
@@ -46,12 +48,13 @@ public final class CliController {
     private Scanner scanner;
 
 
-    public CliController(AddFlowerUseCase addFlowerUseCase, DeleteFlowerUseCase deleteFlowerUseCase, GetAllFlowersUseCase getAllFlowersUseCase, AddDecorationUseCase addDecorationUseCase, DeleteDecorationUseCase deleteDecorationUseCase, PrintStockUseCase printStockUseCase, AddTreeUseCase addTreeUseCase, GetAllTreesUseCase getAllTreesUseCase, AddTicketUseCase addTicketUseCase, DeleteTicketUseCase deleteTicketUseCase, DeleteTreeUseCase deleteTreeUseCase, GetTicketUseCase getTicketUseCase) {
+    public CliController(AddFlowerUseCase addFlowerUseCase, DeleteFlowerUseCase deleteFlowerUseCase, GetAllFlowersUseCase getAllFlowersUseCase, AddDecorationUseCase addDecorationUseCase, DeleteDecorationUseCase deleteDecorationUseCase, GetAllDecorationsUseCase getAllDecorationsUseCase, PrintStockUseCase printStockUseCase, AddTreeUseCase addTreeUseCase, GetAllTreesUseCase getAllTreesUseCase, AddTicketUseCase addTicketUseCase, DeleteTicketUseCase deleteTicketUseCase, DeleteTreeUseCase deleteTreeUseCase, GetTicketUseCase getTicketUseCase) {
         this.addFlowerUseCase = addFlowerUseCase;
         this.deleteFlowerUseCase = deleteFlowerUseCase;
         this.getAllFlowersUseCase = getAllFlowersUseCase;
         this.addDecorationUseCase = addDecorationUseCase;
         this.deleteDecorationUseCase = deleteDecorationUseCase;
+        this.getAllDecorationsUseCase = getAllDecorationsUseCase;
         this.printStockUseCase = printStockUseCase;
         this.addTreeUseCase = addTreeUseCase;
         this.getAllTreesUseCase = getAllTreesUseCase;

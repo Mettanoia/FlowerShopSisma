@@ -4,6 +4,7 @@ import com.itacademy.sigma_team.cli_controller.CliController;
 import com.itacademy.sigma_team.decorations.repositories.DecorationMapper;
 import com.itacademy.sigma_team.decorations.use_cases.AddDecorationUseCase;
 import com.itacademy.sigma_team.decorations.use_cases.DeleteDecorationUseCase;
+import com.itacademy.sigma_team.decorations.use_cases.GetAllDecorationsUseCase;
 import com.itacademy.sigma_team.domain.Decoration;
 import com.itacademy.sigma_team.domain.Flower;
 import com.itacademy.sigma_team.domain.Tree;
@@ -108,6 +109,15 @@ public final class App {
                     try {
                         decorationGateway.delete(DecorationMapper.toDto(decoration));
                     } catch (IOException e) {logException();}
+                }),
+
+                new GetAllDecorationsUseCase(() -> {
+                    try {
+                        return decorationGateway.getAll().stream().map(DecorationMapper::toDomain).collect(Collectors.toSet());
+                    } catch (IOException e) {
+                        logException();
+                        return null;
+                    }
                 }),
 
                 new PrintStockUseCase(createFlowerShop("Our shop", flowerGateway, treeGateway, decorationGateway)),
