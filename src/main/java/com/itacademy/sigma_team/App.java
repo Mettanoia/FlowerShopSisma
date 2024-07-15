@@ -52,6 +52,7 @@ public final class App {
         Collection<Flower> flowers = null;
         Collection<Tree> trees = null;
         Collection<Decoration> decorations = null;
+
         try {
 
             flowers = flowerGateway.getAll().stream()
