@@ -15,6 +15,7 @@ import com.itacademy.sigma_team.tickets.use_cases.DeleteTicketUseCase;
 import com.itacademy.sigma_team.tickets.use_cases.GetTicketUseCase;
 import com.itacademy.sigma_team.trees.use_cases.AddTreeUseCase;
 import com.itacademy.sigma_team.trees.use_cases.DeleteTreeUseCase;
+import com.itacademy.sigma_team.trees.use_cases.GetAllTreesUseCase;
 
 import java.util.Scanner;
 
@@ -35,6 +36,7 @@ public final class CliController {
     // Tree use cases
     private final AddTreeUseCase addTreeUseCase;
     private final DeleteTreeUseCase deleteTreeUseCase;
+    private final GetAllTreesUseCase getAllTreesUseCase;
 
 
     // Ticket use cases
@@ -44,7 +46,7 @@ public final class CliController {
     private Scanner scanner;
 
 
-    public CliController(AddFlowerUseCase addFlowerUseCase, DeleteFlowerUseCase deleteFlowerUseCase, GetAllFlowersUseCase getAllFlowersUseCase, AddDecorationUseCase addDecorationUseCase, DeleteDecorationUseCase deleteDecorationUseCase, PrintStockUseCase printStockUseCase, AddTreeUseCase addTreeUseCase, AddTicketUseCase addTicketUseCase, DeleteTicketUseCase deleteTicketUseCase, DeleteTreeUseCase deleteTreeUseCase, GetTicketUseCase getTicketUseCase) {
+    public CliController(AddFlowerUseCase addFlowerUseCase, DeleteFlowerUseCase deleteFlowerUseCase, GetAllFlowersUseCase getAllFlowersUseCase, AddDecorationUseCase addDecorationUseCase, DeleteDecorationUseCase deleteDecorationUseCase, PrintStockUseCase printStockUseCase, AddTreeUseCase addTreeUseCase, GetAllTreesUseCase getAllTreesUseCase, AddTicketUseCase addTicketUseCase, DeleteTicketUseCase deleteTicketUseCase, DeleteTreeUseCase deleteTreeUseCase, GetTicketUseCase getTicketUseCase) {
         this.addFlowerUseCase = addFlowerUseCase;
         this.deleteFlowerUseCase = deleteFlowerUseCase;
         this.getAllFlowersUseCase = getAllFlowersUseCase;
@@ -52,6 +54,7 @@ public final class CliController {
         this.deleteDecorationUseCase = deleteDecorationUseCase;
         this.printStockUseCase = printStockUseCase;
         this.addTreeUseCase = addTreeUseCase;
+        this.getAllTreesUseCase = getAllTreesUseCase;
         this.addTicketUseCase = addTicketUseCase;
         this.deleteTicketUseCase = deleteTicketUseCase;
         this.deleteTreeUseCase = deleteTreeUseCase;

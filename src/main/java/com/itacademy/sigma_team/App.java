@@ -16,6 +16,7 @@ import com.itacademy.sigma_team.decorations.use_cases.DecorationGateway;
 import com.itacademy.sigma_team.flowers.use_cases.GetAllFlowersUseCase;
 import com.itacademy.sigma_team.repositories_factories.DecorationRepositoryFactory;
 import com.itacademy.sigma_team.repositories_factories.TreeRepositoryFactory;
+import com.itacademy.sigma_team.trees.use_cases.GetAllTreesUseCase;
 import com.itacademy.sigma_team.trees.use_cases.TreeGateway;
 import com.itacademy.sigma_team.print_stock.use_cases.PrintStockUseCase;
 import com.itacademy.sigma_team.repositories_factories.FlowerRepositoryFactory;
@@ -115,6 +116,15 @@ public final class App {
                     try {
                         treeGateway.add(TreeMapper.toDto(tree));
                     } catch (IOException e) {logException();}
+                }),
+
+                new GetAllTreesUseCase(() -> {
+                    try {
+                        return treeGateway.getAll().stream().map(TreeMapper::toDomain).collect(Collectors.toSet());
+                    } catch (IOException e) {
+                        logException();
+                        return null;
+                    }
                 }),
 
                 new AddTicketUseCase(ticket -> {
