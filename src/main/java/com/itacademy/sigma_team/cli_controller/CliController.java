@@ -19,10 +19,9 @@ import com.itacademy.sigma_team.trees.use_cases.AddTreeUseCase;
 import com.itacademy.sigma_team.trees.use_cases.DeleteTreeUseCase;
 import com.itacademy.sigma_team.trees.use_cases.GetAllTreesUseCase;
 
-import java.util.Scanner;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
-@SuppressWarnings("FieldCanBeLocal")
 public final class CliController {
 
     //Flowers use cases
@@ -50,10 +49,15 @@ public final class CliController {
     private final GetTicketUseCase getTicketUseCase;
     private final GetAllTicketsUseCase getAllTicketsUseCase;
 
-    private Scanner scanner;
+    private final Scanner scanner;
 
-
-    public CliController(AddFlowerUseCase addFlowerUseCase, DeleteFlowerUseCase deleteFlowerUseCase, GetAllFlowersUseCase getAllFlowersUseCase, AddDecorationUseCase addDecorationUseCase, DeleteDecorationUseCase deleteDecorationUseCase, GetAllDecorationsUseCase getAllDecorationsUseCase, PrintStockUseCase printStockUseCase, AddTreeUseCase addTreeUseCase, GetAllTreesUseCase getAllTreesUseCase, AddTicketUseCase addTicketUseCase, DeleteTicketUseCase deleteTicketUseCase, DeleteTreeUseCase deleteTreeUseCase, GetTicketUseCase getTicketUseCase, GetAllTicketsUseCase getAllTicketsUseCase) {
+    public CliController(AddFlowerUseCase addFlowerUseCase, DeleteFlowerUseCase deleteFlowerUseCase,
+                         GetAllFlowersUseCase getAllFlowersUseCase, AddDecorationUseCase addDecorationUseCase,
+                         DeleteDecorationUseCase deleteDecorationUseCase, GetAllDecorationsUseCase getAllDecorationsUseCase,
+                         PrintStockUseCase printStockUseCase, AddTreeUseCase addTreeUseCase,
+                         GetAllTreesUseCase getAllTreesUseCase, AddTicketUseCase addTicketUseCase,
+                         DeleteTicketUseCase deleteTicketUseCase, DeleteTreeUseCase deleteTreeUseCase,
+                         GetTicketUseCase getTicketUseCase, GetAllTicketsUseCase getAllTicketsUseCase) {
         this.addFlowerUseCase = addFlowerUseCase;
         this.deleteFlowerUseCase = deleteFlowerUseCase;
         this.getAllFlowersUseCase = getAllFlowersUseCase;
@@ -71,13 +75,55 @@ public final class CliController {
     }
 
     // Flower show entrypoint
-    private void createFlowerShop(){}
+    private void createFlowerShop() {
+        System.out.print("Enter the name of the flower shop: ");
+        String name = scanner.nextLine();
+        // Implementation of creating a flower shop
+        System.out.println("Flower shop " + name + " created successfully.");
+    }
 
     // Flowers entry points
-    private void addFlower(Flower flower) {
+    private void addFlower() {
+        System.out.print("Enter flower name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter flower color: ");
+        String color = scanner.nextLine();
+        System.out.print("Enter flower price: ");
+        double price = scanner.nextDouble();
+        System.out.print("Enter flower stock: ");
+        int stock = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        Flower flower = new Flower(name, color, price, stock);
         this.addFlowerUseCase.exec(flower);
+        System.out.println("Flower added successfully.");
     }
-    private void deleteFlower(Flower flower) { this.deleteFlowerUseCase.exec(flower); }
+
+    private void deleteFlower() {
+        Collection<Flower> flowerCollection = getAllFlowersUseCase.exec();
+        if (flowerCollection.isEmpty()) {
+            System.out.println("No flowers available to delete.");
+        } else {
+            List<Flower> flowers = new ArrayList<>(flowerCollection);
+            System.out.println("Select a flower to delete:");
+            for (int i = 0; i < flowers.size(); i++) {
+                Flower flower = flowers.get(i);
+                System.out.printf("%d. %s (Color: %s, Price: %.2f, Stock: %d)\n", i + 1, flower.getName(), flower.getColor(), flower.getPrice(), flower.getStock());
+            }
+
+            System.out.print("Enter the number of the flower to delete: ");
+            int index = scanner.nextInt() - 1;
+            scanner.nextLine(); // Consume newline
+
+            if (index < 0 || index >= flowers.size()) {
+                System.out.println("Invalid selection. Please try again.");
+            } else {
+                Flower flowerToDelete = flowers.get(index);
+                this.deleteFlowerUseCase.exec(flowerToDelete);
+                System.out.println("Flower deleted successfully.");
+            }
+        }
+    }
 
     // Trees entry points
     private void addTree(Tree tree) { this.addTreeUseCase.exec(tree); }
@@ -119,17 +165,17 @@ public final class CliController {
 
             switch (option) {
                 case 1 -> createFlowerShop();
-                case 2 -> addTreeMenu(addTreeUseCase);
-                case 3 -> addFlowerMenu(addFlowerUseCase);
-                case 4 -> addDecorationMenu(addDecorationUseCase);
-                case 5, 9 -> printStock();
-                case 6 -> deleteTreeMenu(deleteTreeUseCase, getAllTreesUseCase);
-                case 7 -> deleteFlowerMenu(deleteFlowerUseCase, getAllFlowersUseCase);
-                case 8 -> deleteDecorationMenu(deleteDecorationUseCase, getAllDecorationsUseCase);
+                case 2 -> addTree();
+                case 3 -> addFlower();
+                case 4 -> addDecoration();
+                case 5 -> printStock();
+                case 6 -> deleteTree();
+                case 7 -> deleteFlower();
+                case 8 -> deleteDecoration();
                 case 10 -> printBenefits();
-                case 11 -> createTicketMenu(addTicketUseCase);
+                case 11 -> createTicket();
                 case 12 -> printPurchaseHistory();
-                case 13 -> printBenefits(); // Assuming this method also prints total money earned
+                case 13 -> printBenefits();
                 case 14 -> {
                     System.out.println("Exiting...");
                     return;
@@ -138,63 +184,12 @@ public final class CliController {
             }
         }
     }
+}
 
-    private void createTicketMenu(AddTicketUseCase addTicketUseCase) {
+    private void deleteDecorationMenu(DeleteDecorationUseCase deleteDecorationUseCase) {
     }
 
-    private void deleteDecorationMenu(DeleteDecorationUseCase deleteDecorationUseCase, GetAllDecorationsUseCase getAllDecorationsUseCase) {
-        List<Decoration> decorations = (List<Decoration>) getAllDecorationsUseCase.exec();
-        if (decorations.isEmpty()) {
-            System.out.println("No decorations available to delete.");
-            return;
-        }
-
-        System.out.println("Available decorations:");
-        for (Decoration decoration : decorations) {
-            System.out.println(decoration); // Assuming Decoration has a proper toString implementation
-        }
-
-        System.out.print("Enter decoration ID to delete: ");
-        String id = scanner.nextLine();
-        Decoration decorationToDelete = decorations.stream()
-                .filter(decoration -> decoration.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-
-        if (decorationToDelete != null) {
-            deleteDecorationUseCase.exec(decorationToDelete);
-            System.out.println("Decoration deleted successfully!");
-        } else {
-            System.out.println("Decoration not found.");
-        }
-    }
-
-
-    private void deleteFlowerMenu(DeleteFlowerUseCase deleteFlowerUseCase, GetAllFlowersUseCase getAllFlowersUseCase) {
-        List<Flower> flowers = (List<Flower>) getAllFlowersUseCase.exec();
-        if (flowers.isEmpty()) {
-            System.out.println("No flowers available to delete.");
-            return;
-        }
-
-        System.out.println("Available flowers:");
-        for (Flower flower : flowers) {
-            System.out.println(flower);
-        }
-
-        System.out.print("Enter flower ID to delete: ");
-        String id = scanner.nextLine();
-        Flower flowerToDelete = flowers.stream()
-                .filter(flower -> flower.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-
-        if (flowerToDelete != null) {
-            deleteFlowerUseCase.exec(flowerToDelete);
-            System.out.println("Flower deleted successfully!");
-        } else {
-            System.out.println("Flower not found.");
-        }
+    private void deleteFlowerMenu(DeleteFlowerUseCase deleteFlowerUseCase) {
     }
 
     private void deleteTreeMenu(DeleteTreeUseCase deleteTreeUseCase, GetAllTreesUseCase getAllTreesUseCase) {
@@ -224,71 +219,27 @@ public final class CliController {
         }
     }
 
-    private void addDecorationMenu(AddDecorationUseCase addDecorationUseCase) {
-        System.out.println("Enter decoration details:");
-        System.out.print("Enter decoration ID: ");
-        String id = scanner.nextLine();
-        System.out.print("Enter decoration name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter decoration price: ");
-        double price = scanner.nextDouble();
-        System.out.print("Enter decoration stock: ");
-        int stock = scanner.nextInt();
-        Decoration decoration = new Decoration(id, name, null, price, stock);
-        addDecorationUseCase.exec(decoration);
-        System.out.println("Decoration added successfully!");
+    private void addDecorationMenu(AddFlowerUseCase addFlowerUseCase) {
     }
 
     private void addFlowerMenu(AddFlowerUseCase addFlowerUseCase) {
-
-        System.out.println("Enter flower details:");
-        System.out.print("Enter flower ID: ");
-        String id = scanner.nextLine();
-
-        System.out.print("Enter flower name: ");
-        String name = scanner.nextLine();
-
-        System.out.print("Enter flower color: ");
-        String color = scanner.nextLine();
-
-        System.out.print("Enter flower price: ");
-        double price = scanner.nextDouble();
-
-        System.out.print("Enter flower stock: ");
-        int stock = scanner.nextInt();
-
-        scanner.nextLine();
-
-        Flower flower = new Flower(id, name, color, price, stock);
-        addFlowerUseCase.exec(flower);
-
-        System.out.println("Flower added successfully!");
-
     }
 
     private void addTreeMenu(AddTreeUseCase addTreeUseCase) {
-
         System.out.println("Enter tree details:");
         System.out.print("Enter tree ID: ");
         String id = scanner.nextLine();
-
         System.out.print("Enter tree name: ");
         String name = scanner.nextLine();
-
         System.out.print("Enter tree height: ");
         double height = scanner.nextDouble();
-
         System.out.print("Enter tree price: ");
         double price = scanner.nextDouble();
-
         System.out.print("Enter tree stock: ");
         int stock = scanner.nextInt();
-
         Tree tree = new Tree(id, name, height, price, stock);
         addTreeUseCase.exec(tree);
-
         System.out.println("Tree added successfully!");
-
     }
 
 }
