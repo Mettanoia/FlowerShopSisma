@@ -18,6 +18,7 @@ import com.itacademy.sigma_team.trees.use_cases.DeleteTreeUseCase;
 import com.itacademy.sigma_team.trees.use_cases.GetAllTreesUseCase;
 
 import java.util.Scanner;
+import java.util.List;
 
 public final class CliController {
 
@@ -114,7 +115,7 @@ public final class CliController {
                 case 3 -> addFlowerMenu(addFlowerUseCase);
                 case 4 -> addDecorationMenu(addFlowerUseCase);
                 case 5, 9 -> printStock();
-                case 6 -> deleteTreeMenu(deleteTreeUseCase);
+                case 6 -> deleteTreeMenu(deleteTreeUseCase, getAllTreesUseCase);
                 case 7 -> deleteFlowerMenu(deleteFlowerUseCase);
                 case 8 -> deleteDecorationMenu(deleteDecorationUseCase);
                 case 10 -> printBenefits();
@@ -139,7 +140,31 @@ public final class CliController {
     private void deleteFlowerMenu(DeleteFlowerUseCase deleteFlowerUseCase) {
     }
 
-    private void deleteTreeMenu(DeleteTreeUseCase deleteTreeUseCase) {
+    private void deleteTreeMenu(DeleteTreeUseCase deleteTreeUseCase, GetAllTreesUseCase getAllTreesUseCase) {
+        List<Tree> trees = (List<Tree>) getAllTreesUseCase.exec();
+        if (trees.isEmpty()) {
+            System.out.println("No trees available to delete.");
+            return;
+        }
+
+        System.out.println("Available trees:");
+        for (Tree tree : trees) {
+            System.out.println(tree);
+        }
+
+        System.out.print("Enter tree ID to delete: ");
+        String id = scanner.nextLine();
+        Tree treeToDelete = trees.stream()
+                .filter(tree -> tree.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+
+        if (treeToDelete != null) {
+            deleteTreeUseCase.exec(treeToDelete);
+            System.out.println("Tree deleted successfully!");
+        } else {
+            System.out.println("Tree not found.");
+        }
     }
 
     private void addDecorationMenu(AddFlowerUseCase addFlowerUseCase) {
