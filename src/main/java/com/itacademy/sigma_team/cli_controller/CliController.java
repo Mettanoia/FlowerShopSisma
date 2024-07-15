@@ -70,30 +70,53 @@ public final class CliController {
     }
 
     // Flower show entrypoint
-    private void createFlowerShop(){}
+    private void createFlowerShop() {
+    }
 
     // Flowers entry points
     private void addFlower(Flower flower) {
         this.addFlowerUseCase.exec(flower);
     }
-    private void deleteFlower(Flower flower) { this.deleteFlowerUseCase.exec(flower); }
+
+    private void deleteFlower(Flower flower) {
+        this.deleteFlowerUseCase.exec(flower);
+    }
 
     // Trees entry points
-    private void addTree(Tree tree) { this.addTreeUseCase.exec(tree); }
-    private void deleteTree(Tree tree) { this.deleteTreeUseCase.exec(tree); }
+    private void addTree(Tree tree) {
+        this.addTreeUseCase.exec(tree);
+    }
+
+    private void deleteTree(Tree tree) {
+        this.deleteTreeUseCase.exec(tree);
+    }
 
     // Decoration entry points
-    private void addDecoration(Decoration decoration) { this.addDecorationUseCase.exec(decoration); }
+    private void addDecoration(Decoration decoration) {
+        this.addDecorationUseCase.exec(decoration);
+    }
 
 
     // Ticket entry points
-    private void addTicket(Ticket ticket) { this.addTicketUseCase.exec(ticket); }
-    private void deleteTicket(Ticket ticket) { this.deleteTicketUseCase.exec(ticket); }
+    private void addTicket(Ticket ticket) {
+        this.addTicketUseCase.exec(ticket);
+    }
+
+    private void deleteTicket(Ticket ticket) {
+        this.deleteTicketUseCase.exec(ticket);
+    }
 
     // Printing entry points
-    public void printStock() { this.printStockUseCase.exec(); }
-    private void printPurchaseHistory() {}
-    private void printBenefits() {}
+    public void printStock() {
+        this.printStockUseCase.exec();
+    }
+
+    private void printPurchaseHistory() {
+    }
+
+    private void printBenefits() {
+    }
+
     public void displayMenu() {
         while (true) {
             System.out.println("Main Menu:");
@@ -120,7 +143,7 @@ public final class CliController {
                 case 1 -> createFlowerShop();
                 case 2 -> addTreeMenu(addTreeUseCase);
                 case 3 -> addFlowerMenu(addFlowerUseCase);
-                case 4 -> addDecorationMenu(addFlowerUseCase);
+                case 4 -> addDecorationMenu(addDecorationUseCase);
                 case 5, 9 -> printStock();
                 case 6 -> deleteTreeMenu(deleteTreeUseCase, getAllTreesUseCase);
                 case 7 -> deleteFlowerMenu(deleteFlowerUseCase);
@@ -174,10 +197,36 @@ public final class CliController {
         }
     }
 
-    private void addDecorationMenu(AddFlowerUseCase addFlowerUseCase) {
+    private void addDecorationMenu(AddDecorationUseCase addDecorationUseCase) {
+        System.out.println("Enter decoration details:");
+        System.out.print("Enter decoration ID: ");
+        String id = scanner.nextLine();
+        System.out.print("Enter decoration name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter decoration price: ");
+        double price = scanner.nextDouble();
+        System.out.print("Enter decoration stock: ");
+        int stock = scanner.nextInt();
+        Decoration decoration = new Decoration(id, name, null, price, stock);
+        addDecorationUseCase.exec(decoration);
+        System.out.println("Decoration added successfully!");
     }
 
     private void addFlowerMenu(AddFlowerUseCase addFlowerUseCase) {
+        System.out.println("Enter flower details:");
+        System.out.print("Enter flower ID: ");
+        String id = scanner.nextLine();
+        System.out.print("Enter flower name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter flower color: ");
+        String color = scanner.nextLine();
+        System.out.print("Enter flower price: ");
+        double price = scanner.nextDouble();
+        System.out.print("Enter flower stock: ");
+        int stock = scanner.nextInt();
+        Flower flower = new Flower(id, name,color , price, stock);
+        addFlowerUseCase.exec(flower);
+        System.out.println("Flower added successfully!");
     }
 
     private void addTreeMenu(AddTreeUseCase addTreeUseCase) {
@@ -192,9 +241,8 @@ public final class CliController {
         double price = scanner.nextDouble();
         System.out.print("Enter tree stock: ");
         int stock = scanner.nextInt();
-        Tree tree = new Tree(id, name, height, price, stock);
-        addTreeUseCase.exec(tree);
-        System.out.println("Tree added successfully!");
+
+
     }
 
 }
