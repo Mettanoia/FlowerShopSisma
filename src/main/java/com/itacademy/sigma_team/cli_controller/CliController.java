@@ -15,6 +15,8 @@ import com.itacademy.sigma_team.tickets.use_cases.GetTicketUseCase;
 import com.itacademy.sigma_team.trees.use_cases.AddTreeUseCase;
 import com.itacademy.sigma_team.trees.use_cases.DeleteTreeUseCase;
 
+import java.util.Scanner;
+
 public final class CliController {
 
     //Flowers use cases
@@ -37,6 +39,7 @@ public final class CliController {
     private final AddTicketUseCase addTicketUseCase;
     private final DeleteTicketUseCase deleteTicketUseCase;
     private final GetTicketUseCase getTicketUseCase;
+    private Scanner scanner;
 
 
     public CliController(AddFlowerUseCase addFlowerUseCase, DeleteFlowerUseCase deleteFlowerUseCase, AddDecorationUseCase addDecorationUseCase, DeleteDecorationUseCase deleteDecorationUseCase, PrintStockUseCase printStockUseCase, AddTreeUseCase addTreeUseCase, AddTicketUseCase addTicketUseCase, DeleteTicketUseCase deleteTicketUseCase, DeleteTreeUseCase deleteTreeUseCase, GetTicketUseCase getTicketUseCase) {
@@ -140,6 +143,20 @@ public final class CliController {
     }
 
     private void addTreeMenu(AddTreeUseCase addTreeUseCase) {
+        System.out.println("Enter tree details:");
+        System.out.print("Enter tree ID: ");
+        String id = scanner.nextLine();
+        System.out.print("Enter tree name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter tree height: ");
+        double height = scanner.nextDouble();
+        System.out.print("Enter tree price: ");
+        double price = scanner.nextDouble();
+        System.out.print("Enter tree stock: ");
+        int stock = scanner.nextInt();
+        Tree tree = new Tree(id, name, height, price, stock);
+        addTreeUseCase.exec(tree);
+        System.out.println("Tree added successfully!");
     }
 
 }
