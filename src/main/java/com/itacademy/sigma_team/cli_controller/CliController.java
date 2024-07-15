@@ -13,6 +13,7 @@ import com.itacademy.sigma_team.flowers.use_cases.GetAllFlowersUseCase;
 import com.itacademy.sigma_team.print_stock.use_cases.PrintStockUseCase;
 import com.itacademy.sigma_team.tickets.use_cases.AddTicketUseCase;
 import com.itacademy.sigma_team.tickets.use_cases.DeleteTicketUseCase;
+import com.itacademy.sigma_team.tickets.use_cases.GetAllTicketsUseCase;
 import com.itacademy.sigma_team.tickets.use_cases.GetTicketUseCase;
 import com.itacademy.sigma_team.trees.use_cases.AddTreeUseCase;
 import com.itacademy.sigma_team.trees.use_cases.DeleteTreeUseCase;
@@ -45,10 +46,12 @@ public final class CliController {
     private final AddTicketUseCase addTicketUseCase;
     private final DeleteTicketUseCase deleteTicketUseCase;
     private final GetTicketUseCase getTicketUseCase;
+    private final GetAllTicketsUseCase getAllTicketsUseCase;
+
     private Scanner scanner;
 
 
-    public CliController(AddFlowerUseCase addFlowerUseCase, DeleteFlowerUseCase deleteFlowerUseCase, GetAllFlowersUseCase getAllFlowersUseCase, AddDecorationUseCase addDecorationUseCase, DeleteDecorationUseCase deleteDecorationUseCase, GetAllDecorationsUseCase getAllDecorationsUseCase, PrintStockUseCase printStockUseCase, AddTreeUseCase addTreeUseCase, GetAllTreesUseCase getAllTreesUseCase, AddTicketUseCase addTicketUseCase, DeleteTicketUseCase deleteTicketUseCase, DeleteTreeUseCase deleteTreeUseCase, GetTicketUseCase getTicketUseCase) {
+    public CliController(AddFlowerUseCase addFlowerUseCase, DeleteFlowerUseCase deleteFlowerUseCase, GetAllFlowersUseCase getAllFlowersUseCase, AddDecorationUseCase addDecorationUseCase, DeleteDecorationUseCase deleteDecorationUseCase, GetAllDecorationsUseCase getAllDecorationsUseCase, PrintStockUseCase printStockUseCase, AddTreeUseCase addTreeUseCase, GetAllTreesUseCase getAllTreesUseCase, AddTicketUseCase addTicketUseCase, DeleteTicketUseCase deleteTicketUseCase, DeleteTreeUseCase deleteTreeUseCase, GetTicketUseCase getTicketUseCase, GetAllTicketsUseCase getAllTicketsUseCase) {
         this.addFlowerUseCase = addFlowerUseCase;
         this.deleteFlowerUseCase = deleteFlowerUseCase;
         this.getAllFlowersUseCase = getAllFlowersUseCase;
@@ -62,6 +65,7 @@ public final class CliController {
         this.deleteTicketUseCase = deleteTicketUseCase;
         this.deleteTreeUseCase = deleteTreeUseCase;
         this.getTicketUseCase = getTicketUseCase;
+        this.getAllTicketsUseCase = getAllTicketsUseCase;
     }
 
     // Flower show entrypoint
