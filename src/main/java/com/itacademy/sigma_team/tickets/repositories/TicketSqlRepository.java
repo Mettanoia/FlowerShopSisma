@@ -109,10 +109,7 @@ public final class TicketSqlRepository implements TicketGateway {
         }
     }
 
-    /**
-     * こちらのメソッドは見ないでください。このような手段に頼ってしまったことを非常に恥じています。
-     * 今後は適切なクリーンアーキテクチャを使用することをお約束します。
-     */
+
     private static void commonAttributes(TicketItem item, String ticketId, PreparedStatement stmt) throws SQLException {
         try {
 
