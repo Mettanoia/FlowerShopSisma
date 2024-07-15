@@ -125,7 +125,7 @@ public final class CliController {
                 case 5, 9 -> printStock();
                 case 6 -> deleteTreeMenu(deleteTreeUseCase, getAllTreesUseCase);
                 case 7 -> deleteFlowerMenu(deleteFlowerUseCase, getAllFlowersUseCase);
-                case 8 -> deleteDecorationMenu(deleteDecorationUseCase);
+                case 8 -> deleteDecorationMenu(deleteDecorationUseCase, getAllDecorationsUseCase);
                 case 10 -> printBenefits();
                 case 11 -> createTicketMenu(addTicketUseCase);
                 case 12 -> printPurchaseHistory();
@@ -142,7 +142,31 @@ public final class CliController {
     private void createTicketMenu(AddTicketUseCase addTicketUseCase) {
     }
 
-    private void deleteDecorationMenu(DeleteDecorationUseCase deleteDecorationUseCase) {
+    private void deleteDecorationMenu(DeleteDecorationUseCase deleteDecorationUseCase, GetAllDecorationsUseCase getAllDecorationsUseCase) {
+        List<Decoration> decorations = (List<Decoration>) getAllDecorationsUseCase.exec();
+        if (decorations.isEmpty()) {
+            System.out.println("No decorations available to delete.");
+            return;
+        }
+
+        System.out.println("Available decorations:");
+        for (Decoration decoration : decorations) {
+            System.out.println(decoration); // Assuming Decoration has a proper toString implementation
+        }
+
+        System.out.print("Enter decoration ID to delete: ");
+        String id = scanner.nextLine();
+        Decoration decorationToDelete = decorations.stream()
+                .filter(decoration -> decoration.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+
+        if (decorationToDelete != null) {
+            deleteDecorationUseCase.exec(decorationToDelete);
+            System.out.println("Decoration deleted successfully!");
+        } else {
+            System.out.println("Decoration not found.");
+        }
     }
 
 
