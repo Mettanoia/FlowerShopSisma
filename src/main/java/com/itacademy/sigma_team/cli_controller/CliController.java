@@ -124,7 +124,7 @@ public final class CliController {
                 case 4 -> addDecorationMenu(addDecorationUseCase);
                 case 5, 9 -> printStock();
                 case 6 -> deleteTreeMenu(deleteTreeUseCase, getAllTreesUseCase);
-                case 7 -> deleteFlowerMenu(deleteFlowerUseCase);
+                case 7 -> deleteFlowerMenu(deleteFlowerUseCase, getAllFlowersUseCase);
                 case 8 -> deleteDecorationMenu(deleteDecorationUseCase);
                 case 10 -> printBenefits();
                 case 11 -> createTicketMenu(addTicketUseCase);
@@ -145,7 +145,32 @@ public final class CliController {
     private void deleteDecorationMenu(DeleteDecorationUseCase deleteDecorationUseCase) {
     }
 
-    private void deleteFlowerMenu(DeleteFlowerUseCase deleteFlowerUseCase) {
+
+    private void deleteFlowerMenu(DeleteFlowerUseCase deleteFlowerUseCase, GetAllFlowersUseCase getAllFlowersUseCase) {
+        List<Flower> flowers = (List<Flower>) getAllFlowersUseCase.exec();
+        if (flowers.isEmpty()) {
+            System.out.println("No flowers available to delete.");
+            return;
+        }
+
+        System.out.println("Available flowers:");
+        for (Flower flower : flowers) {
+            System.out.println(flower);
+        }
+
+        System.out.print("Enter flower ID to delete: ");
+        String id = scanner.nextLine();
+        Flower flowerToDelete = flowers.stream()
+                .filter(flower -> flower.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+
+        if (flowerToDelete != null) {
+            deleteFlowerUseCase.exec(flowerToDelete);
+            System.out.println("Flower deleted successfully!");
+        } else {
+            System.out.println("Flower not found.");
+        }
     }
 
     private void deleteTreeMenu(DeleteTreeUseCase deleteTreeUseCase, GetAllTreesUseCase getAllTreesUseCase) {
