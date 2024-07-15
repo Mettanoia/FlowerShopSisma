@@ -77,5 +77,54 @@ public final class CliController {
     public void printStock() { this.printStockUseCase.exec(); }
     private void printPurchaseHistory() {}
     private void printBenefits() {}
+    public void displayMenu() {
+        while (true) {
+            System.out.println("Main Menu:");
+            System.out.println("1. Create Flower Shop");
+            System.out.println("2. Add Tree");
+            System.out.println("3. Add Flower");
+            System.out.println("4. Add Decoration");
+            System.out.println("5. Show Stock");
+            System.out.println("6. Remove Tree");
+            System.out.println("7. Remove Flower");
+            System.out.println("8. Remove Decoration");
+            System.out.println("9. Print Stock with Quantities");
+            System.out.println("10. Print Total Value of Flower Shop");
+            System.out.println("11. Create Purchase Ticket");
+            System.out.println("12. Show Purchase History");
+            System.out.println("13. View Total Money Earned");
+            System.out.println("14. Exit");
+            System.out.print("Select an option: ");
 
+            int option = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (option) {
+                case 1 -> createFlowerShop();
+                case 2 -> addTreeMenu(addTreeUseCase);
+                case 3 -> addFlower();
+                case 4 -> addDecoration();
+                case 5 -> printStock();
+                case 6 -> deleteTree();
+                case 7 -> deleteFlower();
+                case 8 -> deleteDecoration();
+                case 9 -> cliController.printStock(); // Assumes it prints with quantities
+                case 10 -> cliController.printBenefits();
+                case 11 -> createTicket();
+                case 12 -> cliController.printPurchaseHistory();
+                case 13 -> cliController.printBenefits(); // Assuming this method also prints total money earned
+                case 14 -> {
+                    System.out.println("Exiting...");
+                    return;
+                }
+                default -> System.out.println("Invalid option. Please try again.");
+            }
+        }
+    }
+
+    private void addTreeMenu(AddTreeUseCase addTreeUseCase) {
+
+
+
+    }
 }
