@@ -22,6 +22,7 @@ import com.itacademy.sigma_team.trees.use_cases.GetAllTreesUseCase;
 import java.util.Scanner;
 import java.util.List;
 
+@SuppressWarnings("FieldCanBeLocal")
 public final class CliController {
 
     //Flowers use cases
@@ -70,53 +71,30 @@ public final class CliController {
     }
 
     // Flower show entrypoint
-    private void createFlowerShop() {
-    }
+    private void createFlowerShop(){}
 
     // Flowers entry points
     private void addFlower(Flower flower) {
         this.addFlowerUseCase.exec(flower);
     }
-
-    private void deleteFlower(Flower flower) {
-        this.deleteFlowerUseCase.exec(flower);
-    }
+    private void deleteFlower(Flower flower) { this.deleteFlowerUseCase.exec(flower); }
 
     // Trees entry points
-    private void addTree(Tree tree) {
-        this.addTreeUseCase.exec(tree);
-    }
-
-    private void deleteTree(Tree tree) {
-        this.deleteTreeUseCase.exec(tree);
-    }
+    private void addTree(Tree tree) { this.addTreeUseCase.exec(tree); }
+    private void deleteTree(Tree tree) { this.deleteTreeUseCase.exec(tree); }
 
     // Decoration entry points
-    private void addDecoration(Decoration decoration) {
-        this.addDecorationUseCase.exec(decoration);
-    }
+    private void addDecoration(Decoration decoration) { this.addDecorationUseCase.exec(decoration); }
 
 
     // Ticket entry points
-    private void addTicket(Ticket ticket) {
-        this.addTicketUseCase.exec(ticket);
-    }
-
-    private void deleteTicket(Ticket ticket) {
-        this.deleteTicketUseCase.exec(ticket);
-    }
+    private void addTicket(Ticket ticket) { this.addTicketUseCase.exec(ticket); }
+    private void deleteTicket(Ticket ticket) { this.deleteTicketUseCase.exec(ticket); }
 
     // Printing entry points
-    public void printStock() {
-        this.printStockUseCase.exec();
-    }
-
-    private void printPurchaseHistory() {
-    }
-
-    private void printBenefits() {
-    }
-
+    public void printStock() { this.printStockUseCase.exec(); }
+    private void printPurchaseHistory() {}
+    private void printBenefits() {}
     public void displayMenu() {
         while (true) {
             System.out.println("Main Menu:");
@@ -213,37 +191,55 @@ public final class CliController {
     }
 
     private void addFlowerMenu(AddFlowerUseCase addFlowerUseCase) {
+
         System.out.println("Enter flower details:");
         System.out.print("Enter flower ID: ");
         String id = scanner.nextLine();
+
         System.out.print("Enter flower name: ");
         String name = scanner.nextLine();
+
         System.out.print("Enter flower color: ");
         String color = scanner.nextLine();
+
         System.out.print("Enter flower price: ");
         double price = scanner.nextDouble();
+
         System.out.print("Enter flower stock: ");
         int stock = scanner.nextInt();
-        Flower flower = new Flower(id, name,color , price, stock);
+
+        scanner.nextLine();
+
+        Flower flower = new Flower(id, name, color, price, stock);
         addFlowerUseCase.exec(flower);
+
         System.out.println("Flower added successfully!");
+
     }
 
     private void addTreeMenu(AddTreeUseCase addTreeUseCase) {
+
         System.out.println("Enter tree details:");
         System.out.print("Enter tree ID: ");
         String id = scanner.nextLine();
+
         System.out.print("Enter tree name: ");
         String name = scanner.nextLine();
+
         System.out.print("Enter tree height: ");
         double height = scanner.nextDouble();
+
         System.out.print("Enter tree price: ");
         double price = scanner.nextDouble();
+
         System.out.print("Enter tree stock: ");
         int stock = scanner.nextInt();
+
         Tree tree = new Tree(id, name, height, price, stock);
         addTreeUseCase.exec(tree);
+
         System.out.println("Tree added successfully!");
+
     }
 
 }
