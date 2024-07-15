@@ -1,4 +1,4 @@
-package com.itacademy.sigma_team.flowers;
+package com.itacademy.sigma_team.flowers.repositories;
 
 import com.itacademy.sigma_team.domain.Flower;
 import com.itacademy.sigma_team.dtos.FlowerDTO;

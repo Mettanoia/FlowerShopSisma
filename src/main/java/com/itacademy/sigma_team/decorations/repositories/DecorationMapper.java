@@ -1,6 +1,6 @@
-package com.itacademy.sigma_team.decorations;
+package com.itacademy.sigma_team.decorations.repositories;
 
-import com.itacademy.sigma_team.decorations.repositories.DecorationDTO;
+import com.itacademy.sigma_team.domain.Decoration;
 import com.itacademy.sigma_team.dtos.DecorationDTO;
 
 // TODO This needs a better mapper for the id

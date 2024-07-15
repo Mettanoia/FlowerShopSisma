@@ -1,13 +1,19 @@
 package com.itacademy.sigma_team.trees.repositories;
 
 
-import com.itacademy.sigma_team.gateways.TreeGateway;
+import com.itacademy.sigma_team.trees.use_cases.TreeGateway;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+
+import com.itacademy.sigma_team.dtos.TreeDTO;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -22,29 +28,37 @@ public final class TreeMongoRepository implements TreeGateway {
     }
 
     @Override
-    public void addTree(TreeDTO treeDTO) {
+    public void add(TreeDTO treeDTO) {
         Document document = new Document("id", treeDTO.id())
-                .append("species", treeDTO.species())
+                .append("name", treeDTO.name())
                 .append("height", treeDTO.height())
                 .append("price", treeDTO.price());
         collection.insertOne(document);
     }
 
     @Override
-    public TreeDTO getTree(Long treeId) {
+    public TreeDTO get(String treeId) {
         Bson filter = eq("id", treeId);
         Document document = collection.find(filter).first();
         if (document != null) {
-            return new TreeDTO(Math.toIntExact(document.getLong("id")),
-                    document.getString("species"),
+            return new TreeDTO(
+                    document.getString("id"),
+                    document.getString("name"),
                     document.getDouble("height"),
-                    document.getDouble("price"));
+                    document.getDouble("price"),
+                    document.getInteger("stock")
+            );
         }
         return null;
     }
 
     @Override
-    public void deleteTree(TreeDTO treeDTO) {
+    public Collection<TreeDTO> getAll() throws IOException {
+        throw new UnsupportedOperationException(); // TODO BS
+    }
+
+    @Override
+    public void delete(TreeDTO treeDTO) {
         Bson filter = eq("id", treeDTO.id());
         collection.deleteOne(filter);
     }

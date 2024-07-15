@@ -1,4 +1,4 @@
-package com.itacademy.sigma_team.trees;
+package com.itacademy.sigma_team.trees.repositories;
 
 
 import com.itacademy.sigma_team.domain.Tree;

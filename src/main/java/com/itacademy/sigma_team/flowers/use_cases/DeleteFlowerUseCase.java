@@ -12,7 +12,6 @@ public final class DeleteFlowerUseCase {
         this.deleteFlowerMixin = deleteFlowerMixin;
     }
 
-
     public void exec(Flower flower) {
         this.deleteFlowerMixin.accept(flower);
     }

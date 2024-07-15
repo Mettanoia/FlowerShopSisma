@@ -1,4 +1,4 @@
-package com.itacademy.sigma_team.gateways.readers;
+package com.itacademy.sigma_team.gateway_mixins.writers;
 
 import java.io.IOException;
 

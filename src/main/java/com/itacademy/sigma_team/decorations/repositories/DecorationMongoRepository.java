@@ -2,13 +2,19 @@ package com.itacademy.sigma_team.decorations.repositories;
 
 
 import com.itacademy.sigma_team.domain.Material;
-import com.itacademy.sigma_team.gateways.DecorationGateway;
+import com.itacademy.sigma_team.decorations.use_cases.DecorationGateway;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+
+import com.itacademy.sigma_team.dtos.DecorationDTO;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -24,7 +30,7 @@ public final class DecorationMongoRepository implements DecorationGateway {
     }
 
     @Override
-    public void addDecoration(DecorationDTO decorationDTO) {
+    public void add(DecorationDTO decorationDTO) {
         Document document = new Document("id", decorationDTO.id())
                 .append("name", decorationDTO.name())
                 .append("material", decorationDTO.material().name())
@@ -34,7 +40,7 @@ public final class DecorationMongoRepository implements DecorationGateway {
     }
 
     @Override
-    public DecorationDTO getDecoration(String decorationId) {
+    public DecorationDTO get(String decorationId) {
         Bson filter = eq("id", decorationId);
         Document document = collection.find(filter).first();
         if (document != null) {
@@ -50,7 +56,12 @@ public final class DecorationMongoRepository implements DecorationGateway {
     }
 
     @Override
-    public void deleteDecoration(DecorationDTO decorationDTO) {
+    public Collection<DecorationDTO> getAll() throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void delete(DecorationDTO decorationDTO) {
         Bson filter = eq("id", decorationDTO.id());
         collection.deleteOne(filter);
     }
