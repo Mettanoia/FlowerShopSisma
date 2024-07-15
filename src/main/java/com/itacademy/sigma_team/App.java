@@ -13,6 +13,7 @@ import com.itacademy.sigma_team.flowers.use_cases.AddFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.DeleteFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.FlowerGateway;
 import com.itacademy.sigma_team.decorations.use_cases.DecorationGateway;
+import com.itacademy.sigma_team.flowers.use_cases.GetAllFlowersUseCase;
 import com.itacademy.sigma_team.repositories_factories.DecorationRepositoryFactory;
 import com.itacademy.sigma_team.repositories_factories.TreeRepositoryFactory;
 import com.itacademy.sigma_team.trees.use_cases.TreeGateway;
@@ -33,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public final class App {
@@ -88,6 +90,13 @@ public final class App {
                     } catch (IOException e) {logException();}
                 }),
 
+                new GetAllFlowersUseCase(() -> {
+                    try {
+                        return flowerGateway.getAll().stream().map(FlowerMapper::toDomain).collect(Collectors.toSet());
+                    } catch (IOException e) {logException();}
+                    return Set.of();
+                }),
+
                 new AddDecorationUseCase(decoration -> {
                     try {
                         decorationGateway.add(DecorationMapper.toDto(decoration));
@@ -136,6 +145,8 @@ public final class App {
                 })
 
         );
+
+        cliController.printStock();
 
     }
 
