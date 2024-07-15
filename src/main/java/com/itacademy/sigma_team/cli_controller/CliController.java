@@ -241,8 +241,9 @@ public final class CliController {
         double price = scanner.nextDouble();
         System.out.print("Enter tree stock: ");
         int stock = scanner.nextInt();
-
-
+        Tree tree = new Tree(id, name, height, price, stock);
+        addTreeUseCase.exec(tree);
+        System.out.println("Tree added successfully!");
     }
 
 }
