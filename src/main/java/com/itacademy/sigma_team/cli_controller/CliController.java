@@ -102,17 +102,16 @@ public final class CliController {
             switch (option) {
                 case 1 -> createFlowerShop();
                 case 2 -> addTreeMenu(addTreeUseCase);
-                case 3 -> addFlower();
-                case 4 -> addDecoration();
-                case 5 -> printStock();
-                case 6 -> deleteTree();
-                case 7 -> deleteFlower();
-                case 8 -> deleteDecoration();
-                case 9 -> cliController.printStock(); // Assumes it prints with quantities
-                case 10 -> cliController.printBenefits();
-                case 11 -> createTicket();
-                case 12 -> cliController.printPurchaseHistory();
-                case 13 -> cliController.printBenefits(); // Assuming this method also prints total money earned
+                case 3 -> addFlowerMenu(addFlowerUseCase);
+                case 4 -> addDecorationMenu(addFlowerUseCase);
+                case 5, 9 -> printStock();
+                case 6 -> deleteTreeMenu(deleteTreeUseCase);
+                case 7 -> deleteFlowerMenu(deleteFlowerUseCase);
+                case 8 -> deleteDecorationMenu(deleteDecorationUseCase);
+                case 10 -> printBenefits();
+                case 11 -> createTicketMenu(addTicketUseCase);
+                case 12 -> printPurchaseHistory();
+                case 13 -> printBenefits(); // Assuming this method also prints total money earned
                 case 14 -> {
                     System.out.println("Exiting...");
                     return;
@@ -122,9 +121,25 @@ public final class CliController {
         }
     }
 
-    private void addTreeMenu(AddTreeUseCase addTreeUseCase) {
-
-
-
+    private void createTicketMenu(AddTicketUseCase addTicketUseCase) {
     }
+
+    private void deleteDecorationMenu(DeleteDecorationUseCase deleteDecorationUseCase) {
+    }
+
+    private void deleteFlowerMenu(DeleteFlowerUseCase deleteFlowerUseCase) {
+    }
+
+    private void deleteTreeMenu(DeleteTreeUseCase deleteTreeUseCase) {
+    }
+
+    private void addDecorationMenu(AddFlowerUseCase addFlowerUseCase) {
+    }
+
+    private void addFlowerMenu(AddFlowerUseCase addFlowerUseCase) {
+    }
+
+    private void addTreeMenu(AddTreeUseCase addTreeUseCase) {
+    }
+
 }
