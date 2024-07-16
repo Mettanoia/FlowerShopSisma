@@ -89,11 +89,17 @@ public final class CliController {
 
 
     // Ticket entry points
-    private void addTicket(Ticket ticket) { this.addTicketUseCase.exec(ticket); }
+    private void addTicket(Ticket ticket) {
+        this.addTicketUseCase.exec(ticket);
+        System.out.println("Ticket created successfully at '" + flowerShopName + "'!");
+    }
     private void deleteTicket(Ticket ticket) { this.deleteTicketUseCase.exec(ticket); }
 
     // Printing entry points
-    public void printStock() { this.printStockUseCase.exec(); }
+    public void printStock() {
+        System.out.println("Stock for '" + flowerShopName + "':");
+        this.printStockUseCase.exec();
+    }
     private void printPurchaseHistory() {}
     private void printBenefits() {}
 
@@ -224,6 +230,7 @@ public final class CliController {
             };
 
             System.out.println(details);
+
 
         }
     }
