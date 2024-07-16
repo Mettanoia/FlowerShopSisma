@@ -25,6 +25,8 @@ import java.util.UUID;
 @SuppressWarnings("FieldCanBeLocal")
 public final class CliController {
 
+    private String flowerShopName;
+
     //Flowers use cases
     private final AddFlowerUseCase addFlowerUseCase;
     private final DeleteFlowerUseCase deleteFlowerUseCase;
