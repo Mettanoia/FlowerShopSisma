@@ -3,10 +3,7 @@ package com.itacademy.sigma_team.cli_controller;
 import com.itacademy.sigma_team.decorations.use_cases.AddDecorationUseCase;
 import com.itacademy.sigma_team.decorations.use_cases.DeleteDecorationUseCase;
 import com.itacademy.sigma_team.decorations.use_cases.GetAllDecorationsUseCase;
-import com.itacademy.sigma_team.domain.Decoration;
-import com.itacademy.sigma_team.domain.Flower;
-import com.itacademy.sigma_team.domain.Ticket;
-import com.itacademy.sigma_team.domain.Tree;
+import com.itacademy.sigma_team.domain.*;
 import com.itacademy.sigma_team.flowers.use_cases.AddFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.DeleteFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.GetAllFlowersUseCase;
@@ -19,8 +16,11 @@ import com.itacademy.sigma_team.trees.use_cases.AddTreeUseCase;
 import com.itacademy.sigma_team.trees.use_cases.DeleteTreeUseCase;
 import com.itacademy.sigma_team.trees.use_cases.GetAllTreesUseCase;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.List;
+import java.util.UUID;
 
 @SuppressWarnings("FieldCanBeLocal")
 public final class CliController {
@@ -50,10 +50,10 @@ public final class CliController {
     private final GetTicketUseCase getTicketUseCase;
     private final GetAllTicketsUseCase getAllTicketsUseCase;
 
-    private Scanner scanner;
+    private final Scanner scanner;
 
 
-    public CliController(AddFlowerUseCase addFlowerUseCase, DeleteFlowerUseCase deleteFlowerUseCase, GetAllFlowersUseCase getAllFlowersUseCase, AddDecorationUseCase addDecorationUseCase, DeleteDecorationUseCase deleteDecorationUseCase, GetAllDecorationsUseCase getAllDecorationsUseCase, PrintStockUseCase printStockUseCase, AddTreeUseCase addTreeUseCase, GetAllTreesUseCase getAllTreesUseCase, AddTicketUseCase addTicketUseCase, DeleteTicketUseCase deleteTicketUseCase, DeleteTreeUseCase deleteTreeUseCase, GetTicketUseCase getTicketUseCase, GetAllTicketsUseCase getAllTicketsUseCase) {
+    public CliController(AddFlowerUseCase addFlowerUseCase, DeleteFlowerUseCase deleteFlowerUseCase, GetAllFlowersUseCase getAllFlowersUseCase, AddDecorationUseCase addDecorationUseCase, DeleteDecorationUseCase deleteDecorationUseCase, GetAllDecorationsUseCase getAllDecorationsUseCase, PrintStockUseCase printStockUseCase, AddTreeUseCase addTreeUseCase, GetAllTreesUseCase getAllTreesUseCase, AddTicketUseCase addTicketUseCase, DeleteTicketUseCase deleteTicketUseCase, DeleteTreeUseCase deleteTreeUseCase, GetTicketUseCase getTicketUseCase, GetAllTicketsUseCase getAllTicketsUseCase, Scanner scanner) {
         this.addFlowerUseCase = addFlowerUseCase;
         this.deleteFlowerUseCase = deleteFlowerUseCase;
         this.getAllFlowersUseCase = getAllFlowersUseCase;
@@ -68,6 +68,7 @@ public final class CliController {
         this.deleteTreeUseCase = deleteTreeUseCase;
         this.getTicketUseCase = getTicketUseCase;
         this.getAllTicketsUseCase = getAllTicketsUseCase;
+        this.scanner = scanner;
     }
 
     // Flower show entrypoint
@@ -95,6 +96,7 @@ public final class CliController {
     public void printStock() { this.printStockUseCase.exec(); }
     private void printPurchaseHistory() {}
     private void printBenefits() {}
+
     public void displayMenu() {
         while (true) {
             System.out.println("Main Menu:");
@@ -127,7 +129,7 @@ public final class CliController {
                 case 7 -> deleteFlowerMenu(deleteFlowerUseCase);
                 case 8 -> deleteDecorationMenu(deleteDecorationUseCase);
                 case 10 -> printBenefits();
-                case 11 -> createTicketMenu(addTicketUseCase);
+                case 11 -> createTicketMenu();
                 case 12 -> printPurchaseHistory();
                 case 13 -> printBenefits(); // Assuming this method also prints total money earned
                 case 14 -> {
@@ -139,7 +141,91 @@ public final class CliController {
         }
     }
 
-    private void createTicketMenu(AddTicketUseCase addTicketUseCase) {
+    public void createTicketMenu() {
+
+        List<Product> flowers = List.copyOf(getAllFlowersUseCase.exec());
+        List<Product> trees = List.copyOf(getAllTreesUseCase.exec());
+        List<Product> decorations = List.copyOf(getAllDecorationsUseCase.exec());
+
+        List<Product> selectedItems = new ArrayList<>();
+
+        System.out.println("Select flowers to add to the ticket (type 'done' when finished):");
+        printProductDetails(flowers);
+        selectItems(flowers, selectedItems);
+
+        System.out.println("Select trees to add to the ticket (type 'done' when finished):");
+        printProductDetails(trees);
+        selectItems(trees, selectedItems);
+
+        System.out.println("Select decorations to add to the ticket (type 'done' when finished):");
+        printProductDetails(decorations);
+        selectItems(decorations, selectedItems);
+
+        Ticket ticket = new Ticket(UUID.randomUUID().toString(), LocalDateTime.now(), selectedItems);
+        this.addTicketUseCase.exec(ticket);
+
+        System.out.println("Ticket created successfully!");
+
+    }
+
+    private void selectItems(List<Product> items, List<Product> selectedItems) {
+
+        while (true) {
+
+            String input = scanner.nextLine();
+
+            if (input.equalsIgnoreCase("done")) {
+                break;
+            }
+
+            try {
+
+                int index = Integer.parseInt(input) - 1;
+
+                if (index >= 0 && index < items.size()) {
+
+                    selectedItems.add(items.get(index));
+                    System.out.println(items.get(index).getClass().getSimpleName() + " added to ticket.");
+
+                } else {
+                    System.out.println("Invalid selection. Please try again.");
+                }
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number or 'done'.");
+            }
+        }
+    }
+
+    private void printProductDetails(List<Product> products) {
+
+        for (int i = 0; i < products.size(); i++) {
+
+            Product product = products.get(i);
+            String details = switch (product.getClass().getSimpleName()) {
+
+                case "Flower" -> {
+                    Flower flower = (Flower) product;
+                    yield (i + 1) + ". " + flower.getName() + " - Color: " + flower.getColor() + " - $" + flower.getPrice();
+                }
+
+                case "Tree" -> {
+                    Tree tree = (Tree) product;
+                    yield (i + 1) + ". " + tree.getName() + " - Height: " + tree.getHeight() + "m - $" + tree.getPrice();
+                }
+
+                case "Decoration" -> {
+                    Decoration decoration = (Decoration) product;
+                    yield (i + 1) + ". " + decoration.getName() + " - Material: " + decoration.getMaterial() + " - $" + decoration.getPrice();
+                }
+
+                default -> throw new IllegalStateException("Unexpected value: " + product.getClass().getSimpleName());
+
+            };
+
+            System.out.println(details);
+
+        }
     }
 
     private void deleteDecorationMenu(DeleteDecorationUseCase deleteDecorationUseCase) {
@@ -149,6 +235,7 @@ public final class CliController {
     }
 
     private void deleteTreeMenu(DeleteTreeUseCase deleteTreeUseCase, GetAllTreesUseCase getAllTreesUseCase) {
+
         List<Tree> trees = (List<Tree>) getAllTreesUseCase.exec();
         if (trees.isEmpty()) {
             System.out.println("No trees available to delete.");
@@ -173,6 +260,7 @@ public final class CliController {
         } else {
             System.out.println("Tree not found.");
         }
+
     }
 
     private void addDecorationMenu(AddDecorationUseCase addDecorationUseCase) {

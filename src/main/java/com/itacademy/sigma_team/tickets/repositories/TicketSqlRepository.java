@@ -32,21 +32,21 @@ public final class TicketSqlRepository implements TicketGateway {
             connection.setAutoCommit(false);
 
             // Insert TicketDTO
-            insertTicketStmt.setString(1, dto.getId());
-            insertTicketStmt.setObject(2, dto.getDateTime());
+            insertTicketStmt.setString(1, dto.id());
+            insertTicketStmt.setObject(2, dto.dateTime());
             insertTicketStmt.executeUpdate();
 
             // Insert all the TicketItems
-            for (TicketItem item : dto.getItems()) {
-                insertItem(insertItemSql, item, dto.getId(), connection);
+            for (TicketItem item : dto.items()) {
+                insertItem(insertItemSql, item, dto.id(), connection);
             }
 
             // Commit the transaction
             connection.commit();
-            logger.info("Transaction committed successfully for Ticket: {}", dto.getId());
+            logger.info("Transaction committed successfully for Ticket: {}", dto.id());
 
         } catch (SQLException e) {
-            logger.error("SQL Exception occurred while adding Ticket: {}", dto.getId(), e);
+            logger.error("SQL Exception occurred while adding Ticket: {}", dto.id(), e);
             rollback();
         }
 
@@ -102,6 +102,8 @@ public final class TicketSqlRepository implements TicketGateway {
                     // Discriminator
                     stmt.setString(9, "Decoration");
                 }
+
+                default -> throw new IllegalArgumentException("Type doesn't exist.");
 
             }
 
@@ -166,17 +168,17 @@ public final class TicketSqlRepository implements TicketGateway {
 
             connection.setAutoCommit(false);
 
-            deleteItemsStmt.setString(1, dto.getId());
+            deleteItemsStmt.setString(1, dto.id());
             deleteItemsStmt.executeUpdate();
 
-            deleteTicketStmt.setString(1, dto.getId());
+            deleteTicketStmt.setString(1, dto.id());
             deleteTicketStmt.executeUpdate();
 
             connection.commit();
-            logger.info("Transaction committed successfully for deleting Ticket: {}", dto.getId());
+            logger.info("Transaction committed successfully for deleting Ticket: {}", dto.id());
 
         } catch (SQLException e) {
-            logger.error("SQL Exception occurred while deleting Ticket: {}", dto.getId(), e);
+            logger.error("SQL Exception occurred while deleting Ticket: {}", dto.id(), e);
             rollback();
         }
     }

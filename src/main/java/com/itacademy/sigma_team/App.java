@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -169,15 +170,17 @@ public final class App {
                         logException();
                         return null;
                     }
-                })
+                }),
+
+                new Scanner(System.in)
 
         );
 
-        cliController.printStock();
+        cliController.displayMenu();
 
     }
 
-    public static FlowerShop createFlowerShop(String flowerShopName, FlowerGateway flowerGateway, TreeGateway treeGateway, DecorationGateway decorationGateway) {
+    private static FlowerShop createFlowerShop(String flowerShopName, FlowerGateway flowerGateway, TreeGateway treeGateway, DecorationGateway decorationGateway) {
 
         try {
             return new FlowerShop.FlowerShopBuilder(flowerShopName)
