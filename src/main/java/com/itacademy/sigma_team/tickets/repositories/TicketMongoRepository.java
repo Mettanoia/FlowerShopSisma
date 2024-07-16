@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -37,7 +36,7 @@ public final class TicketMongoRepository {
 
         List<Document> items = new ArrayList<>();
         for (TicketItem item : ticket.getItems()) {
-            Document itemDoc = new Document("productId", getProductId(item))
+            Document itemDoc = new Document("productId", getProductId(item.toString()))
                     .append("productType", getItemTicketType(item))
                     .append("name", getProductName(item))
                     .append("quantity", getProductStock(item))
@@ -95,7 +94,7 @@ public final class TicketMongoRepository {
         return tickets;
     }
 
-    private static String getProductId(TicketItem item) {
+    public static String getProductId(String item) {
         return switch (item) {
             case DecorationDTO decorationDTO -> decorationDTO.id();
             case FlowerDTO flowerDTO -> flowerDTO.id();
@@ -145,4 +144,6 @@ public final class TicketMongoRepository {
                         item instanceof DecorationDTO ? "Decoration" :
                                 "None";
     }
+
+
 }
