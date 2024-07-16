@@ -19,7 +19,6 @@ import com.itacademy.sigma_team.trees.use_cases.AddTreeUseCase;
 import com.itacademy.sigma_team.trees.use_cases.DeleteTreeUseCase;
 import com.itacademy.sigma_team.trees.use_cases.GetAllTreesUseCase;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 public final class CliController {
@@ -57,7 +56,7 @@ public final class CliController {
                          PrintStockUseCase printStockUseCase, AddTreeUseCase addTreeUseCase,
                          GetAllTreesUseCase getAllTreesUseCase, AddTicketUseCase addTicketUseCase,
                          DeleteTicketUseCase deleteTicketUseCase, DeleteTreeUseCase deleteTreeUseCase,
-                         GetTicketUseCase getTicketUseCase, GetAllTicketsUseCase getAllTicketsUseCase) {
+                         GetTicketUseCase getTicketUseCase, GetAllTicketsUseCase getAllTicketsUseCase, Scanner scanner) {
         this.addFlowerUseCase = addFlowerUseCase;
         this.deleteFlowerUseCase = deleteFlowerUseCase;
         this.getAllFlowersUseCase = getAllFlowersUseCase;
@@ -72,6 +71,8 @@ public final class CliController {
         this.deleteTreeUseCase = deleteTreeUseCase;
         this.getTicketUseCase = getTicketUseCase;
         this.getAllTicketsUseCase = getAllTicketsUseCase;
+
+        this.scanner = scanner;
     }
 
     // Flower show entrypoint

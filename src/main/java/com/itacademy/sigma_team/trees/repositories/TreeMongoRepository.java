@@ -1,23 +1,20 @@
 package com.itacademy.sigma_team.trees.repositories;
 
-
+import com.itacademy.sigma_team.dtos.TreeDTO;
 import com.itacademy.sigma_team.trees.use_cases.TreeGateway;
-import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import com.itacademy.sigma_team.dtos.TreeDTO;
-
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
 
-public final class TreeMongoRepository implements TreeGateway {
+public class TreeMongoRepository implements TreeGateway {
 
     private final MongoCollection<Document> collection;
 
@@ -32,7 +29,8 @@ public final class TreeMongoRepository implements TreeGateway {
         Document document = new Document("id", treeDTO.id())
                 .append("name", treeDTO.name())
                 .append("height", treeDTO.height())
-                .append("price", treeDTO.price());
+                .append("price", treeDTO.price())
+                .append("stock", treeDTO.stock()); // Include stock field
         collection.insertOne(document);
     }
 
@@ -46,15 +44,26 @@ public final class TreeMongoRepository implements TreeGateway {
                     document.getString("name"),
                     document.getDouble("height"),
                     document.getDouble("price"),
-                    document.getInteger("stock")
+                    document.getInteger("stock") // Include stock field
             );
         }
         return null;
     }
 
     @Override
-    public Collection<TreeDTO> getAll() throws IOException {
-        throw new UnsupportedOperationException(); // TODO BS
+    public Collection<TreeDTO> getAll() {
+        Collection<TreeDTO> trees = new ArrayList<>();
+        for (Document doc : collection.find()) {
+            TreeDTO tree = new TreeDTO(
+                    doc.getString("id"),
+                    doc.getString("name"),
+                    doc.getDouble("height"),
+                    doc.getDouble("price"),
+                    doc.getInteger("stock") // Include stock field
+            );
+            trees.add(tree);
+        }
+        return trees;
     }
 
     @Override
@@ -63,8 +72,15 @@ public final class TreeMongoRepository implements TreeGateway {
         collection.deleteOne(filter);
     }
 
+    // New method to decrement stock
+    public void decrementStock(String treeId, int quantityPurchased) {
+        Bson filter = eq("id", treeId);
+        Bson update = new Document("$inc", new Document("stock", -quantityPurchased));
+        Document result = collection.findOneAndUpdate(filter, update);
+        if (result == null) {
+            System.out.println("Not enough stock to decrement for tree with ID: " + treeId);
+        } else {
+            System.out.println("Stock decremented successfully for tree with ID: " + treeId);
+        }
+    }
 }
-
-
-
-

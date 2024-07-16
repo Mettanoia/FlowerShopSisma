@@ -133,29 +133,6 @@ public final class DecorationSqlRepository implements DecorationGateway {
             e.printStackTrace();
         }
     }
-    // New method to decrement stock
-    public void decrementStock(String decorationId, int quantityPurchased) {
-        String sql = "UPDATE products SET stock = stock - ? WHERE id = ? AND type = 'Decoration' AND stock >= ?";
-
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, quantityPurchased);
-            pstmt.setString(2, decorationId);
-            pstmt.setInt(3, quantityPurchased);
-
-            int rowsAffected = pstmt.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Stock decremented successfully for decoration with ID: " + decorationId);
-            } else {
-                System.out.println("Not enough stock to decrement for decoration with ID: " + decorationId);
-            }
-
-        } catch (SQLException e) {
-            logger.error("SQL Exception occurred while decrementing the stock for decoration with ID: " + decorationId, e);
-        }
-    }
-
 
 }
 

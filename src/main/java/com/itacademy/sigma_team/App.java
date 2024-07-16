@@ -169,9 +169,9 @@ public final class App {
                         logException();
                         return null;
                     }
-                })
+                }),
 
-        );
+                scanner);
 
         cliController.printStock();
 

@@ -21,6 +21,9 @@ dependencies {
     implementation("org.hibernate.orm:hibernate-core:6.5.2.Final")
     testImplementation("org.mockito:mockito-all:1.10.19")
 }
+tasks.withType<JavaCompile> {
+    options.compilerArgs.addAll(listOf("-Xlint:unchecked", "-Xlint:deprecation", "-Xlint:none"))
+}
 
 tasks.test {
     useJUnitPlatform()

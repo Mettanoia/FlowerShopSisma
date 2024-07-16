@@ -139,26 +139,6 @@ public final class FlowerSqlRepository implements FlowerGateway {
         }
     }
     // New method to decrement stock
-    public void decrementStock(String flowerId, int quantityPurchased) {
-        String sql = "UPDATE products SET stock = stock - ? WHERE id = ? AND type = 'Flower' AND stock >= ?";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, quantityPurchased);
-            pstmt.setString(2, flowerId);
-            pstmt.setInt(3, quantityPurchased);
-
-            int rowsAffected = pstmt.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Stock decremented successfully for flower with ID: " + flowerId);
-            } else {
-                System.out.println("Not enough stock to decrement for flower with ID: " + flowerId);
-            }
-
-        } catch (SQLException e) {
-            logger.error("SQL Exception occurred while decrementing the stock for flower with ID: " + flowerId, e);
-        }
-    }
 
 }
