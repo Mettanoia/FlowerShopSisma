@@ -105,6 +105,7 @@ public final class CliController {
 
     public void displayMenu() {
         while (true) {
+
             System.out.println("Main Menu:");
             System.out.println("1. Create Flower Shop");
             System.out.println("2. Add Tree");
@@ -147,7 +148,7 @@ public final class CliController {
         }
     }
 
-    public void createTicketMenu() {
+    private void createTicketMenu() {
 
         List<Product> flowers = List.copyOf(getAllFlowersUseCase.exec());
         List<Product> trees = List.copyOf(getAllTreesUseCase.exec());
@@ -200,7 +201,9 @@ public final class CliController {
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a number or 'done'.");
             }
+
         }
+
     }
 
     private void printProductDetails(List<Product> products) {
@@ -236,6 +239,7 @@ public final class CliController {
     }
 
     private void deleteDecorationMenu(DeleteDecorationUseCase deleteDecorationUseCase, GetAllDecorationsUseCase getAllDecorationsUseCase) {
+
         List<Decoration> decorations = (List<Decoration>) getAllDecorationsUseCase.exec();
         if (decorations.isEmpty()) {
             System.out.println("No decorations available to delete.");
@@ -260,10 +264,11 @@ public final class CliController {
         } else {
             System.out.println("Decoration not found.");
         }
+
     }
 
-
     private void deleteFlowerMenu(DeleteFlowerUseCase deleteFlowerUseCase, GetAllFlowersUseCase getAllFlowersUseCase) {
+
         List<Flower> flowers = (List<Flower>) getAllFlowersUseCase.exec();
         if (flowers.isEmpty()) {
             System.out.println("No flowers available to delete.");
@@ -288,6 +293,7 @@ public final class CliController {
         } else {
             System.out.println("Flower not found.");
         }
+
     }
 
     private void deleteTreeMenu(DeleteTreeUseCase deleteTreeUseCase, GetAllTreesUseCase getAllTreesUseCase) {
