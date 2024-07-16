@@ -17,6 +17,7 @@ import com.itacademy.sigma_team.decorations.use_cases.DecorationGateway;
 import com.itacademy.sigma_team.flowers.use_cases.GetAllFlowersUseCase;
 import com.itacademy.sigma_team.repositories_factories.DecorationRepositoryFactory;
 import com.itacademy.sigma_team.repositories_factories.TreeRepositoryFactory;
+import com.itacademy.sigma_team.testing_chuchus.DatabaseInitializer;
 import com.itacademy.sigma_team.tickets.use_cases.*;
 import com.itacademy.sigma_team.trees.use_cases.GetAllTreesUseCase;
 import com.itacademy.sigma_team.trees.use_cases.TreeGateway;
@@ -33,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -176,7 +178,7 @@ public final class App {
 
         );
 
-        cliController.displayMenu();
+        cliController.printStock();
 
     }
 
