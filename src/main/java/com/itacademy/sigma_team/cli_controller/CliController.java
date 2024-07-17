@@ -307,12 +307,11 @@ public final class CliController {
     }
 
     private void deleteTreeMenu(DeleteTreeUseCase deleteTreeUseCase, GetAllTreesUseCase getAllTreesUseCase) {
-
-        List<Tree> trees = List.copyOf(getAllTreesUseCase.exec());
-        if (trees.isEmpty()) {
-            System.out.println("No trees available to delete.");
-            return;
-        }
+        try {
+            List<Tree> trees = List.copyOf(getAllTreesUseCase.exec());
+            if (trees.isEmpty()) {
+                throw new IllegalStateException("No trees available to delete.");
+            }
 
         System.out.println("Available trees:");
         for (Tree tree : trees) {
@@ -326,11 +325,19 @@ public final class CliController {
                 .findFirst()
                 .orElse(null);
 
-        if (treeToDelete != null) {
-            deleteTreeUseCase.exec(treeToDelete);
-            System.out.println("Tree deleted successfully!");
-        } else {
-            System.out.println("Tree not found.");
+            if (treeToDelete != null) {
+                deleteTreeUseCase.exec(treeToDelete);
+                System.out.println("Tree deleted successfully!");
+            } else {
+                System.out.println("Tree not found.");
+            }
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+        } catch (NoSuchElementException e) {
+            System.out.println("Invalid input. Please enter a valid tree ID.");
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
+            logger.error("An unexpected error occurred", e);
         }
 
     }
@@ -401,12 +408,11 @@ public final class CliController {
                 addTreeUseCase.exec(tree);
 
                 System.out.println("Tree added successfully!");
-                setFlowerShop(updateFlowerShopUseCase.exec(getFlowerShop())); // Update the model
                 finishedInput = true;
 
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input format. Please try again.");
-                scanner.nextLine();
+                scanner.nextLine(); // Clear the buffer
             }
 
         }
