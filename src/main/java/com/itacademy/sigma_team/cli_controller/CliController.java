@@ -401,48 +401,65 @@ public final class CliController {
     }
 
     private void addDecorationMenu(AddDecorationUseCase addDecorationUseCase) {
+        boolean finishedInput = false;
+        while (!finishedInput) {
+            try {
+                System.out.println("Enter decoration details:");
 
-        System.out.println("Enter decoration details:");
-        System.out.print("Enter decoration ID: ");
-        String id = scanner.nextLine();
-        System.out.print("Enter decoration name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter decoration price: ");
-        double price = scanner.nextDouble();
-        System.out.print("Enter decoration stock: ");
-        int stock = scanner.nextInt();
-        Decoration decoration = new Decoration(id, name, null, price, stock);
-        addDecorationUseCase.exec(decoration);
-        setFlowerShop(updateFlowerShopUseCase.exec(getFlowerShop())); // Update the model
-        System.out.println("Decoration added successfully!");
+                System.out.print("Enter decoration name: ");
+
+                String name = scanner.nextLine();
+                System.out.print("Enter decoration price: ");
+
+                double price = scanner.nextDouble();
+                System.out.print("Enter decoration stock: ");
+
+                int stock = scanner.nextInt();
+
+                Decoration decoration = new Decoration(name, null, price, stock);
+                addDecorationUseCase.exec(decoration);
+                setFlowerShop(updateFlowerShopUseCase.exec(getFlowerShop())); // Update the model
+                System.out.println("Decoration added successfully!");
+                finishedInput = true;
+
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input format. Please try again.");
+                scanner.nextLine(); // Clear the buffer
+            }
+        }
     }
-
     private void addFlowerMenu(AddFlowerUseCase addFlowerUseCase) {
+        boolean finishedInput = false;
+        while (!finishedInput) {
+            try {
+                System.out.println("Enter flower details:");
 
-        System.out.println("Enter flower details:");
-        System.out.print("Enter flower ID: ");
-        String id = scanner.nextLine();
+                System.out.print("Enter flower name: ");
+                String name = scanner.nextLine();
 
-        System.out.print("Enter flower name: ");
-        String name = scanner.nextLine();
+                System.out.print("Enter flower color: ");
+                String color = scanner.nextLine();
 
-        System.out.print("Enter flower color: ");
-        String color = scanner.nextLine();
+                System.out.print("Enter flower price: ");
+                double price = scanner.nextDouble();
 
-        System.out.print("Enter flower price: ");
-        double price = scanner.nextDouble();
+                System.out.print("Enter flower stock: ");
+                int stock = scanner.nextInt();
 
-        System.out.print("Enter flower stock: ");
-        int stock = scanner.nextInt();
+                scanner.nextLine();
 
-        scanner.nextLine();
+                Flower flower = new Flower(name, color, price, stock);
+                addFlowerUseCase.exec(flower);
+                setFlowerShop(updateFlowerShopUseCase.exec(getFlowerShop())); // Update the model
+                System.out.println("Flower added successfully!");
+                finishedInput = true;
 
-        Flower flower = new Flower(id, name, color, price, stock);
-        addFlowerUseCase.exec(flower);
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input format. Please try again.");
+                scanner.nextLine(); // Clear the buffer
+            }
 
-        setFlowerShop(updateFlowerShopUseCase.exec(getFlowerShop())); // Update the model
-        System.out.println("Flower added successfully!");
-
+        }
     }
 
     private void addTreeMenu(AddTreeUseCase addTreeUseCase) {
