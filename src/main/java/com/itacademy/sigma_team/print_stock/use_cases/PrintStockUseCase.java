@@ -7,13 +7,7 @@ import com.itacademy.sigma_team.flower_shop.FlowerShop;
 
 public final class PrintStockUseCase {
 
-    private final FlowerShop flowerShop;
-
-    public PrintStockUseCase(FlowerShop flowerShop) {
-        this.flowerShop = flowerShop;
-    }
-
-    public void exec() {
+    public void exec(FlowerShop flowerShop) {
 
         System.out.println("Welcome to " + flowerShop.name + "!\n");
         System.out.println("Here is our current stock:\n");

@@ -89,7 +89,7 @@ public final class App {
                     }
                 }),
 
-                new PrintStockUseCase(getFlowerShop(flowerGateway, treeGateway, decorationGateway)),
+                new PrintStockUseCase(),
 
                 new AddTreeUseCase(tree -> {
                     try {

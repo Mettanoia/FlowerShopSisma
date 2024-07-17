@@ -109,7 +109,7 @@ public final class CliController {
 
     // Printing entry points
     public void printStock() {
-        this.printStockUseCase.exec();
+        this.printStockUseCase.exec(getFlowerShop());
     }
     private void printPurchaseHistory() {}
     private void printBenefits() {}
@@ -269,6 +269,7 @@ public final class CliController {
 
             if (decorationToDelete != null) {
                 deleteDecorationUseCase.exec(decorationToDelete);
+                setFlowerShop(updateFlowerShopUseCase.exec(getFlowerShop())); // Update the model
                 System.out.println("Decoration deleted successfully!");
             } else {
                 System.out.println("Decoration not found.");
@@ -303,6 +304,7 @@ public final class CliController {
 
             if (flowerToDelete != null) {
                 deleteFlowerUseCase.exec(flowerToDelete);
+                setFlowerShop(updateFlowerShopUseCase.exec(getFlowerShop())); // Update the model
                 System.out.println("Flower deleted successfully!");
             } else {
                 System.out.println("Flower not found.");
@@ -337,6 +339,7 @@ public final class CliController {
 
             if (treeToDelete != null) {
                 deleteTreeUseCase.exec(treeToDelete);
+                setFlowerShop(updateFlowerShopUseCase.exec(getFlowerShop())); // Update the model
                 System.out.println("Tree deleted successfully!");
             } else {
                 System.out.println("Tree not found.");
@@ -363,6 +366,7 @@ public final class CliController {
         int stock = scanner.nextInt();
         Decoration decoration = new Decoration(id, name, null, price, stock);
         addDecorationUseCase.exec(decoration);
+        setFlowerShop(updateFlowerShopUseCase.exec(getFlowerShop())); // Update the model
         System.out.println("Decoration added successfully!");
     }
 
@@ -388,7 +392,7 @@ public final class CliController {
 
         Flower flower = new Flower(id, name, color, price, stock);
         addFlowerUseCase.exec(flower);
-
+        setFlowerShop(updateFlowerShopUseCase.exec(getFlowerShop())); // Update the model
         System.out.println("Flower added successfully!");
 
     }
