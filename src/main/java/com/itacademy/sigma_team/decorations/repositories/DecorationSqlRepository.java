@@ -15,7 +15,7 @@ import java.util.List;
 
 public final class DecorationSqlRepository implements DecorationGateway {
 
-    private static final Logger logger = LoggerFactory.getLogger(TicketSqlRepository.class);
+    private static final Logger logger = LoggerFactory.getLogger(DecorationSqlRepository.class);
 
     @Override
     public void add(DecorationDTO decorationDTO) {

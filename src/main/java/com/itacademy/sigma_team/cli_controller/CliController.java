@@ -114,15 +114,17 @@ public final class CliController {
     private void printPurchaseHistory() {}
     private void printBenefits() {}
 
+    private static final String ANSI_RESET = "\u001B[0m";
+    private static final String ANSI_RED = "\u001B[31m";
+    private static final String ANSI_GREEN = "\u001B[32m";
+    private static final String ANSI_YELLOW = "\u001B[33m";
+    private static final String ANSI_BLUE = "\u001B[34m";
+    private static final String ANSI_PURPLE = "\u001B[35m";
+    private static final String ANSI_CYAN = "\u001B[36m";
+
     public void displayMenu() {
 
-        final String ANSI_RESET = "\u001B[0m";
-        final String ANSI_RED = "\u001B[31m";
-        final String ANSI_GREEN = "\u001B[32m";
-        final String ANSI_YELLOW = "\u001B[33m";
-        final String ANSI_BLUE = "\u001B[34m";
-        final String ANSI_PURPLE = "\u001B[35m";
-        final String ANSI_CYAN = "\u001B[36m";
+        final Scanner scanner = new Scanner(System.in);
 
         while (true) {
             clearConsole();
@@ -396,33 +398,65 @@ public final class CliController {
     }
 
     private void addDecorationMenu(AddDecorationUseCase addDecorationUseCase) {
+
+        final Scanner scanner = new Scanner(System.in);
+
         boolean finishedInput = false;
         while (!finishedInput) {
+
             try {
-                System.out.println("Enter decoration details:");
+                System.out.println(ANSI_BLUE + "Enter decoration details:" + ANSI_RESET);
 
-                System.out.print("Enter decoration name: ");
-
+                System.out.print(ANSI_CYAN + "Enter decoration name: " + ANSI_RESET);
                 String name = scanner.nextLine();
-                System.out.print("Enter decoration price: ");
 
+                System.out.print(ANSI_CYAN + "Enter decoration price: " + ANSI_RESET);
                 double price = scanner.nextDouble();
-                System.out.print("Enter decoration stock: ");
 
+                System.out.print(ANSI_CYAN + "Enter decoration stock: " + ANSI_RESET);
                 int stock = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
 
-                Decoration decoration = new Decoration(name, null, price, stock);
+                Material material = null;
+                boolean validMaterial = false;
+
+                while (!validMaterial) {
+                    System.out.print(ANSI_CYAN + "Enter decoration material (" + ANSI_YELLOW + getValidMaterials() + ANSI_CYAN + "): " + ANSI_RESET);
+                    String materialInput = scanner.nextLine().toUpperCase();
+
+                    try {
+                        material = Material.valueOf(materialInput);
+                        validMaterial = true;
+                    } catch (IllegalArgumentException e) {
+                        System.out.println(ANSI_RED + "Invalid material. Please enter one of the following: " + ANSI_YELLOW + getValidMaterials() + ANSI_RED + "." + ANSI_RESET);
+                    }
+                }
+
+                Decoration decoration = new Decoration(UUID.randomUUID().toString(), name, material, price, stock);
                 addDecorationUseCase.exec(decoration);
                 setFlowerShop(updateFlowerShopUseCase.exec(getFlowerShop())); // Update the model
-                System.out.println("Decoration added successfully!");
+
+                System.out.println(ANSI_GREEN + "Decoration added successfully!" + ANSI_RESET);
                 finishedInput = true;
 
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid input format. Please try again.");
-                scanner.nextLine(); // Clear the buffer
+            } catch (Exception e) {
+                System.out.println(ANSI_RED + "An error occurred: " + e.getMessage() + ANSI_RESET);
             }
         }
+
     }
+
+    private static String getValidMaterials() {
+        StringBuilder validMaterials = new StringBuilder();
+        for (Material material : Material.values()) {
+            if (validMaterials.length() > 0) {
+                validMaterials.append("/");
+            }
+            validMaterials.append(material.name());
+        }
+        return validMaterials.toString();
+    }
+
     private void addFlowerMenu(AddFlowerUseCase addFlowerUseCase) {
         boolean finishedInput = false;
         while (!finishedInput) {
@@ -445,8 +479,10 @@ public final class CliController {
 
                 Flower flower = new Flower(name, color, price, stock);
                 addFlowerUseCase.exec(flower);
+
                 setFlowerShop(updateFlowerShopUseCase.exec(getFlowerShop())); // Update the model
                 System.out.println("Flower added successfully!");
+
                 finishedInput = true;
 
             } catch (InputMismatchException e) {
