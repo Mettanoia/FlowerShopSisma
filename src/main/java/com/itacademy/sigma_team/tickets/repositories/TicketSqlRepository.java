@@ -1,5 +1,6 @@
 package com.itacademy.sigma_team.tickets.repositories;
 
+import com.itacademy.sigma_team.H2DatabaseConnection;
 import com.itacademy.sigma_team.domain.Material;
 import com.itacademy.sigma_team.dtos.*;
 import com.itacademy.sigma_team.tickets.use_cases.TicketGateway;
@@ -24,7 +25,7 @@ public final class TicketSqlRepository implements TicketGateway {
         String insertItemSql = "INSERT INTO products (id, name, color, height, material, price, stock, ticketId, type) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb");
+        try (Connection connection = H2DatabaseConnection.getConnection();
 
              PreparedStatement insertTicketStmt = connection.prepareStatement(insertTicketSql)) {
 
@@ -162,7 +163,7 @@ public final class TicketSqlRepository implements TicketGateway {
         String deleteItemsSql = "DELETE FROM products WHERE ticketId = ?";
         String deleteTicketSql = "DELETE FROM tickets WHERE id = ?";
 
-        try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb");
+        try (Connection connection = H2DatabaseConnection.getConnection();
              PreparedStatement deleteItemsStmt = connection.prepareStatement(deleteItemsSql);
              PreparedStatement deleteTicketStmt = connection.prepareStatement(deleteTicketSql)) {
 
@@ -189,7 +190,7 @@ public final class TicketSqlRepository implements TicketGateway {
         String SELECT_TICKET_SQL = "SELECT * FROM tickets WHERE id = ?";
         String SELECT_ITEMS_SQL = "SELECT * FROM products WHERE ticketId = ?";
 
-        try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb");
+        try (Connection connection = H2DatabaseConnection.getConnection();
              PreparedStatement ticketStmt = connection.prepareStatement(SELECT_TICKET_SQL);
              PreparedStatement itemsStmt = connection.prepareStatement(SELECT_ITEMS_SQL)) {
 
@@ -250,11 +251,12 @@ public final class TicketSqlRepository implements TicketGateway {
 
     @Override
     public Collection<TicketDTO> getAll() {
+
         String SELECT_TICKETS_SQL = "SELECT * FROM tickets";
         String SELECT_ITEMS_SQL = "SELECT * FROM products WHERE ticketId = ?";
         List<TicketDTO> tickets = new ArrayList<>();
 
-        try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb");
+        try (Connection connection = H2DatabaseConnection.getConnection();
              PreparedStatement ticketsStmt = connection.prepareStatement(SELECT_TICKETS_SQL);
              PreparedStatement itemsStmt = connection.prepareStatement(SELECT_ITEMS_SQL);
              ResultSet ticketsRs = ticketsStmt.executeQuery()) {

@@ -218,17 +218,17 @@ public final class CliController {
 
                 case "Flower" -> {
                     Flower flower = (Flower) product;
-                    yield (i + 1) + ". " + flower.getName() + " - Color: " + flower.getColor() + " - $" + flower.getPrice();
+                    yield (i + 1) + ". " + flower.getName() + " - Color: " + flower.getColor() + " - €" + flower.getPrice();
                 }
 
                 case "Tree" -> {
                     Tree tree = (Tree) product;
-                    yield (i + 1) + ". " + tree.getName() + " - Height: " + tree.getHeight() + "m - $" + tree.getPrice();
+                    yield (i + 1) + ". " + tree.getName() + " - Height: " + tree.getHeight() + "m - €" + tree.getPrice();
                 }
 
                 case "Decoration" -> {
                     Decoration decoration = (Decoration) product;
-                    yield (i + 1) + ". " + decoration.getName() + " - Material: " + decoration.getMaterial() + " - $" + decoration.getPrice();
+                    yield (i + 1) + ". " + decoration.getName() + " - Material: " + decoration.getMaterial() + " - €" + decoration.getPrice();
                 }
 
                 default -> throw new IllegalStateException("Unexpected value: " + product.getClass().getSimpleName());
@@ -236,7 +236,6 @@ public final class CliController {
             };
 
             System.out.println(details);
-
 
         }
     }
