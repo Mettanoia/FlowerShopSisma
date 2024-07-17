@@ -115,6 +115,7 @@ public final class CliController {
     private void printBenefits() {}
 
     public void displayMenu() {
+
         final String ANSI_RESET = "\u001B[0m";
         final String ANSI_RED = "\u001B[31m";
         final String ANSI_GREEN = "\u001B[32m";
