@@ -234,15 +234,14 @@ public final class CliController {
 
     private void deleteDecorationMenu(DeleteDecorationUseCase deleteDecorationUseCase, GetAllDecorationsUseCase getAllDecorationsUseCase) {
 
-        List<Decoration> decorations = (List<Decoration>) getAllDecorationsUseCase.exec();
+        List<Decoration> decorations = List.copyOf(getAllDecorationsUseCase.exec());
         if (decorations.isEmpty()) {
-            System.out.println("No decorations available to delete.");
-            return;
+            throw new IllegalStateException("No decorations available to delete.");
         }
 
         System.out.println("Available decorations:");
         for (Decoration decoration : decorations) {
-            System.out.println(decoration); // Assuming Decoration has a proper toString implementation
+            System.out.println(decoration);
         }
 
         System.out.print("Enter decoration ID to delete: ");
@@ -263,7 +262,7 @@ public final class CliController {
 
     private void deleteFlowerMenu(DeleteFlowerUseCase deleteFlowerUseCase, GetAllFlowersUseCase getAllFlowersUseCase) {
 
-        List<Flower> flowers = (List<Flower>) getAllFlowersUseCase.exec();
+        List<Flower> flowers = List.copyOf(getAllFlowersUseCase.exec());
         if (flowers.isEmpty()) {
             System.out.println("No flowers available to delete.");
             return;
@@ -292,7 +291,7 @@ public final class CliController {
 
     private void deleteTreeMenu(DeleteTreeUseCase deleteTreeUseCase, GetAllTreesUseCase getAllTreesUseCase) {
 
-        List<Tree> trees = (List<Tree>) getAllTreesUseCase.exec();
+        List<Tree> trees = List.copyOf(getAllTreesUseCase.exec());
         if (trees.isEmpty()) {
             System.out.println("No trees available to delete.");
             return;
