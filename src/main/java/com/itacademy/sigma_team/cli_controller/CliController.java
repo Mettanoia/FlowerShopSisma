@@ -337,7 +337,6 @@ public final class CliController {
             System.out.println("Invalid input. Please enter a valid tree ID.");
         } catch (Exception e) {
             System.out.println("An unexpected error occurred: " + e.getMessage());
-            logger.error("An unexpected error occurred", e);
         }
 
     }
