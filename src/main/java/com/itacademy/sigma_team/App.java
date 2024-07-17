@@ -9,6 +9,7 @@ import com.itacademy.sigma_team.domain.Decoration;
 import com.itacademy.sigma_team.domain.Flower;
 import com.itacademy.sigma_team.domain.Tree;
 import com.itacademy.sigma_team.flower_shop.FlowerShop;
+import com.itacademy.sigma_team.flower_shop.use_cases.UpdateFlowerShopUseCase;
 import com.itacademy.sigma_team.flowers.repositories.FlowerMapper;
 import com.itacademy.sigma_team.flowers.use_cases.AddFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.DeleteFlowerUseCase;
@@ -23,12 +24,10 @@ import com.itacademy.sigma_team.trees.use_cases.TreeGateway;
 import com.itacademy.sigma_team.print_stock.use_cases.PrintStockUseCase;
 import com.itacademy.sigma_team.repositories_factories.FlowerRepositoryFactory;
 import com.itacademy.sigma_team.tickets.repositories.TicketMappers;
-import com.itacademy.sigma_team.tickets.repositories.TicketSqlRepository;
 import com.itacademy.sigma_team.repositories_factories.TicketRepositoryFactory;
 import com.itacademy.sigma_team.trees.repositories.TreeMapper;
 import com.itacademy.sigma_team.trees.use_cases.AddTreeUseCase;
 import com.itacademy.sigma_team.trees.use_cases.DeleteTreeUseCase;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -39,8 +38,6 @@ import java.util.stream.Collectors;
 
 public final class App {
 
-    private static final Logger logger = LoggerFactory.getLogger(TicketSqlRepository.class);
-
     public static void run() {
 
         // Repositories to inject in the use cases
@@ -49,9 +46,120 @@ public final class App {
         TreeGateway treeGateway = TreeRepositoryFactory.getInstance();
         DecorationGateway decorationGateway = DecorationRepositoryFactory.getInstance();
 
+
+        CliController cliController = new CliController(
+
+                new AddFlowerUseCase(flower -> {
+                    try {
+                        flowerGateway.add(FlowerMapper.toDto(flower));
+                    } catch (IOException e) {logException(AddFlowerUseCase.class);}
+                }),
+
+                new DeleteFlowerUseCase(flower -> {
+                    try {
+                        flowerGateway.delete(FlowerMapper.toDto(flower));
+                    } catch (IOException e) {logException(DeleteFlowerUseCase.class);}
+                }),
+
+                new GetAllFlowersUseCase(() -> {
+                    try {
+                        return flowerGateway.getAll().stream().map(FlowerMapper::toDomain).collect(Collectors.toSet());
+                    } catch (IOException e) {logException(GetAllFlowersUseCase.class);}
+                    return Set.of();
+                }),
+
+                new AddDecorationUseCase(decoration -> {
+                    try {
+                        decorationGateway.add(DecorationMapper.toDto(decoration));
+                    } catch (IOException e) {logException(AddDecorationUseCase.class);}
+                }),
+
+                new DeleteDecorationUseCase(decoration -> {
+                    try {
+                        decorationGateway.delete(DecorationMapper.toDto(decoration));
+                    } catch (IOException e) {logException(DeleteDecorationUseCase.class);}
+                }),
+
+                new GetAllDecorationsUseCase(() -> {
+                    try {
+                        return decorationGateway.getAll().stream().map(DecorationMapper::toDomain).collect(Collectors.toSet());
+                    } catch (IOException e) {
+                        logException(GetAllDecorationsUseCase.class);
+                        return null;
+                    }
+                }),
+
+                new PrintStockUseCase(getFlowerShop(flowerGateway, treeGateway, decorationGateway)),
+
+                new AddTreeUseCase(tree -> {
+                    try {
+                        treeGateway.add(TreeMapper.toDto(tree));
+                    } catch (IOException e) {logException(AddTreeUseCase.class);}
+                }),
+
+                new GetAllTreesUseCase(() -> {
+                    try {
+                        return treeGateway.getAll().stream().map(TreeMapper::toDomain).collect(Collectors.toSet());
+                    } catch (IOException e) {
+                        logException(GetAllTreesUseCase.class);
+                        return null;
+                    }
+                }),
+
+                new AddTicketUseCase(ticket -> {
+                    try {
+                        ticketGateway.add(TicketMappers.toDto(ticket));
+                    } catch (IOException e) {logException(AddTicketUseCase.class);}
+                }),
+
+                new DeleteTicketUseCase(ticket -> {
+                    try {
+                        ticketGateway.delete(TicketMappers.toDto(ticket));
+                    } catch (IOException e) {logException(DeleteTicketUseCase.class);}
+                }),
+
+                new DeleteTreeUseCase(tree -> {
+                    try {
+                        treeGateway.delete(TreeMapper.toDto(tree));
+                    } catch (IOException e) {logException(DeleteTreeUseCase.class);}
+                }),
+
+                new GetTicketUseCase(ticketId -> {
+                    try {
+                        return TicketMappers.toDomain(ticketGateway.get(ticketId));
+                    } catch (IOException e) {
+                        logException(GetTicketUseCase.class);
+                        return null;
+                    }
+                }),
+
+                new GetAllTicketsUseCase(() -> {
+                    try {
+                        return ticketGateway.getAll().stream().map(TicketMappers::toDomain).collect(Collectors.toSet());
+                    } catch (IOException e) {
+                        logException(GetAllTicketsUseCase.class);
+                        return null;
+                    }
+                }),
+
+                new UpdateFlowerShopUseCase(flowerGateway, treeGateway, decorationGateway),
+
+                new Scanner(System.in),
+
+                getFlowerShop(flowerGateway, treeGateway, decorationGateway)
+
+        );
+
+        cliController.displayMenu();
+
+    }
+
+    private static FlowerShop getFlowerShop(FlowerGateway flowerGateway, TreeGateway treeGateway, DecorationGateway decorationGateway) {
+
         Collection<Flower> flowers = null;
         Collection<Tree> trees = null;
         Collection<Decoration> decorations = null;
+
         try {
 
             flowers = flowerGateway.getAll().stream()
@@ -66,120 +174,18 @@ public final class App {
                     .map(DecorationMapper::toDomain)
                     .collect(Collectors.toSet());
 
-        } catch (IOException e) {logException();}
+        } catch (IOException e) {logException(AddFlowerUseCase.class);}
 
         // Building the FlowerShop
-        FlowerShop flowerShop = new FlowerShop.FlowerShopBuilder("Sigma Flower Shop")
+        return new FlowerShop.FlowerShopBuilder("Sigma Flower Shop")
                 .flowers(flowers)
                 .trees(trees)
                 .decorations(decorations)
                 .build();
-
-        CliController cliController = new CliController(
-
-                new AddFlowerUseCase(flower -> {
-                    try {
-                        flowerGateway.add(FlowerMapper.toDto(flower));
-                    } catch (IOException e) {logException();}
-                }),
-
-                new DeleteFlowerUseCase(flower -> {
-                    try {
-                        flowerGateway.delete(FlowerMapper.toDto(flower));
-                    } catch (IOException e) {logException();}
-                }),
-
-                new GetAllFlowersUseCase(() -> {
-                    try {
-                        return flowerGateway.getAll().stream().map(FlowerMapper::toDomain).collect(Collectors.toSet());
-                    } catch (IOException e) {logException();}
-                    return Set.of();
-                }),
-
-                new AddDecorationUseCase(decoration -> {
-                    try {
-                        decorationGateway.add(DecorationMapper.toDto(decoration));
-                    } catch (IOException e) {logException();}
-                }),
-
-                new DeleteDecorationUseCase(decoration -> {
-                    try {
-                        decorationGateway.delete(DecorationMapper.toDto(decoration));
-                    } catch (IOException e) {logException();}
-                }),
-
-                new GetAllDecorationsUseCase(() -> {
-                    try {
-                        return decorationGateway.getAll().stream().map(DecorationMapper::toDomain).collect(Collectors.toSet());
-                    } catch (IOException e) {
-                        logException();
-                        return null;
-                    }
-                }),
-
-                new PrintStockUseCase(flowerShop),
-
-                new AddTreeUseCase(tree -> {
-                    try {
-                        treeGateway.add(TreeMapper.toDto(tree));
-                    } catch (IOException e) {logException();}
-                }),
-
-                new GetAllTreesUseCase(() -> {
-                    try {
-                        return treeGateway.getAll().stream().map(TreeMapper::toDomain).collect(Collectors.toSet());
-                    } catch (IOException e) {
-                        logException();
-                        return null;
-                    }
-                }),
-
-                new AddTicketUseCase(ticket -> {
-                    try {
-                        ticketGateway.add(TicketMappers.toDto(ticket));
-                    } catch (IOException e) {logException();}
-                }),
-
-                new DeleteTicketUseCase(ticket -> {
-                    try {
-                        ticketGateway.delete(TicketMappers.toDto(ticket));
-                    } catch (IOException e) {logException();}
-                }),
-
-                new DeleteTreeUseCase(tree -> {
-                    try {
-                        treeGateway.delete(TreeMapper.toDto(tree));
-                    } catch (IOException e) {logException();}
-                }),
-
-                new GetTicketUseCase(ticketId -> {
-                    try {
-                        return TicketMappers.toDomain(ticketGateway.get(ticketId));
-                    } catch (IOException e) {
-                        logException();
-                        return null;
-                    }
-                }),
-
-                new GetAllTicketsUseCase(() -> {
-                    try {
-                        return ticketGateway.getAll().stream().map(TicketMappers::toDomain).collect(Collectors.toSet());
-                    } catch (IOException e) {
-                        logException();
-                        return null;
-                    }
-                }),
-
-                new Scanner(System.in)
-
-        );
-
-        cliController.displayMenu();
-
     }
 
-    private static void logException() {
-        logger.error("Exception thrown while calling the repository.");
+    private static <T> void logException(Class<T> className) {
+        LoggerFactory.getLogger(className).error("Exception thrown while calling the repository.");
     }
 
 }

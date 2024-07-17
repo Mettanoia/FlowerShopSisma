@@ -4,6 +4,8 @@ import com.itacademy.sigma_team.decorations.use_cases.AddDecorationUseCase;
 import com.itacademy.sigma_team.decorations.use_cases.DeleteDecorationUseCase;
 import com.itacademy.sigma_team.decorations.use_cases.GetAllDecorationsUseCase;
 import com.itacademy.sigma_team.domain.*;
+import com.itacademy.sigma_team.flower_shop.FlowerShop;
+import com.itacademy.sigma_team.flower_shop.use_cases.UpdateFlowerShopUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.AddFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.DeleteFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.GetAllFlowersUseCase;
@@ -47,10 +49,14 @@ public final class CliController {
     private final GetTicketUseCase getTicketUseCase;
     private final GetAllTicketsUseCase getAllTicketsUseCase;
 
+    // FlowerShop use case
+    private final UpdateFlowerShopUseCase updateFlowerShopUseCase;
+
     private final Scanner scanner;
+    private FlowerShop flowerShop;
 
 
-    public CliController(AddFlowerUseCase addFlowerUseCase, DeleteFlowerUseCase deleteFlowerUseCase, GetAllFlowersUseCase getAllFlowersUseCase, AddDecorationUseCase addDecorationUseCase, DeleteDecorationUseCase deleteDecorationUseCase, GetAllDecorationsUseCase getAllDecorationsUseCase, PrintStockUseCase printStockUseCase, AddTreeUseCase addTreeUseCase, GetAllTreesUseCase getAllTreesUseCase, AddTicketUseCase addTicketUseCase, DeleteTicketUseCase deleteTicketUseCase, DeleteTreeUseCase deleteTreeUseCase, GetTicketUseCase getTicketUseCase, GetAllTicketsUseCase getAllTicketsUseCase, Scanner scanner) {
+    public CliController(AddFlowerUseCase addFlowerUseCase, DeleteFlowerUseCase deleteFlowerUseCase, GetAllFlowersUseCase getAllFlowersUseCase, AddDecorationUseCase addDecorationUseCase, DeleteDecorationUseCase deleteDecorationUseCase, GetAllDecorationsUseCase getAllDecorationsUseCase, PrintStockUseCase printStockUseCase, AddTreeUseCase addTreeUseCase, GetAllTreesUseCase getAllTreesUseCase, AddTicketUseCase addTicketUseCase, DeleteTicketUseCase deleteTicketUseCase, DeleteTreeUseCase deleteTreeUseCase, GetTicketUseCase getTicketUseCase, GetAllTicketsUseCase getAllTicketsUseCase, UpdateFlowerShopUseCase updateFlowerShopUseCase, Scanner scanner, FlowerShop flowerShop) {
         this.addFlowerUseCase = addFlowerUseCase;
         this.deleteFlowerUseCase = deleteFlowerUseCase;
         this.getAllFlowersUseCase = getAllFlowersUseCase;
@@ -65,7 +71,17 @@ public final class CliController {
         this.deleteTreeUseCase = deleteTreeUseCase;
         this.getTicketUseCase = getTicketUseCase;
         this.getAllTicketsUseCase = getAllTicketsUseCase;
+        this.updateFlowerShopUseCase = updateFlowerShopUseCase;
         this.scanner = scanner;
+        this.flowerShop = flowerShop;
+    }
+
+    private FlowerShop getFlowerShop() {
+        return flowerShop;
+    }
+
+    private void setFlowerShop(FlowerShop flowerShop) {
+        this.flowerShop = flowerShop;
     }
 
     // Flower show entrypoint
@@ -292,7 +308,7 @@ public final class CliController {
 
     private void deleteTreeMenu(DeleteTreeUseCase deleteTreeUseCase, GetAllTreesUseCase getAllTreesUseCase) {
 
-        List<Tree> trees = (List<Tree>) getAllTreesUseCase.exec();
+        List<Tree> trees = List.copyOf(getAllTreesUseCase.exec());
         if (trees.isEmpty()) {
             System.out.println("No trees available to delete.");
             return;
@@ -385,11 +401,12 @@ public final class CliController {
                 addTreeUseCase.exec(tree);
 
                 System.out.println("Tree added successfully!");
+                setFlowerShop(updateFlowerShopUseCase.exec(getFlowerShop())); // Update the model
                 finishedInput = true;
 
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input format. Please try again.");
-                scanner.nextLine(); // Clear the buffer
+                scanner.nextLine();
             }
 
         }
