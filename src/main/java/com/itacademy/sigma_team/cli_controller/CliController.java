@@ -17,10 +17,7 @@ import com.itacademy.sigma_team.trees.use_cases.DeleteTreeUseCase;
 import com.itacademy.sigma_team.trees.use_cases.GetAllTreesUseCase;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @SuppressWarnings("FieldCanBeLocal")
 public final class CliController {
@@ -366,26 +363,36 @@ public final class CliController {
 
     private void addTreeMenu(AddTreeUseCase addTreeUseCase) {
 
-        System.out.println("Enter tree details:");
-        System.out.print("Enter tree ID: ");
-        String id = scanner.nextLine();
+        boolean finishedInput = false;
+        while (!finishedInput) {
+            try {
 
-        System.out.print("Enter tree name: ");
-        String name = scanner.nextLine();
+                System.out.println("Enter tree details:");
 
-        System.out.print("Enter tree height: ");
-        double height = scanner.nextDouble();
+                System.out.print("Enter tree name: ");
+                String name = scanner.nextLine();
 
-        System.out.print("Enter tree price: ");
-        double price = scanner.nextDouble();
+                System.out.print("Enter tree height: ");
+                double height = scanner.nextDouble();
 
-        System.out.print("Enter tree stock: ");
-        int stock = scanner.nextInt();
+                System.out.print("Enter tree price: ");
+                double price = scanner.nextDouble();
 
-        Tree tree = new Tree(id, name, height, price, stock);
-        addTreeUseCase.exec(tree);
+                System.out.print("Enter tree stock: ");
+                int stock = scanner.nextInt();
 
-        System.out.println("Tree added successfully!");
+                Tree tree = new Tree(UUID.randomUUID().toString(), name, height, price, stock);
+                addTreeUseCase.exec(tree);
+
+                System.out.println("Tree added successfully!");
+                finishedInput = true;
+
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input format. Please try again.");
+                scanner.nextLine(); // Clear the buffer
+            }
+
+        }
 
     }
 
