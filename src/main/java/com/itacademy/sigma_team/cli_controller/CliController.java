@@ -1,5 +1,6 @@
 package com.itacademy.sigma_team.cli_controller;
 
+import com.itacademy.sigma_team.decorations.repositories.DecorationSqlRepository;
 import com.itacademy.sigma_team.decorations.use_cases.AddDecorationUseCase;
 import com.itacademy.sigma_team.decorations.use_cases.DeleteDecorationUseCase;
 import com.itacademy.sigma_team.decorations.use_cases.GetAllDecorationsUseCase;
@@ -8,6 +9,7 @@ import com.itacademy.sigma_team.flowers.use_cases.AddFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.DeleteFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.GetAllFlowersUseCase;
 import com.itacademy.sigma_team.print_stock.use_cases.PrintStockUseCase;
+import com.itacademy.sigma_team.tickets.repositories.TicketSqlRepository;
 import com.itacademy.sigma_team.tickets.use_cases.AddTicketUseCase;
 import com.itacademy.sigma_team.tickets.use_cases.DeleteTicketUseCase;
 import com.itacademy.sigma_team.tickets.use_cases.GetAllTicketsUseCase;
@@ -15,9 +17,12 @@ import com.itacademy.sigma_team.tickets.use_cases.GetTicketUseCase;
 import com.itacademy.sigma_team.trees.use_cases.AddTreeUseCase;
 import com.itacademy.sigma_team.trees.use_cases.DeleteTreeUseCase;
 import com.itacademy.sigma_team.trees.use_cases.GetAllTreesUseCase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.*;
+
 
 @SuppressWarnings("FieldCanBeLocal")
 public final class CliController {
@@ -49,6 +54,7 @@ public final class CliController {
 
     private final Scanner scanner;
 
+    private static final Logger logger = LoggerFactory.getLogger(CliController.class);
 
     public CliController(AddFlowerUseCase addFlowerUseCase, DeleteFlowerUseCase deleteFlowerUseCase, GetAllFlowersUseCase getAllFlowersUseCase, AddDecorationUseCase addDecorationUseCase, DeleteDecorationUseCase deleteDecorationUseCase, GetAllDecorationsUseCase getAllDecorationsUseCase, PrintStockUseCase printStockUseCase, AddTreeUseCase addTreeUseCase, GetAllTreesUseCase getAllTreesUseCase, AddTicketUseCase addTicketUseCase, DeleteTicketUseCase deleteTicketUseCase, DeleteTreeUseCase deleteTreeUseCase, GetTicketUseCase getTicketUseCase, GetAllTicketsUseCase getAllTicketsUseCase, Scanner scanner) {
         this.addFlowerUseCase = addFlowerUseCase;
@@ -233,90 +239,110 @@ public final class CliController {
     }
 
     private void deleteDecorationMenu(DeleteDecorationUseCase deleteDecorationUseCase, GetAllDecorationsUseCase getAllDecorationsUseCase) {
+        try {
+            List<Decoration> decorations = List.copyOf(getAllDecorationsUseCase.exec());
+            if (decorations.isEmpty()) {
+                throw new IllegalStateException("No decorations available to delete.");
+            }
 
-        List<Decoration> decorations = List.copyOf(getAllDecorationsUseCase.exec());
-        if (decorations.isEmpty()) {
-            throw new IllegalStateException("No decorations available to delete.");
+            System.out.println("Available decorations:");
+            for (Decoration decoration : decorations) {
+                System.out.println(decoration);
+            }
+
+            System.out.print("Enter decoration ID to delete: ");
+            String id = scanner.nextLine();
+            Decoration decorationToDelete = decorations.stream()
+                    .filter(decoration -> decoration.getId().equals(id))
+                    .findFirst()
+                    .orElse(null);
+
+            if (decorationToDelete != null) {
+                deleteDecorationUseCase.exec(decorationToDelete);
+                System.out.println("Decoration deleted successfully!");
+            } else {
+                System.out.println("Decoration not found.");
+            }
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+        } catch (NoSuchElementException e) {
+            System.out.println("Invalid input. Please enter a valid decoration ID.");
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
+            logger.error("An unexpected error occurred", e);
         }
-
-        System.out.println("Available decorations:");
-        for (Decoration decoration : decorations) {
-            System.out.println(decoration);
-        }
-
-        System.out.print("Enter decoration ID to delete: ");
-        String id = scanner.nextLine();
-        Decoration decorationToDelete = decorations.stream()
-                .filter(decoration -> decoration.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-
-        if (decorationToDelete != null) {
-            deleteDecorationUseCase.exec(decorationToDelete);
-            System.out.println("Decoration deleted successfully!");
-        } else {
-            System.out.println("Decoration not found.");
-        }
-
     }
 
     private void deleteFlowerMenu(DeleteFlowerUseCase deleteFlowerUseCase, GetAllFlowersUseCase getAllFlowersUseCase) {
+        try {
+            List<Flower> flowers = List.copyOf(getAllFlowersUseCase.exec());
+            if (flowers.isEmpty()) {
+                throw new IllegalStateException("No flowers available to delete.");
+            }
 
-        List<Flower> flowers = List.copyOf(getAllFlowersUseCase.exec());
-        if (flowers.isEmpty()) {
-            System.out.println("No flowers available to delete.");
-            return;
+            System.out.println("Available flowers:");
+            for (Flower flower : flowers) {
+                System.out.println(flower);
+            }
+
+            System.out.print("Enter flower ID to delete: ");
+            String id = scanner.nextLine();
+            Flower flowerToDelete = flowers.stream()
+                    .filter(flower -> flower.getId().equals(id))
+                    .findFirst()
+                    .orElse(null);
+
+            if (flowerToDelete != null) {
+                deleteFlowerUseCase.exec(flowerToDelete);
+                System.out.println("Flower deleted successfully!");
+            } else {
+                System.out.println("Flower not found.");
+            }
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+        } catch (NoSuchElementException e) {
+            System.out.println("Invalid input. Please enter a valid flower ID.");
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
+            logger.error("An unexpected error occurred", e);
         }
-
-        System.out.println("Available flowers:");
-        for (Flower flower : flowers) {
-            System.out.println(flower);
-        }
-
-        System.out.print("Enter flower ID to delete: ");
-        String id = scanner.nextLine();
-        Flower flowerToDelete = flowers.stream()
-                .filter(flower -> flower.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-
-        if (flowerToDelete != null) {
-            deleteFlowerUseCase.exec(flowerToDelete);
-            System.out.println("Flower deleted successfully!");
-        } else {
-            System.out.println("Flower not found.");
-        }
-
     }
 
     private void deleteTreeMenu(DeleteTreeUseCase deleteTreeUseCase, GetAllTreesUseCase getAllTreesUseCase) {
+        try {
+            List<Tree> trees = List.copyOf(getAllTreesUseCase.exec());
+            if (trees.isEmpty()) {
+                throw new IllegalStateException("No trees available to delete.");
+            }
 
-        List<Tree> trees = List.copyOf(getAllTreesUseCase.exec());
-        if (trees.isEmpty()) {
-            System.out.println("No trees available to delete.");
-            return;
+            System.out.println("Available trees:");
+            for (Tree tree : trees) {
+                System.out.println(tree);
+            }
+
+            System.out.print("Enter tree ID to delete: ");
+            String id = scanner.nextLine();
+            Tree treeToDelete = trees.stream()
+                    .filter(tree -> tree.getId().equals(id))
+                    .findFirst()
+                    .orElse(null);
+
+            if (treeToDelete != null) {
+                deleteTreeUseCase.exec(treeToDelete);
+                System.out.println("Tree deleted successfully!");
+            } else {
+                System.out.println("Tree not found.");
+            }
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+        } catch (NoSuchElementException e) {
+            System.out.println("Invalid input. Please enter a valid tree ID.");
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
+            logger.error("An unexpected error occurred", e);
         }
-
-        System.out.println("Available trees:");
-        for (Tree tree : trees) {
-            System.out.println(tree);
-        }
-
-        System.out.print("Enter tree ID to delete: ");
-        String id = scanner.nextLine();
-        Tree treeToDelete = trees.stream()
-                .filter(tree -> tree.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-
-        if (treeToDelete != null) {
-            deleteTreeUseCase.exec(treeToDelete);
-            System.out.println("Tree deleted successfully!");
-        } else {
-            System.out.println("Tree not found.");
-        }
-
     }
+
 
     private void addDecorationMenu(AddDecorationUseCase addDecorationUseCase) {
         System.out.println("Enter decoration details:");
