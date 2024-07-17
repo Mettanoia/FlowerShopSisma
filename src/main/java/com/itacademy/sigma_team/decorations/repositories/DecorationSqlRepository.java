@@ -1,483 +1,155 @@
-package com.itacademy.sigma_team.cli_controller;
+package com.itacademy.sigma_team.decorations.repositories;
 
-import com.itacademy.sigma_team.decorations.use_cases.*;
-import com.itacademy.sigma_team.domain.*;
-import com.itacademy.sigma_team.dtos.TicketItem;
-import com.itacademy.sigma_team.flowers.use_cases.*;
-import com.itacademy.sigma_team.print_stock.use_cases.PrintStockUseCase;
-import com.itacademy.sigma_team.tickets.use_cases.*;
-import com.itacademy.sigma_team.trees.use_cases.*;
+import com.itacademy.sigma_team.domain.Material;
+import com.itacademy.sigma_team.decorations.use_cases.DecorationGateway;
+import com.itacademy.sigma_team.dtos.DecorationDTO;
+import com.itacademy.sigma_team.tickets.repositories.TicketSqlRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-public final class CliController {
+public final class DecorationSqlRepository implements DecorationGateway {
 
-    // Flowers use cases
-    private final AddFlowerUseCase addFlowerUseCase;
-    private final DeleteFlowerUseCase deleteFlowerUseCase;
-    private final GetAllFlowersUseCase getAllFlowersUseCase;
-    private final DecrementFlowerStockUseCase decrementFlowerStockUseCase;
+    private static final Logger logger = LoggerFactory.getLogger(TicketSqlRepository.class);
 
-    // Decoration use cases
-    private final AddDecorationUseCase addDecorationUseCase;
-    private final DeleteDecorationUseCase deleteDecorationUseCase;
-    private final GetAllDecorationsUseCase getAllDecorationsUseCase;
-    private final DecrementDecorationStockUseCase decrementDecorationStockUseCase;
+    @Override
+    public void add(DecorationDTO decorationDTO) {
 
-    // Printing use cases
-    private final PrintStockUseCase printStockUseCase;
+        String sql = "INSERT INTO products (id, name, color, height, material, price, stock, ticketId, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    // Tree use cases
-    private final AddTreeUseCase addTreeUseCase;
-    private final DeleteTreeUseCase deleteTreeUseCase;
-    private final GetAllTreesUseCase getAllTreesUseCase;
-    private final DecrementTreeStockUseCase decrementTreeStockUseCase;
+        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-    // Ticket use cases
-    private final AddTicketUseCase addTicketUseCase;
-    private final DeleteTicketUseCase deleteTicketUseCase;
-    private final GetTicketUseCase getTicketUseCase;
-    private final GetAllTicketsUseCase getAllTicketsUseCase;
-    private final PrintTotalMoneyEarnedUseCase printTotalMoneyEarnedUseCase;
+            pstmt.setString(1, decorationDTO.id());
+            pstmt.setString(2, decorationDTO.name());
+            pstmt.setNull(3, Types.VARCHAR); // color
+            pstmt.setNull(4, Types.DOUBLE);  // height
+            pstmt.setString(5, decorationDTO.material().name());
+            pstmt.setDouble(6, decorationDTO.price());
+            pstmt.setInt(7, decorationDTO.stock());
+            pstmt.setString(8, null);
+            pstmt.setString(9, "Decoration"); // Discriminator
 
-    private final Scanner scanner;
+            pstmt.executeUpdate();
+            System.out.println("Decoración insertada en la base de datos SQL");
 
-    public CliController(AddFlowerUseCase addFlowerUseCase, DeleteFlowerUseCase deleteFlowerUseCase,
-                         GetAllFlowersUseCase getAllFlowersUseCase, DecrementFlowerStockUseCase decrementFlowerStockUseCase,
-                         AddDecorationUseCase addDecorationUseCase, DeleteDecorationUseCase deleteDecorationUseCase,
-                         GetAllDecorationsUseCase getAllDecorationsUseCase, DecrementDecorationStockUseCase decrementDecorationStockUseCase,
-                         PrintStockUseCase printStockUseCase, AddTreeUseCase addTreeUseCase, GetAllTreesUseCase getAllTreesUseCase,
-                         DecrementTreeStockUseCase decrementTreeStockUseCase, AddTicketUseCase addTicketUseCase,
-                         DeleteTicketUseCase deleteTicketUseCase, DeleteTreeUseCase deleteTreeUseCase, GetTicketUseCase getTicketUseCase,
-                         GetAllTicketsUseCase getAllTicketsUseCase, PrintTotalMoneyEarnedUseCase printTotalMoneyEarnedUseCase) {
-        this.addFlowerUseCase = addFlowerUseCase;
-        this.deleteFlowerUseCase = deleteFlowerUseCase;
-        this.getAllFlowersUseCase = getAllFlowersUseCase;
-        this.decrementFlowerStockUseCase = decrementFlowerStockUseCase;
-        this.addDecorationUseCase = addDecorationUseCase;
-        this.deleteDecorationUseCase = deleteDecorationUseCase;
-        this.getAllDecorationsUseCase = getAllDecorationsUseCase;
-        this.decrementDecorationStockUseCase = decrementDecorationStockUseCase;
-        this.printStockUseCase = printStockUseCase;
-        this.addTreeUseCase = addTreeUseCase;
-        this.getAllTreesUseCase = getAllTreesUseCase;
-        this.decrementTreeStockUseCase = decrementTreeStockUseCase;
-        this.addTicketUseCase = addTicketUseCase;
-        this.deleteTicketUseCase = deleteTicketUseCase;
-        this.deleteTreeUseCase = deleteTreeUseCase;
-        this.getTicketUseCase = getTicketUseCase;
-        this.getAllTicketsUseCase = getAllTicketsUseCase;
-        this.printTotalMoneyEarnedUseCase = printTotalMoneyEarnedUseCase;
-        this.scanner = new Scanner(System.in);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    // Flower shop entrypoint
-    private void createFlowerShop() {
-        System.out.print("Enter the name of the flower shop: ");
-        String name = scanner.nextLine();
-        // Implementation of creating a flower shop
-        System.out.println("Flower shop " + name + " created successfully.");
-    }
+    @Override
+    public DecorationDTO get(String decorationId) {
 
-    // Flowers entry points
-    private void addFlower() {
-        System.out.print("Enter flower name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter flower color: ");
-        String color = scanner.nextLine();
-        System.out.print("Enter flower price: ");
-        double price = scanner.nextDouble();
-        System.out.print("Enter flower stock: ");
-        int stock = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        String sql = "SELECT * FROM products WHERE id = ? AND type = 'Decoration'";
 
-        Flower flower = new Flower(name, color, price, stock);
-        this.addFlowerUseCase.exec(flower);
-        System.out.println("Flower added successfully.");
-    }
+        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-    private void deleteFlower() {
-        Collection<Flower> flowers = getAllFlowersUseCase.exec();
-        if (flowers.isEmpty()) {
-            System.out.println("No flowers available to delete.");
-        } else {
-            List<Flower> flowerList = new ArrayList<>(flowers);
-            System.out.println("Select a flower to delete:");
-            for (int i = 0; i < flowerList.size(); i++) {
-                Flower flower = flowerList.get(i);
-                System.out.printf("%d. %s (Color: %s, Price: %.2f, Stock: %d)\n", i + 1, flower.getName(), flower.getColor(), flower.getPrice(), flower.getStock());
+            pstmt.setString(1, decorationId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return new DecorationDTO(
+                        rs.getString("id"),
+                        rs.getString("name"),
+                        Material.valueOf(rs.getString("material")),
+                        rs.getDouble("price"),
+                        rs.getInt("stock")
+                );
             }
 
-            System.out.print("Enter the number of the flower to delete: ");
-            int index = scanner.nextInt() - 1;
-            scanner.nextLine(); // Consume newline
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-            if (index < 0 || index >= flowerList.size()) {
-                System.out.println("Invalid selection. Please try again.");
+    @Override
+    public Collection<DecorationDTO> getAll() {
+
+        String sql = "SELECT * FROM products WHERE type = 'Decoration'";
+        List<DecorationDTO> decorations = new ArrayList<>();
+
+        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                DecorationDTO decoration = new DecorationDTO(
+                        rs.getString("id"),
+                        rs.getString("name"),
+                        Material.valueOf(rs.getString("material")),
+                        rs.getDouble("price"),
+                        rs.getInt("stock")
+                );
+
+                decorations.add(decoration);
+            }
+
+        } catch (SQLException e) {
+            logger.error("SQL Exception occurred while getting all Decorations", e);
+        }
+        return decorations;
+    }
+
+    @Override
+    public void delete(DecorationDTO decorationDTO) {
+        String sql = "DELETE FROM products WHERE id = ? AND type = 'Decoration'";
+
+        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, decorationDTO.id());
+            pstmt.executeUpdate();
+            System.out.println("Decoración eliminada de la base de datos SQL");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // New method to update stock
+    public void updateStock(String decorationId, int newStock) {
+        String sql = "UPDATE products SET stock = ? WHERE id = ? AND type = 'Decoration'";
+
+        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, newStock);
+            pstmt.setString(2, decorationId);
+            pstmt.executeUpdate();
+            System.out.println("Stock actualizado correctamente para la decoración con ID: " + decorationId);
+
+        } catch (SQLException e) {
+            logger.error("SQL Exception occurred while updating the stock for decoration with ID: " + decorationId, e);
+        }
+    }
+    // New method to decrement stock
+    public void decrementStock(String decorationId, int quantityPurchased) {
+        String sql = "UPDATE products SET stock = stock - ? WHERE id = ? AND type = 'Decoration' AND stock >= ?";
+
+        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, quantityPurchased);
+            pstmt.setString(2, decorationId);
+            pstmt.setInt(3, quantityPurchased);
+
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Stock decremented successfully for decoration with ID: " + decorationId);
             } else {
-                Flower flowerToDelete = flowerList.get(index);
-                this.deleteFlowerUseCase.exec(flowerToDelete);
-                System.out.println("Flower deleted successfully.");
-            }
-        }
-    }
-
-    // Trees entry points
-    private void addTree() {
-        System.out.print("Enter tree species: ");
-        String species = scanner.nextLine();
-        System.out.print("Enter tree height: ");
-        double height = scanner.nextDouble();
-        System.out.print("Enter tree price: ");
-        double price = scanner.nextDouble();
-        System.out.print("Enter tree stock: ");
-        int stock = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
-
-        Tree tree = new Tree(species, height, price, stock);
-        this.addTreeUseCase.exec(tree);
-        System.out.println("Tree added successfully.");
-    }
-
-    private void deleteTree() {
-        Collection<Tree> trees = getAllTreesUseCase.exec();
-        if (trees.isEmpty()) {
-            System.out.println("No trees available to delete.");
-        } else {
-            List<Tree> treeList = new ArrayList<>(trees);
-            System.out.println("Select a tree to delete:");
-            for (int i = 0; i < treeList.size(); i++) {
-                Tree tree = treeList.get(i);
-                System.out.printf("%d. %s (Height: %.2f, Price: %.2f, Stock: %d)\n", i + 1, tree.getName(), tree.getHeight(), tree.getPrice(), tree.getStock());
+                System.out.println("Not enough stock to decrement for decoration with ID: " + decorationId);
             }
 
-            System.out.print("Enter the number of the tree to delete: ");
-            int index = scanner.nextInt() - 1;
-            scanner.nextLine(); // Consume newline
-
-            if (index < 0 || index >= treeList.size()) {
-                System.out.println("Invalid selection. Please try again.");
-            } else {
-                Tree treeToDelete = treeList.get(index);
-                this.deleteTreeUseCase.exec(treeToDelete);
-                System.out.println("Tree deleted successfully.");
-            }
+        } catch (SQLException e) {
+            logger.error("SQL Exception occurred while decrementing the stock for decoration with ID: " + decorationId, e);
         }
-    }
-
-    // Decoration entry points
-    private void addDecoration() {
-        System.out.print("Enter decoration name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter decoration material (WOOD/PLASTIC): ");
-        String material = scanner.nextLine().toUpperCase();
-        System.out.print("Enter decoration price: ");
-        double price = scanner.nextDouble();
-        System.out.print("Enter decoration stock: ");
-        int stock = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
-
-        Decoration decoration = new Decoration(name, Material.valueOf(material), price, stock);
-        this.addDecorationUseCase.exec(decoration);
-        System.out.println("Decoration added successfully.");
-    }
-
-    private void deleteDecoration() {
-        Collection<Decoration> decorations = getAllDecorationsUseCase.exec();
-        if (decorations.isEmpty()) {
-            System.out.println("No decorations available to delete.");
-        } else {
-            List<Decoration> decorationList = new ArrayList<>(decorations);
-            System.out.println("Select a decoration to delete:");
-            for (int i = 0; i < decorationList.size(); i++) {
-                Decoration decoration = decorationList.get(i);
-                System.out.printf("%d. %s (Material: %s, Price: %.2f, Stock: %d)\n", i + 1, decoration.getName(), decoration.getMaterial(), decoration.getPrice(), decoration.getStock());
-            }
-
-            System.out.print("Enter the number of the decoration to delete: ");
-            int index = scanner.nextInt() - 1;
-            scanner.nextLine(); // Consume newline
-
-            if (index < 0 || index >= decorationList.size()) {
-                System.out.println("Invalid selection. Please try again.");
-            } else {
-                Decoration decorationToDelete = decorationList.get(index);
-                this.deleteDecorationUseCase.exec(decorationToDelete);
-                System.out.println("Decoration deleted successfully.");
-            }
-        }
-    }
-
-    // Ticket entry points
-    private void createTicket() {
-        List<TicketItem> ticketItems = new ArrayList<>();
-        String ticketId = UUID.randomUUID().toString();
-        boolean addingItems = true;
-
-        while (addingItems) {
-            System.out.println("Select product type to add to the ticket:");
-            System.out.println("1. Flower");
-            System.out.println("2. Tree");
-            System.out.println("3. Decoration");
-            System.out.println("4. Finish and create ticket");
-            System.out.print("Select an option: ");
-            int option = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
-
-            switch (option) {
-                case 1 -> ticketItems.add(selectFlower());
-                case 2 -> ticketItems.add(selectTree());
-                case 3 -> ticketItems.add(selectDecoration());
-                case 4 -> {
-                    addingItems = false;
-                    addTicketUseCase.exec(new Ticket(ticketId, LocalDateTime.now(), ticketItems,0,0));
-                    System.out.println("Ticket created successfully.");
-                }
-                default -> System.out.println("Invalid option. Please try again.");
-            }
-        }
-    }
-
-    private Flower selectFlower() {
-        Collection<Flower> flowers = getAllFlowersUseCase.exec();
-        if (flowers.isEmpty()) {
-            System.out.println("No flowers available.");
-            return null;
-        } else {
-            List<Flower> flowerList = new ArrayList<>(flowers);
-            System.out.println("Select a flower:");
-            for (int i = 0; i < flowerList.size(); i++) {
-                Flower flower = flowerList.get(i);
-                System.out.printf("%d. %s (Color: %s, Price: %.2f, Stock: %d)\n", i + 1, flower.getName(), flower.getColor(), flower.getPrice(), flower.getStock());
-            }
-
-            System.out.print("Enter the number of the flower to select: ");
-            int index = scanner.nextInt() - 1;
-            scanner.nextLine(); // Consume newline
-
-            if (index < 0 || index >= flowerList.size()) {
-                System.out.println("Invalid selection. Please try again.");
-                return selectFlower();
-            } else {
-                Flower flower = flowerList.get(index);
-                System.out.print("Enter the quantity: ");
-                int quantity = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
-
-                if (quantity > flower.getStock()) {
-                    System.out.println("Not enough stock. Please try again.");
-                    return selectFlower();
-                } else {
-                    decrementFlowerStockUseCase.exec(flower.getId(), quantity);
-                    return new Flower(flower.getId(), flower.getName(), flower.getColor(), flower.getPrice(), quantity);
-                }
-            }
-        }
-    }
-
-    private Tree selectTree() {
-        Collection<Tree> trees = getAllTreesUseCase.exec();
-        if (trees.isEmpty()) {
-            System.out.println("No trees available.");
-            return null;
-        } else {
-            List<Tree> treeList = new ArrayList<>(trees);
-            System.out.println("Select a tree:");
-            for (int i = 0; i < treeList.size(); i++) {
-                Tree tree = treeList.get(i);
-                System.out.printf("%d. %s (Height: %.2f, Price: %.2f, Stock: %d)\n", i + 1, tree.getName(), tree.getHeight(), tree.getPrice(), tree.getStock());
-            }
-
-            System.out.print("Enter the number of the tree to select: ");
-            int index = scanner.nextInt() - 1;
-            scanner.nextLine(); // Consume newline
-
-            if (index < 0 || index >= treeList.size()) {
-                System.out.println("Invalid selection. Please try again.");
-                return selectTree();
-            } else {
-                Tree tree = treeList.get(index);
-                System.out.print("Enter the quantity: ");
-                int quantity = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
-
-                if (quantity > tree.getStock()) {
-                    System.out.println("Not enough stock. Please try again.");
-                    return selectTree();
-                } else {
-                    decrementTreeStockUseCase.exec(tree.getId(), quantity);
-                    return new Tree(tree.getId(), tree.getName(), tree.getHeight(), tree.getPrice(), quantity);
-                }
-            }
-        }
-    }
-
-    private Decoration selectDecoration() {
-        Collection<Decoration> decorations = getAllDecorationsUseCase.exec();
-        if (decorations.isEmpty()) {
-            System.out.println("No decorations available.");
-            return null;
-        } else {
-            List<Decoration> decorationList = new ArrayList<>(decorations);
-            System.out.println("Select a decoration:");
-            for (int i = 0; i < decorationList.size(); i++) {
-                Decoration decoration = decorationList.get(i);
-                System.out.printf("%d. %s (Material: %s, Price: %.2f, Stock: %d)\n", i + 1, decoration.getName(), decoration.getMaterial(), decoration.getPrice(), decoration.getStock());
-            }
-
-            System.out.print("Enter the number of the decoration to select: ");
-            int index = scanner.nextInt() - 1;
-            scanner.nextLine(); // Consume newline
-
-            if (index < 0 || index >= decorationList.size()) {
-                System.out.println("Invalid selection. Please try again.");
-                return selectDecoration();
-            } else {
-                Decoration decoration = decorationList.get(index);
-                System.out.print("Enter the quantity: ");
-                int quantity = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
-
-                if (quantity > decoration.getStock()) {
-                    System.out.println("Not enough stock. Please try again.");
-                    return selectDecoration();
-                } else {
-                    decrementDecorationStockUseCase.exec(decoration.getId(), quantity);
-                    return new Decoration(decoration.getId(), decoration.getName(), decoration.getMaterial(), decoration.getPrice(), quantity);
-                }
-            }
-        }
-    }
-
-    // Printing entry points
-    public void printStock() { this.printStockUseCase.exec(); }
-    private void printPurchaseHistory() {
-        Collection<Ticket> tickets = getAllTicketsUseCase.exec();
-        for (Ticket ticket : tickets) {
-            System.out.println(ticket);
-        }
-    }
-    private void printTotalMoneyEarned() {
-        double totalMoneyEarned = printTotalMoneyEarnedUseCase.exec();
-        System.out.printf("Total Money Earned: %.2f\n", totalMoneyEarned);
-    }
-
-    public void displayMenu() {
-        while (true) {
-            System.out.println("Main Menu:");
-            System.out.println("1. Create Flower Shop");
-            System.out.println("2. Add Product (Tree, Flower, Decoration)");
-            System.out.println("3. Show Stock");
-            System.out.println("4. Remove Product (Tree, Flower, Decoration)");
-            System.out.println("5. Print Stock with Quantities");
-            System.out.println("6. Print Total Value of Flower Shop");
-            System.out.println("7. Create Purchase Ticket");
-            System.out.println("8. Show Purchase History");
-            System.out.println("9. View Total Money Earned");
-            System.out.println("10. Exit");
-            System.out.print("Select an option: ");
-
-            int option = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
-
-            switch (option) {
-                case 1 -> createFlowerShop();
-                case 2 -> addProductMenu();
-                case 3 -> removeProductMenu();
-                case 4 -> printStockWithQuantities();
-                case 5 -> printTotalValueOfFlowerShop();
-                case 6 -> createTicket();
-                case 7 -> printPurchaseHistory();
-                case 8 -> printTotalMoneyEarned();
-                case 9 -> {
-                    System.out.println("Exiting...");
-                    return;
-                }
-                default -> System.out.println("Invalid option. Please try again.");
-            }
-        }
-    }
-
-    private void addProductMenu() {
-        System.out.println("Add Product Menu:");
-        System.out.println("1. Add Tree");
-        System.out.println("2. Add Flower");
-        System.out.println("3. Add Decoration");
-        System.out.print("Select an option: ");
-
-        int option = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
-
-        switch (option) {
-            case 1 -> addTree();
-            case 2 -> addFlower();
-            case 3 -> addDecoration();
-            default -> System.out.println("Invalid option. Please try again.");
-        }
-    }
-
-    private void removeProductMenu() {
-        System.out.println("Remove Product Menu:");
-        System.out.println("1. Remove Tree");
-        System.out.println("2. Remove Flower");
-        System.out.println("3. Remove Decoration");
-        System.out.print("Select an option: ");
-
-        int option = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
-
-        switch (option) {
-            case 1 -> deleteTree();
-            case 2 -> deleteFlower();
-            case 3 -> deleteDecoration();
-            default -> System.out.println("Invalid option. Please try again.");
-        }
-    }
-
-    private void printStockWithQuantities() {
-        Collection<Flower> flowers = getAllFlowersUseCase.exec();
-        Collection<Tree> trees = getAllTreesUseCase.exec();
-        Collection<Decoration> decorations = getAllDecorationsUseCase.exec();
-
-        System.out.println("Stock with Quantities:");
-
-        System.out.println("Flowers:");
-        for (Flower flower : flowers) {
-            System.out.printf("Name: %s, Color: %s, Price: %.2f, Stock: %d\n", flower.getName(), flower.getColor(), flower.getPrice(), flower.getStock());
-        }
-
-        System.out.println("Trees:");
-        for (Tree tree : trees) {
-            System.out.printf("Name: %s, Height: %.2f, Price: %.2f, Stock: %d\n", tree.getName(), tree.getHeight(), tree.getPrice(), tree.getStock());
-        }
-
-        System.out.println("Decorations:");
-        for (Decoration decoration : decorations) {
-            System.out.printf("Name: %s, Material: %s, Price: %.2f, Stock: %d\n", decoration.getName(), decoration.getMaterial(), decoration.getPrice(), decoration.getStock());
-        }
-    }
-
-    private void printTotalValueOfFlowerShop() {
-        double totalValue = 0.0;
-
-        Collection<Flower> flowers = getAllFlowersUseCase.exec();
-        Collection<Tree> trees = getAllTreesUseCase.exec();
-        Collection<Decoration> decorations = getAllDecorationsUseCase.exec();
-
-        for (Flower flower : flowers) {
-            totalValue += flower.getPrice() * flower.getStock();
-        }
-
-        for (Tree tree : trees) {
-            totalValue += tree.getPrice() * tree.getStock();
-        }
-
-        for (Decoration decoration : decorations) {
-            totalValue += decoration.getPrice() * decoration.getStock();
-        }
-
-        System.out.printf("Total Value of Flower Shop: %.2f\n", totalValue);
     }
 
 }
