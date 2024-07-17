@@ -407,6 +407,7 @@ public final class CliController {
                 addTreeUseCase.exec(tree);
 
                 System.out.println("Tree added successfully!");
+                setFlowerShop(updateFlowerShopUseCase.exec(getFlowerShop())); // Update the model
                 finishedInput = true;
 
             } catch (InputMismatchException e) {
