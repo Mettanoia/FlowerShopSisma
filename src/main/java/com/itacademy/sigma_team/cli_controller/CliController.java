@@ -4,7 +4,6 @@ import com.itacademy.sigma_team.decorations.use_cases.AddDecorationUseCase;
 import com.itacademy.sigma_team.decorations.use_cases.DeleteDecorationUseCase;
 import com.itacademy.sigma_team.decorations.use_cases.GetAllDecorationsUseCase;
 import com.itacademy.sigma_team.domain.*;
-import com.itacademy.sigma_team.flower_shop.FlowerShop;
 import com.itacademy.sigma_team.flowers.use_cases.AddFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.DeleteFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.GetAllFlowersUseCase;
@@ -25,8 +24,6 @@ import java.util.UUID;
 
 @SuppressWarnings("FieldCanBeLocal")
 public final class CliController {
-
-
 
     //Flowers use cases
     private final AddFlowerUseCase addFlowerUseCase;
@@ -94,13 +91,11 @@ public final class CliController {
     // Ticket entry points
     private void addTicket(Ticket ticket) {
         this.addTicketUseCase.exec(ticket);
-        System.out.println("Ticket created successfully!");
     }
     private void deleteTicket(Ticket ticket) { this.deleteTicketUseCase.exec(ticket); }
 
     // Printing entry points
     public void printStock() {
-        System.out.println("Stock for:");
         this.printStockUseCase.exec();
     }
     private void printPurchaseHistory() {}
@@ -255,10 +250,17 @@ public final class CliController {
 
         System.out.print("Enter decoration ID to delete: ");
         String id = scanner.nextLine();
-        decorations.stream()
+        Decoration decorationToDelete = decorations.stream()
                 .filter(decoration -> decoration.getId().equals(id))
                 .findFirst()
-                .ifPresent(deleteDecorationUseCase::exec);
+                .orElse(null);
+
+        if (decorationToDelete != null) {
+            deleteDecorationUseCase.exec(decorationToDelete);
+            System.out.println("Decoration deleted successfully!");
+        } else {
+            System.out.println("Decoration not found.");
+        }
 
     }
 
@@ -277,11 +279,17 @@ public final class CliController {
 
         System.out.print("Enter flower ID to delete: ");
         String id = scanner.nextLine();
-        flowers.stream()
+        Flower flowerToDelete = flowers.stream()
                 .filter(flower -> flower.getId().equals(id))
                 .findFirst()
-                .ifPresent(deleteFlowerUseCase::exec);
+                .orElse(null);
 
+        if (flowerToDelete != null) {
+            deleteFlowerUseCase.exec(flowerToDelete);
+            System.out.println("Flower deleted successfully!");
+        } else {
+            System.out.println("Flower not found.");
+        }
 
     }
 
@@ -300,11 +308,17 @@ public final class CliController {
 
         System.out.print("Enter tree ID to delete: ");
         String id = scanner.nextLine();
-        trees.stream()
+        Tree treeToDelete = trees.stream()
                 .filter(tree -> tree.getId().equals(id))
                 .findFirst()
-                .ifPresent(deleteTreeUseCase::exec);
+                .orElse(null);
 
+        if (treeToDelete != null) {
+            deleteTreeUseCase.exec(treeToDelete);
+            System.out.println("Tree deleted successfully!");
+        } else {
+            System.out.println("Tree not found.");
+        }
 
     }
 

@@ -174,7 +174,7 @@ public final class App {
 
         );
 
-        cliController.printStock();
+        cliController.displayMenu();
 
     }
 
