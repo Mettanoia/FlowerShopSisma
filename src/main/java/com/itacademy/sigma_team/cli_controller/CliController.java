@@ -115,27 +115,57 @@ public final class CliController {
     private void printBenefits() {}
 
     public void displayMenu() {
+        final String ANSI_RESET = "\u001B[0m";
+        final String ANSI_RED = "\u001B[31m";
+        final String ANSI_GREEN = "\u001B[32m";
+        final String ANSI_YELLOW = "\u001B[33m";
+        final String ANSI_BLUE = "\u001B[34m";
+        final String ANSI_PURPLE = "\u001B[35m";
+        final String ANSI_CYAN = "\u001B[36m";
+
         while (true) {
+            clearConsole();
 
-            System.out.println("Main Menu:");
-            System.out.println("1. Create Flower Shop");
-            System.out.println("2. Add Tree");
-            System.out.println("3. Add Flower");
-            System.out.println("4. Add Decoration");
-            System.out.println("5. Show Stock");
-            System.out.println("6. Remove Tree");
-            System.out.println("7. Remove Flower");
-            System.out.println("8. Remove Decoration");
-            System.out.println("9. Print Stock with Quantities");
-            System.out.println("10. Print Total Value of Flower Shop");
-            System.out.println("11. Create Purchase Ticket");
-            System.out.println("12. Show Purchase History");
-            System.out.println("13. View Total Money Earned");
-            System.out.println("14. Exit");
-            System.out.print("Select an option: ");
+            String frameColor = ANSI_BLUE;
+            System.out.println(frameColor + "╔═════════════════════════════════╗" + ANSI_RESET);
+            System.out.println(frameColor + "║" + ANSI_RESET + ANSI_CYAN + "           Main Menu             " + frameColor + "║" + ANSI_RESET);
+            System.out.println(frameColor + "╠═════════════════════════════════╣" + ANSI_RESET);
+            System.out.println(frameColor + "║" + ANSI_RESET + ANSI_GREEN + " 1. Create Flower Shop           " + frameColor + "║" + ANSI_RESET);
+            System.out.println(frameColor + "║" + ANSI_RESET + ANSI_GREEN + " 2. Add Tree                     " + frameColor + "║" + ANSI_RESET);
+            System.out.println(frameColor + "║" + ANSI_RESET + ANSI_GREEN + " 3. Add Flower                   " + frameColor + "║" + ANSI_RESET);
+            System.out.println(frameColor + "║" + ANSI_RESET + ANSI_GREEN + " 4. Add Decoration               " + frameColor + "║" + ANSI_RESET);
+            System.out.println(frameColor + "║" + ANSI_RESET + ANSI_GREEN + " 5. Show Stock                   " + frameColor + "║" + ANSI_RESET);
+            System.out.println(frameColor + "║" + ANSI_RESET + ANSI_GREEN + " 6. Remove Tree                  " + frameColor + "║" + ANSI_RESET);
+            System.out.println(frameColor + "║" + ANSI_RESET + ANSI_GREEN + " 7. Remove Flower                " + frameColor + "║" + ANSI_RESET);
+            System.out.println(frameColor + "║" + ANSI_RESET + ANSI_GREEN + " 8. Remove Decoration            " + frameColor + "║" + ANSI_RESET);
+            System.out.println(frameColor + "║" + ANSI_RESET + ANSI_GREEN + " 9. Print Stock with Quantities  " + frameColor + "║" + ANSI_RESET);
+            System.out.println(frameColor + "║" + ANSI_RESET + ANSI_GREEN + "10. Print Total Value of Shop    " + frameColor + "║" + ANSI_RESET);
+            System.out.println(frameColor + "║" + ANSI_RESET + ANSI_GREEN + "11. Create Purchase Ticket       " + frameColor + "║" + ANSI_RESET);
+            System.out.println(frameColor + "║" + ANSI_RESET + ANSI_GREEN + "12. Show Purchase History        " + frameColor + "║" + ANSI_RESET);
+            System.out.println(frameColor + "║" + ANSI_RESET + ANSI_GREEN + "13. View Total Money Earned      " + frameColor + "║" + ANSI_RESET);
+            System.out.println(frameColor + "║" + ANSI_RESET + ANSI_RED + "14. Exit                         " + frameColor + "║" + ANSI_RESET);
+            System.out.println(frameColor + "╚═════════════════════════════════╝" + ANSI_RESET);
+            System.out.print(ANSI_CYAN + "Select an option: " + ANSI_RESET);
 
-            int option = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            int option = -1;
+            boolean validInput = false;
+
+            while (!validInput) {
+                if (scanner.hasNextInt()) {
+                    option = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline
+                    if (option >= 1 && option <= 14) {
+                        validInput = true;
+                    } else {
+                        System.out.println(ANSI_RED + "Invalid option. Please try again." + ANSI_RESET);
+                        System.out.print(ANSI_CYAN + "Select an option: " + ANSI_RESET);
+                    }
+                } else {
+                    System.out.println(ANSI_RED + "Invalid input. Please enter a number." + ANSI_RESET);
+                    System.out.print(ANSI_CYAN + "Select an option: " + ANSI_RESET);
+                    scanner.next(); // Consume the invalid input
+                }
+            }
 
             switch (option) {
                 case 1 -> createFlowerShop();
@@ -151,13 +181,29 @@ public final class CliController {
                 case 12 -> printPurchaseHistory();
                 case 13 -> printBenefits(); // Assuming this method also prints total money earned
                 case 14 -> {
-                    System.out.println("Exiting...");
+                    System.out.println(ANSI_RED + "Exiting..." + ANSI_RESET);
                     return;
                 }
-                default -> System.out.println("Invalid option. Please try again.");
+                default -> System.out.println(ANSI_RED + "This should never happen." + ANSI_RESET);
             }
         }
     }
+
+    // Method to clear the console
+    public void clearConsole() {
+        try {
+            if (System.getProperty("os.name").contains("Windows")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+            }
+        } catch (Exception e) {
+            System.out.println("Error clearing console: " + e.getMessage());
+        }
+    }
+
+
 
     private void createTicketMenu() {
 
@@ -325,17 +371,17 @@ public final class CliController {
                 throw new IllegalStateException("No trees available to delete.");
             }
 
-        System.out.println("Available trees:");
-        for (Tree tree : trees) {
-            System.out.println(tree);
-        }
+            System.out.println("Available trees:");
+            for (Tree tree : trees) {
+                System.out.println(tree);
+            }
 
-        System.out.print("Enter tree ID to delete: ");
-        String id = scanner.nextLine();
-        Tree treeToDelete = trees.stream()
-                .filter(tree -> tree.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+            System.out.print("Enter tree ID to delete: ");
+            String id = scanner.nextLine();
+            Tree treeToDelete = trees.stream()
+                    .filter(tree -> tree.getId().equals(id))
+                    .findFirst()
+                    .orElse(null);
 
             if (treeToDelete != null) {
                 deleteTreeUseCase.exec(treeToDelete);
@@ -355,6 +401,7 @@ public final class CliController {
     }
 
     private void addDecorationMenu(AddDecorationUseCase addDecorationUseCase) {
+
         System.out.println("Enter decoration details:");
         System.out.print("Enter decoration ID: ");
         String id = scanner.nextLine();
@@ -392,6 +439,7 @@ public final class CliController {
 
         Flower flower = new Flower(id, name, color, price, stock);
         addFlowerUseCase.exec(flower);
+
         setFlowerShop(updateFlowerShopUseCase.exec(getFlowerShop())); // Update the model
         System.out.println("Flower added successfully!");
 
