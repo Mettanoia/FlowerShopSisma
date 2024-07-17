@@ -249,61 +249,71 @@ public final class CliController {
     }
 
     private void deleteDecorationMenu(DeleteDecorationUseCase deleteDecorationUseCase, GetAllDecorationsUseCase getAllDecorationsUseCase) {
+        try {
+            List<Decoration> decorations = List.copyOf(getAllDecorationsUseCase.exec());
+            if (decorations.isEmpty()) {
+                throw new IllegalStateException("No decorations available to delete.");
+            }
 
-        List<Decoration> decorations = (List<Decoration>) getAllDecorationsUseCase.exec();
-        if (decorations.isEmpty()) {
-            System.out.println("No decorations available to delete.");
-            return;
+            System.out.println("Available decorations:");
+            for (Decoration decoration : decorations) {
+                System.out.println(decoration);
+            }
+
+            System.out.print("Enter decoration ID to delete: ");
+            String id = scanner.nextLine();
+            Decoration decorationToDelete = decorations.stream()
+                    .filter(decoration -> decoration.getId().equals(id))
+                    .findFirst()
+                    .orElse(null);
+
+            if (decorationToDelete != null) {
+                deleteDecorationUseCase.exec(decorationToDelete);
+                System.out.println("Decoration deleted successfully!");
+            } else {
+                System.out.println("Decoration not found.");
+            }
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+        } catch (NoSuchElementException e) {
+            System.out.println("Invalid input. Please enter a valid decoration ID.");
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
         }
-
-        System.out.println("Available decorations:");
-        for (Decoration decoration : decorations) {
-            System.out.println(decoration); // Assuming Decoration has a proper toString implementation
-        }
-
-        System.out.print("Enter decoration ID to delete: ");
-        String id = scanner.nextLine();
-        Decoration decorationToDelete = decorations.stream()
-                .filter(decoration -> decoration.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-
-        if (decorationToDelete != null) {
-            deleteDecorationUseCase.exec(decorationToDelete);
-            System.out.println("Decoration deleted successfully!");
-        } else {
-            System.out.println("Decoration not found.");
-        }
-
     }
 
     private void deleteFlowerMenu(DeleteFlowerUseCase deleteFlowerUseCase, GetAllFlowersUseCase getAllFlowersUseCase) {
+        try {
+            List<Flower> flowers = List.copyOf(getAllFlowersUseCase.exec());
+            if (flowers.isEmpty()) {
+                throw new IllegalStateException("No flowers available to delete.");
+            }
 
-        List<Flower> flowers = (List<Flower>) getAllFlowersUseCase.exec();
-        if (flowers.isEmpty()) {
-            System.out.println("No flowers available to delete.");
-            return;
+            System.out.println("Available flowers:");
+            for (Flower flower : flowers) {
+                System.out.println(flower);
+            }
+
+            System.out.print("Enter flower ID to delete: ");
+            String id = scanner.nextLine();
+            Flower flowerToDelete = flowers.stream()
+                    .filter(flower -> flower.getId().equals(id))
+                    .findFirst()
+                    .orElse(null);
+
+            if (flowerToDelete != null) {
+                deleteFlowerUseCase.exec(flowerToDelete);
+                System.out.println("Flower deleted successfully!");
+            } else {
+                System.out.println("Flower not found.");
+            }
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+        } catch (NoSuchElementException e) {
+            System.out.println("Invalid input. Please enter a valid flower ID.");
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
         }
-
-        System.out.println("Available flowers:");
-        for (Flower flower : flowers) {
-            System.out.println(flower);
-        }
-
-        System.out.print("Enter flower ID to delete: ");
-        String id = scanner.nextLine();
-        Flower flowerToDelete = flowers.stream()
-                .filter(flower -> flower.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-
-        if (flowerToDelete != null) {
-            deleteFlowerUseCase.exec(flowerToDelete);
-            System.out.println("Flower deleted successfully!");
-        } else {
-            System.out.println("Flower not found.");
-        }
-
     }
 
     private void deleteTreeMenu(DeleteTreeUseCase deleteTreeUseCase, GetAllTreesUseCase getAllTreesUseCase) {
