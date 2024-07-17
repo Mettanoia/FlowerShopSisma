@@ -461,33 +461,35 @@ public final class CliController {
         boolean finishedInput = false;
         while (!finishedInput) {
             try {
-                System.out.println("Enter flower details:");
+                System.out.println(ANSI_BLUE + "Enter flower details:" + ANSI_RESET);
 
-                System.out.print("Enter flower name: ");
+                System.out.print(ANSI_CYAN + "Enter flower name: " + ANSI_RESET);
                 String name = scanner.nextLine();
 
-                System.out.print("Enter flower color: ");
+                System.out.print(ANSI_CYAN + "Enter flower color: " + ANSI_RESET);
                 String color = scanner.nextLine();
 
-                System.out.print("Enter flower price: ");
+                System.out.print(ANSI_CYAN + "Enter flower price: " + ANSI_RESET);
                 double price = scanner.nextDouble();
 
-                System.out.print("Enter flower stock: ");
+                System.out.print(ANSI_CYAN + "Enter flower stock: " + ANSI_RESET);
                 int stock = scanner.nextInt();
-
-                scanner.nextLine();
+                scanner.nextLine(); // Consume newline
 
                 Flower flower = new Flower(name, color, price, stock);
                 addFlowerUseCase.exec(flower);
 
                 setFlowerShop(updateFlowerShopUseCase.exec(getFlowerShop())); // Update the model
-                System.out.println("Flower added successfully!");
+
+                System.out.println(ANSI_GREEN + "Flower added successfully!" + ANSI_RESET);
 
                 finishedInput = true;
 
             } catch (InputMismatchException e) {
-                System.out.println("Invalid input format. Please try again.");
+                System.out.println(ANSI_RED + "Invalid input format. Please try again." + ANSI_RESET);
                 scanner.nextLine(); // Clear the buffer
+            } catch (Exception e) {
+                System.out.println(ANSI_RED + "An error occurred: " + e.getMessage() + ANSI_RESET);
             }
 
         }
