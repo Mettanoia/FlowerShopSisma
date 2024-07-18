@@ -428,7 +428,11 @@ public final class CliController {
 
             System.out.println("Available trees:");
             for (Tree tree : trees) {
-                System.out.println(tree);
+                System.out.println(" - " + ANSI_PURPLE + "ID: " + ANSI_RESET + tree.getId() + ", " +
+                        ANSI_GREEN + "Name: " + ANSI_RESET + tree.getName() + ", " +
+                        ANSI_CYAN + "Height: " + ANSI_RESET + tree.getHeight() + ", " +
+                        ANSI_YELLOW + "Price: " + ANSI_RESET + "€" + tree.getPrice() + ", " +
+                        ANSI_RED + "Stock: " + ANSI_RESET + tree.getStock());
             }
 
             System.out.print("Enter tree ID to delete: ");

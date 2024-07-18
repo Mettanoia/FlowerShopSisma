@@ -19,7 +19,7 @@ public final class TreeSqlRepository implements TreeGateway {
     @Override
     public void add(TreeDTO treeDTO) {
 
-        String sql = "INSERT INTO products (id, name, color, height, material, price, stock, ticketId, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO products (id, name, color, height, material, price, stock, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -31,8 +31,7 @@ public final class TreeSqlRepository implements TreeGateway {
             pstmt.setNull(5, Types.VARCHAR); // material
             pstmt.setDouble(6, treeDTO.price());
             pstmt.setInt(7, treeDTO.stock());
-            pstmt.setString(8, null);
-            pstmt.setString(9, "Tree");      // Discriminator
+            pstmt.setString(8, "Tree");      // Discriminator
 
             pstmt.executeUpdate();
             System.out.println("Tree inserted into SQL database");
