@@ -32,52 +32,38 @@ public final class UpdateFlowerShopUseCase {
             return new FlowerShop.FlowerShopBuilder(flowerShop.name)
 
                     .flowers(
-                            updateCollection(
-                                    flowerShop.flowers,
-                                    flowerGateway.getAll().stream()
-                                            .map(FlowerMapper::toDomain)
-                                            .collect(Collectors.toSet())
-                            )
+
+                            flowerGateway.getAll().stream()
+                                    .map(FlowerMapper::toDomain)
+                                    .collect(Collectors.toSet())
+
                     )
 
                     .trees(
-                            updateCollection(
-                                    flowerShop.trees,
-                                    treeGateway.getAll().stream()
-                                            .map(TreeMapper::toDomain)
-                                            .collect(Collectors.toSet())
-                            )
+
+
+                            treeGateway.getAll().stream()
+                                    .map(TreeMapper::toDomain)
+                                    .collect(Collectors.toSet())
+
                     )
 
                     .decorations(
-                            updateCollection(
-                                    flowerShop.decorations,
-                                    decorationGateway.getAll().stream()
-                                            .map(DecorationMapper::toDomain)
-                                            .collect(Collectors.toSet())
-                            )
+
+                            decorationGateway.getAll().stream()
+                                    .map(DecorationMapper::toDomain)
+                                    .collect(Collectors.toSet())
+
                     )
 
                     .build();
 
         } catch (IOException e) {
-            throw new RuntimeException(e); // TODO sONIA arregla esto y ponle exceptions
-        }
-    }
-
-    private <T> Collection<T> updateCollection(Collection<T> original, Collection<T> updated) {
-
-        Set<T> originalSet = new HashSet<>(original);
-        Set<T> updatedSet = new HashSet<>(updated);
-
-        if (updatedSet.size() < originalSet.size()) {
-            originalSet.retainAll(updatedSet);
-        } else if (updatedSet.size() > originalSet.size()) {
-            originalSet.addAll(updatedSet);
+            throw new RuntimeException(e);
         }
 
-        return originalSet;
-
     }
+
+
 
 }
