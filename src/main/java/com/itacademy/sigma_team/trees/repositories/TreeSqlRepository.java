@@ -137,28 +137,7 @@ public final class TreeSqlRepository implements TreeGateway {
         }
 
     }
-    // New method to decrement stock
-    public void decrementStock(String treeId, int quantityPurchased) {
-        String sql = "UPDATE products SET stock = stock - ? WHERE id = ? AND type = 'Tree' AND stock >= ?";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, quantityPurchased);
-            pstmt.setString(2, treeId);
-            pstmt.setInt(3, quantityPurchased);
-
-            int rowsAffected = pstmt.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Stock decremented successfully for tree with ID: " + treeId);
-            } else {
-                System.out.println("Not enough stock to decrement for tree with ID: " + treeId);
-            }
-
-        } catch (SQLException e) {
-            logger.error("SQL Exception occurred while decrementing the stock for tree with ID: " + treeId, e);
-        }
-    }
 
 
 }
