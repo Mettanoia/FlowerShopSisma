@@ -1,9 +1,11 @@
 package com.itacademy.sigma_team.domain;
 
+import com.itacademy.sigma_team.dtos.TicketItem;
+
 import java.util.UUID;
 import java.util.function.Function;
 
-public final class Flower implements Buyable {
+public final class Flower implements Buyable, Product {
 
     private final String id;
     private final String name;

@@ -1,5 +1,6 @@
 package com.itacademy.sigma_team.flowers.repositories;
 
+import com.itacademy.sigma_team.H2DatabaseConnection;
 import com.itacademy.sigma_team.dtos.FlowerDTO;
 import com.itacademy.sigma_team.flowers.use_cases.FlowerGateway;
 import com.itacademy.sigma_team.tickets.repositories.TicketSqlRepository;
@@ -18,9 +19,9 @@ public final class FlowerSqlRepository implements FlowerGateway {
     @Override
     public void add(FlowerDTO flowerDTO) {
 
-        String sql = "INSERT INTO products (id, name, color, height, material, price, stock, ticketId, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO products (id, name, color, height, material, price, stock, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, flowerDTO.id());
@@ -30,8 +31,7 @@ public final class FlowerSqlRepository implements FlowerGateway {
             pstmt.setNull(5, Types.VARCHAR); // material
             pstmt.setDouble(6, flowerDTO.price());
             pstmt.setInt(7, flowerDTO.stock());
-            pstmt.setString(8, null);
-            pstmt.setString(9, "Flower");    // Discriminator
+            pstmt.setString(8, "Flower");    // Discriminator
 
             pstmt.executeUpdate();
             System.out.println("Flor insertada en la base de datos SQL");
@@ -39,12 +39,13 @@ public final class FlowerSqlRepository implements FlowerGateway {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
 
     public void decrementStock(String flowerId, int quantityPurchased) {
         String sql = "UPDATE products SET stock = stock - ? WHERE id = ? AND type = 'Flower' AND stock >= ?";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, quantityPurchased);
@@ -69,7 +70,7 @@ public final class FlowerSqlRepository implements FlowerGateway {
 
         String sql = "SELECT * FROM products WHERE id = ? AND type = 'Flower'";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, flowerId);
@@ -98,7 +99,8 @@ public final class FlowerSqlRepository implements FlowerGateway {
         String sql = "SELECT * FROM products WHERE type = 'Flower'";
         List<FlowerDTO> flowers = new ArrayList<>();
 
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+        try (Connection conn = H2DatabaseConnection.getConnection();
+
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 
@@ -128,7 +130,7 @@ public final class FlowerSqlRepository implements FlowerGateway {
 
         String sql = "DELETE FROM products WHERE id = ? AND type = 'Flower'";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, flowerDTO.id());

@@ -1,5 +1,6 @@
 package com.itacademy.sigma_team.decorations.repositories;
 
+import com.itacademy.sigma_team.H2DatabaseConnection;
 import com.itacademy.sigma_team.domain.Material;
 import com.itacademy.sigma_team.decorations.use_cases.DecorationGateway;
 import com.itacademy.sigma_team.dtos.DecorationDTO;
@@ -14,14 +15,14 @@ import java.util.List;
 
 public final class DecorationSqlRepository implements DecorationGateway {
 
-    private static final Logger logger = LoggerFactory.getLogger(TicketSqlRepository.class);
+    private static final Logger logger = LoggerFactory.getLogger(DecorationSqlRepository.class);
 
     @Override
     public void add(DecorationDTO decorationDTO) {
 
-        String sql = "INSERT INTO products (id, name, color, height, material, price, stock, ticketId, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO products (id, name, color, height, material, price, stock, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, decorationDTO.id());
@@ -31,8 +32,7 @@ public final class DecorationSqlRepository implements DecorationGateway {
             pstmt.setString(5, decorationDTO.material().name());
             pstmt.setDouble(6, decorationDTO.price());
             pstmt.setInt(7, decorationDTO.stock());
-            pstmt.setString(8, null);
-            pstmt.setString(9, "Decoration"); // Discriminator
+            pstmt.setString(8, "Decoration"); // Discriminator
 
             pstmt.executeUpdate();
             System.out.println("Decoración insertada en la base de datos SQL");
@@ -44,7 +44,7 @@ public final class DecorationSqlRepository implements DecorationGateway {
     public void decrementStock(String decorationId, int quantityPurchased) {
         String sql = "UPDATE products SET stock = stock - ? WHERE id = ? AND type = 'Decoration' AND stock >= ?";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, quantityPurchased);
@@ -68,7 +68,7 @@ public final class DecorationSqlRepository implements DecorationGateway {
 
         String sql = "SELECT * FROM products WHERE id = ? AND type = 'Decoration'";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, decorationId);
@@ -96,7 +96,7 @@ public final class DecorationSqlRepository implements DecorationGateway {
         String sql = "SELECT * FROM products WHERE type = 'Decoration'";
         List<DecorationDTO> decorations = new ArrayList<>();
 
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 
@@ -120,9 +120,10 @@ public final class DecorationSqlRepository implements DecorationGateway {
 
     @Override
     public void delete(DecorationDTO decorationDTO) {
+
         String sql = "DELETE FROM products WHERE id = ? AND type = 'Decoration'";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, decorationDTO.id());

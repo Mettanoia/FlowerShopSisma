@@ -1,5 +1,6 @@
 package com.itacademy.sigma_team.trees.repositories;
 
+import com.itacademy.sigma_team.H2DatabaseConnection;
 import com.itacademy.sigma_team.tickets.repositories.TicketSqlRepository;
 import com.itacademy.sigma_team.trees.use_cases.TreeGateway;
 import com.itacademy.sigma_team.dtos.TreeDTO;
@@ -20,7 +21,7 @@ public final class TreeSqlRepository implements TreeGateway {
 
         String sql = "INSERT INTO products (id, name, color, height, material, price, stock, ticketId, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, treeDTO.id());
@@ -43,7 +44,7 @@ public final class TreeSqlRepository implements TreeGateway {
     public void decrementStock(String treeId, int quantityPurchased) {
         String sql = "UPDATE products SET stock = stock - ? WHERE id = ? AND type = 'Tree' AND stock >= ?";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, quantityPurchased);
@@ -67,7 +68,7 @@ public final class TreeSqlRepository implements TreeGateway {
 
         String sql = "SELECT * FROM products WHERE id = ? AND type = 'Tree'";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, treeId);
@@ -95,7 +96,7 @@ public final class TreeSqlRepository implements TreeGateway {
         String sql = "SELECT * FROM products WHERE type = 'Tree'";
         List<TreeDTO> trees = new ArrayList<>();
 
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 
@@ -124,7 +125,7 @@ public final class TreeSqlRepository implements TreeGateway {
 
         String sql = "DELETE FROM products WHERE id = ? AND type = 'Tree'";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb");
+        try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, treeDTO.id());
