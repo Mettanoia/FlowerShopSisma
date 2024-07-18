@@ -98,3 +98,5 @@ test
 
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all
+/src/main/resources/testdb.mv.db
+/src/main/resources/testdb.trace.db

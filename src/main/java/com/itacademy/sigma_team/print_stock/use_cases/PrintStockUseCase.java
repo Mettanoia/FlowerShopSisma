@@ -25,33 +25,37 @@ public final class PrintStockUseCase {
 
         System.out.println(ANSI_GREEN + "Flowers:" + ANSI_RESET);
         for (Flower flower : flowerShop.flowers) {
+            String stockColor = flower.getStock() > 0 ? ANSI_PURPLE : ANSI_RED;
             System.out.println(" - " + ANSI_PURPLE + "Name: " + ANSI_RESET + flower.getName() + ", " +
                     ANSI_PURPLE + "Color: " + ANSI_RESET + flower.getColor() + ", " +
                     ANSI_PURPLE + "Price: " + ANSI_RESET + "€" + flower.calculatePrice() + ", " +
-                    ANSI_PURPLE + "Stock: " + ANSI_RESET + flower.getStock());
+                    stockColor + "Stock: " + ANSI_RESET + flower.getStock());
         }
         System.out.println();
 
         System.out.println(ANSI_GREEN + "Trees:" + ANSI_RESET);
         for (Tree tree : flowerShop.trees) {
+            String stockColor = tree.getStock() > 0 ? ANSI_YELLOW : ANSI_RED;
             System.out.println(" - " + ANSI_YELLOW + "Name: " + ANSI_RESET + tree.getName() + ", " +
                     ANSI_YELLOW + "Height: " + ANSI_RESET + tree.getHeight() + " meters, " +
                     ANSI_YELLOW + "Price: " + ANSI_RESET + "€" + tree.calculatePrice() + ", " +
-                    ANSI_YELLOW + "Stock: " + ANSI_RESET + tree.getStock());
+                    stockColor + "Stock: " + ANSI_RESET + tree.getStock());
         }
         System.out.println();
 
         System.out.println(ANSI_GREEN + "Decorations:" + ANSI_RESET);
         for (Decoration decoration : flowerShop.decorations) {
+            String stockColor = decoration.getStock() > 0 ? ANSI_CYAN : ANSI_RED;
             System.out.println(" - " + ANSI_CYAN + "Name: " + ANSI_RESET + decoration.getName() + ", " +
                     ANSI_CYAN + "Material: " + ANSI_RESET + decoration.getMaterial() + ", " +
                     ANSI_CYAN + "Price: " + ANSI_RESET + "€" + decoration.calculatePrice() + ", " +
-                    ANSI_CYAN + "Stock: " + ANSI_RESET + decoration.getStock());
+                    stockColor + "Stock: " + ANSI_RESET + decoration.getStock());
         }
         System.out.println();
 
         System.out.print(ANSI_YELLOW + "Press any key to continue..." + ANSI_RESET);
         scanner.nextLine(); // Wait for user input
+
 
 
     }

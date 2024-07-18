@@ -19,7 +19,7 @@ public final class FlowerSqlRepository implements FlowerGateway {
     @Override
     public void add(FlowerDTO flowerDTO) {
 
-        String sql = "INSERT INTO products (id, name, color, height, material, price, stock, ticketId, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO products (id, name, color, height, material, price, stock, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -31,8 +31,7 @@ public final class FlowerSqlRepository implements FlowerGateway {
             pstmt.setNull(5, Types.VARCHAR); // material
             pstmt.setDouble(6, flowerDTO.price());
             pstmt.setInt(7, flowerDTO.stock());
-            pstmt.setString(8, null);
-            pstmt.setString(9, "Flower");    // Discriminator
+            pstmt.setString(8, "Flower");    // Discriminator
 
             pstmt.executeUpdate();
             System.out.println("Flor insertada en la base de datos SQL");

@@ -52,9 +52,9 @@ public final class CliController {
     // FlowerShop use case
     private final UpdateFlowerShopUseCase updateFlowerShopUseCase;
 
+    // Utilities
     private final Scanner scanner;
     private FlowerShop flowerShop;
-
 
     public CliController(AddFlowerUseCase addFlowerUseCase, DeleteFlowerUseCase deleteFlowerUseCase, GetAllFlowersUseCase getAllFlowersUseCase, AddDecorationUseCase addDecorationUseCase, DeleteDecorationUseCase deleteDecorationUseCase, GetAllDecorationsUseCase getAllDecorationsUseCase, PrintStockUseCase printStockUseCase, AddTreeUseCase addTreeUseCase, GetAllTreesUseCase getAllTreesUseCase, AddTicketUseCase addTicketUseCase, DeleteTicketUseCase deleteTicketUseCase, DeleteTreeUseCase deleteTreeUseCase, GetTicketUseCase getTicketUseCase, GetAllTicketsUseCase getAllTicketsUseCase, UpdateFlowerShopUseCase updateFlowerShopUseCase, Scanner scanner, FlowerShop flowerShop) {
         this.addFlowerUseCase = addFlowerUseCase;
@@ -84,34 +84,58 @@ public final class CliController {
         this.flowerShop = flowerShop;
     }
 
-    // Flower show entrypoint
     private void createFlowerShop(){}
-
-    // Flowers entry points
-    private void addFlower(Flower flower) {
-        this.addFlowerUseCase.exec(flower);
-    }
-    private void deleteFlower(Flower flower) { this.deleteFlowerUseCase.exec(flower); }
-
-    // Trees entry points
-    private void addTree(Tree tree) { this.addTreeUseCase.exec(tree); }
-    private void deleteTree(Tree tree) { this.deleteTreeUseCase.exec(tree); }
-
-    // Decoration entry points
-    private void addDecoration(Decoration decoration) { this.addDecorationUseCase.exec(decoration); }
-
-
-    // Ticket entry points
-    private void addTicket(Ticket ticket) {
-        this.addTicketUseCase.exec(ticket);
-    }
-    private void deleteTicket(Ticket ticket) { this.deleteTicketUseCase.exec(ticket); }
 
     // Printing entry points
     public void printStock() {
         this.printStockUseCase.exec(getFlowerShop());
     }
-    private void printPurchaseHistory() {}
+
+    private void printPurchaseHistory() {
+        List<Ticket> tickets = List.copyOf(getAllTicketsUseCase.exec());
+        for (Ticket ticket : tickets) {
+            printTicket(ticket);
+        }
+        System.out.print(ANSI_YELLOW + "Press any key to continue..." + ANSI_RESET);
+        scanner.nextLine(); // Wait for user input
+    }
+
+    private void printTicket(Ticket ticket) {
+        System.out.println(ANSI_BLUE + "Ticket ID: " + ANSI_RESET + ticket.getId());
+        System.out.println(ANSI_BLUE + "Date: " + ANSI_RESET + ticket.getDateTime());
+        System.out.println(ANSI_BLUE + "Items:" + ANSI_RESET);
+
+        double total = 0.0;
+
+        for (Product item : ticket.getItems()) {
+            total += printItem(item);
+        }
+
+        System.out.println(ANSI_GREEN + "Total: €" + total + ANSI_RESET);
+        System.out.println("=".repeat(50));
+    }
+
+    private double printItem(Product item) {
+        double price = Product.getPrice(item);
+        int stock = Product.getStock(item);
+        double totalPrice = price * stock;
+
+        System.out.printf(
+                ANSI_CYAN + "ID: " + ANSI_RESET + "%s, " +
+                        ANSI_GREEN + "Name: " + ANSI_RESET + "%s, " +
+                        ANSI_YELLOW + "Price: " + ANSI_RESET + "€%.2f, " +
+                        ANSI_RED + "Quantity: " + ANSI_RESET + "%d, " +
+                        ANSI_PURPLE + "Total Price: " + ANSI_RESET + "€%.2f\n",
+                Product.getId(item),
+                Product.getName(item),
+                price,
+                stock,
+                totalPrice
+        );
+
+        return totalPrice;
+    }
+
     private void printBenefits() {}
 
     private static final String ANSI_RESET = "\u001B[0m";
@@ -224,15 +248,18 @@ public final class CliController {
 
         Ticket ticket = new Ticket(UUID.randomUUID().toString(), LocalDateTime.now(), selectedItems);
         this.addTicketUseCase.exec(ticket);
-
+        setFlowerShop(updateFlowerShopUseCase.exec(getFlowerShop()));
         System.out.println("Ticket created successfully!");
 
     }
 
     private void selectItems(List<Product> items, List<Product> selectedItems) {
 
-        while (true) {
+        final String ANSI_RESET = "\u001B[0m";
+        final String ANSI_RED = "\u001B[31m";
 
+        while (true) {
+            System.out.println("Enter the number of the product to add to the ticket (type 'done' when finished):");
             String input = scanner.nextLine();
 
             if (input.equalsIgnoreCase("done")) {
@@ -240,89 +267,109 @@ public final class CliController {
             }
 
             try {
-
                 int index = Integer.parseInt(input) - 1;
 
                 if (index >= 0 && index < items.size()) {
+                    Product product = items.get(index);
 
-                    selectedItems.add(items.get(index));
-                    System.out.println(items.get(index).getClass().getSimpleName() + " added to ticket.");
-
+                    if (Product.getStock(product) > 0) {
+                        selectedItems.add(product);
+                        System.out.println(product.getClass().getSimpleName() + " added to ticket.");
+                    } else {
+                        System.out.println(ANSI_RED + "Cannot select a product with zero stock." + ANSI_RESET);
+                    }
                 } else {
                     System.out.println("Invalid selection. Please try again.");
                 }
-
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a number or 'done'.");
             }
 
+            // Debugging: print the selected items so far
+            System.out.println("Selected items so far:");
+            for (int i = 0; i < selectedItems.size(); i++) {
+                Product selectedItem = selectedItems.get(i);
+                System.out.println((i + 1) + ". " + Product.getName(selectedItem) + " - Stock: " + Product.getStock(selectedItem));
+            }
         }
-
     }
 
     private void printProductDetails(List<Product> products) {
 
+        final String ANSI_RESET = "\u001B[0m";
+        final String ANSI_RED = "\u001B[31m";
+
         for (int i = 0; i < products.size(); i++) {
 
             Product product = products.get(i);
-            String details = switch (product.getClass().getSimpleName()) {
+            String stockColor = Product.getStock(product) > 0 ? ANSI_RESET : ANSI_RED;
 
+            String details = switch (product.getClass().getSimpleName()) {
                 case "Flower" -> {
                     Flower flower = (Flower) product;
-                    yield (i + 1) + ". " + flower.getName() + " - Color: " + flower.getColor() + " - €" + flower.getPrice();
+                    yield (i + 1) + ". " + flower.getName() + " - Color: " + flower.getColor() + " - €" + flower.getPrice() + " - " + stockColor + "Stock: " + flower.getStock() + ANSI_RESET;
                 }
-
                 case "Tree" -> {
                     Tree tree = (Tree) product;
-                    yield (i + 1) + ". " + tree.getName() + " - Height: " + tree.getHeight() + "m - €" + tree.getPrice();
+                    yield (i + 1) + ". " + tree.getName() + " - Height: " + tree.getHeight() + "m - €" + tree.getPrice() + " - " + stockColor + "Stock: " + tree.getStock() + ANSI_RESET;
                 }
-
                 case "Decoration" -> {
                     Decoration decoration = (Decoration) product;
-                    yield (i + 1) + ". " + decoration.getName() + " - Material: " + decoration.getMaterial() + " - €" + decoration.getPrice();
+                    yield (i + 1) + ". " + decoration.getName() + " - Material: " + decoration.getMaterial() + " - €" + decoration.getPrice() + " - " + stockColor + "Stock: " + decoration.getStock() + ANSI_RESET;
                 }
-
                 default -> throw new IllegalStateException("Unexpected value: " + product.getClass().getSimpleName());
-
             };
 
             System.out.println(details);
-
         }
     }
 
     private void deleteDecorationMenu(DeleteDecorationUseCase deleteDecorationUseCase, GetAllDecorationsUseCase getAllDecorationsUseCase) {
+
         try {
+
             List<Decoration> decorations = List.copyOf(getAllDecorationsUseCase.exec());
+
             if (decorations.isEmpty()) {
                 throw new IllegalStateException("No decorations available to delete.");
             }
 
-            System.out.println("Available decorations:");
+            System.out.println(ANSI_BLUE + "Available decorations:" + ANSI_RESET + "\n");
+
             for (Decoration decoration : decorations) {
-                System.out.println(decoration);
+                System.out.println(" - " + ANSI_PURPLE + "ID: " + ANSI_RESET + decoration.getId() + ", " +
+                        ANSI_GREEN + "Name: " + ANSI_RESET + decoration.getName() + ", " +
+                        ANSI_CYAN + "Material: " + ANSI_RESET + decoration.getMaterial() + ", " +
+                        ANSI_YELLOW + "Price: " + ANSI_RESET + "€" + decoration.getPrice() + ", " +
+                        ANSI_RED + "Stock: " + ANSI_RESET + decoration.getStock());
             }
 
-            System.out.print("Enter decoration ID to delete: ");
+            System.out.println();
+
+            System.out.print(ANSI_YELLOW + "Enter decoration ID to delete: " + ANSI_RESET);
             String id = scanner.nextLine();
+
             Decoration decorationToDelete = decorations.stream()
                     .filter(decoration -> decoration.getId().equals(id))
                     .findFirst()
                     .orElse(null);
 
             if (decorationToDelete != null) {
+
                 deleteDecorationUseCase.exec(decorationToDelete);
                 setFlowerShop(updateFlowerShopUseCase.exec(getFlowerShop())); // Update the model
-                System.out.println("Decoration deleted successfully!");
+                System.out.println(ANSI_GREEN + "Decoration deleted successfully!" + ANSI_RESET);
+
             } else {
-                System.out.println("Decoration not found.");
+                System.out.println(ANSI_RED + "Decoration not found." + ANSI_RESET);
             }
+
         } catch (IllegalStateException e) {
-            System.out.println(e.getMessage());
+            System.out.println(ANSI_RED + e.getMessage() + ANSI_RESET);
         } catch (NoSuchElementException e) {
-            System.out.println("Invalid input. Please enter a valid decoration ID.");
+            System.out.println(ANSI_RED + "Invalid input. Please enter a valid decoration ID." + ANSI_RESET);
         } catch (Exception e) {
-            System.out.println("An unexpected error occurred: " + e.getMessage());
+            System.out.println(ANSI_RED + "An unexpected error occurred: " + e.getMessage() + ANSI_RESET);
         }
     }
 
@@ -335,7 +382,18 @@ public final class CliController {
 
             System.out.println("Available flowers:");
             for (Flower flower : flowers) {
-                System.out.println(flower);
+                System.out.printf(
+                        ANSI_CYAN + "ID: " + ANSI_RESET + "%s, " +
+                                ANSI_GREEN + "Name: " + ANSI_RESET + "%s, " +
+                                ANSI_YELLOW + "Color: " + ANSI_RESET + "%s, " +
+                                ANSI_PURPLE + "Price: " + ANSI_RESET + "€%.2f, " +
+                                ANSI_RED + "Stock: " + ANSI_RESET + "%d\n",
+                        flower.getId(),
+                        flower.getName(),
+                        flower.getColor(),
+                        flower.getPrice(),
+                        flower.getStock()
+                );
             }
 
             System.out.print("Enter flower ID to delete: ");

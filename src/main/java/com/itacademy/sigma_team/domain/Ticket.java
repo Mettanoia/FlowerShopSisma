@@ -15,7 +15,7 @@ public final class Ticket {
     public Ticket(String id, LocalDateTime dateTime, Collection<Product> items) {
         this.id = id;
         this.dateTime = dateTime;
-        this.items = Set.copyOf(items);
+        this.items = List.copyOf(items);
     }
 
     public String getId() {

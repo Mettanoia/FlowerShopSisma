@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 public final class TicketMappers {
 
     public static TicketDTO toDto(Ticket ticket) {
-        return new TicketDTO(ticket.getId(), ticket.getDateTime(), ticket.getItems().stream().map(TicketMappers::toDto).collect(Collectors.toSet()));
+        return new TicketDTO(ticket.getId(), ticket.getDateTime(), ticket.getItems().stream().map(TicketMappers::toDto).toList());
     }
 
     public static Ticket toDomain(TicketDTO ticketDTO) {
-        return new Ticket(ticketDTO.id(), ticketDTO.dateTime(), ticketDTO.items().stream().map(TicketMappers::toDomain).collect(Collectors.toSet()));
+        return new Ticket(ticketDTO.id(), ticketDTO.dateTime(), ticketDTO.items().stream().map(TicketMappers::toDomain).toList());
     }
 
     public static Product toDomain(TicketItem ticketItem) {

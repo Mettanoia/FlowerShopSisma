@@ -20,7 +20,7 @@ public final class DecorationSqlRepository implements DecorationGateway {
     @Override
     public void add(DecorationDTO decorationDTO) {
 
-        String sql = "INSERT INTO products (id, name, color, height, material, price, stock, ticketId, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO products (id, name, color, height, material, price, stock, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -32,8 +32,7 @@ public final class DecorationSqlRepository implements DecorationGateway {
             pstmt.setString(5, decorationDTO.material().name());
             pstmt.setDouble(6, decorationDTO.price());
             pstmt.setInt(7, decorationDTO.stock());
-            pstmt.setString(8, null);
-            pstmt.setString(9, "Decoration"); // Discriminator
+            pstmt.setString(8, "Decoration"); // Discriminator
 
             pstmt.executeUpdate();
             System.out.println("Decoración insertada en la base de datos SQL");
@@ -121,6 +120,7 @@ public final class DecorationSqlRepository implements DecorationGateway {
 
     @Override
     public void delete(DecorationDTO decorationDTO) {
+
         String sql = "DELETE FROM products WHERE id = ? AND type = 'Decoration'";
 
         try (Connection conn = H2DatabaseConnection.getConnection();
