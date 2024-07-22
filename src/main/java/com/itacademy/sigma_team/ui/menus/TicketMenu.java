@@ -2,6 +2,8 @@ package com.itacademy.sigma_team.ui.menus;
 
 import com.itacademy.sigma_team.common.Adder;
 import com.itacademy.sigma_team.domain.*;
+import com.itacademy.sigma_team.dtos.TicketItem;
+import com.itacademy.sigma_team.tickets.repositories.TicketMappers;
 import com.itacademy.sigma_team.ui.CrudControllerAdapter;
 
 import java.time.LocalDateTime;
@@ -238,11 +240,49 @@ public class TicketMenu {
     }
 
     private String formatTicket(Ticket ticket) {
-        return String.format("%s - DateTime: %s [%d items]",
-                colorText(ticket.getId(), "\033[1;34m"), // Blue for ID
-                colorText(ticket.getDateTime().toString(), "\033[1;35m"), // Magenta for date/time
-                ticket.getItems().size());
+
+        StringBuilder ticketDetails = new StringBuilder();
+
+        ticketDetails.append(String.format("%s - DateTime: %s [%d items]",
+                colorText(ticket.getId(), "\033[1;34m"),
+                colorText(ticket.getDateTime().toString(), "\033[1;35m"),
+                ticket.getItems().size()));
+
+        for (Product product : ticket.getItems()) {
+
+            if (product instanceof Flower) {
+
+                Flower flower = (Flower) product;
+                ticketDetails.append(String.format("\n%s - Name: %s - Color: %s - Price: %.2f - Stock: %d",
+                        colorText(flower.getId(), "\033[1;32m"),
+                        colorText(flower.getName(), "\033[1;33m"),
+                        colorText(flower.getColor(), "\033[1;36m"),
+                        flower.getPrice(),
+                        flower.getStock()));
+            } else if (product instanceof Tree) {
+
+                Tree tree = (Tree) product;
+                ticketDetails.append(String.format("\n%s - Name: %s - Height: %.2f - Price: %.2f - Stock: %d",
+                        colorText(tree.getId(), "\033[1;32m"),
+                        colorText(tree.getName(), "\033[1;33m"),
+                        tree.getHeight(), // Height for Tree
+                        tree.getPrice(),
+                        tree.getStock()));
+            } else if (product instanceof Decoration) {
+
+                Decoration decoration = (Decoration) product;
+                ticketDetails.append(String.format("\n%s - Name: %s - Material: %s - Price: %.2f - Stock: %d",
+                        colorText(decoration.getId(), "\033[1;32m"),
+                        colorText(decoration.getName(), "\033[1;33m"),
+                        colorText(decoration.getMaterial().toString(), "\033[1;36m"),
+                        decoration.getPrice(),
+                        decoration.getStock()));
+            }
+        }
+
+        return ticketDetails.toString();
     }
+
 
     private String colorText(String text, String colorCode) {
         return colorCode + text + "\033[0m";
