@@ -2,8 +2,6 @@ package com.itacademy.sigma_team.flowers.repositories;
 
 import com.itacademy.sigma_team.H2DatabaseConnection;
 import com.itacademy.sigma_team.dtos.FlowerDTO;
-import com.itacademy.sigma_team.flowers.use_cases.FlowerGateway;
-import com.itacademy.sigma_team.tickets.repositories.TicketSqlRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,14 +10,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public final class FlowerSqlRepository implements FlowerGateway {
+public final class FlowerSqlRepository {
 
-    private static final Logger logger = LoggerFactory.getLogger(TicketSqlRepository.class);
+    private static final Logger logger = LoggerFactory.getLogger(FlowerSqlRepository.class);
 
-    @Override
     public void add(FlowerDTO flowerDTO) {
 
-        String sql = "INSERT INTO products (id, name, color, height, material, price, stock, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Products (id, name, color, height, material, price, stock, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -34,46 +31,45 @@ public final class FlowerSqlRepository implements FlowerGateway {
             pstmt.setString(8, "Flower");    // Discriminator
 
             pstmt.executeUpdate();
-            System.out.println("Flor insertada en la base de datos SQL");
+            logger.info("Flower inserted into the SQL database: {}", flowerDTO.id());
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("SQL Exception occurred while inserting the flower: {}", flowerDTO.id(), e);
         }
-
     }
 
-    public void decrementStock(String flowerId, int quantityPurchased) {
-        String sql = "UPDATE products SET stock = stock - ? WHERE id = ? AND type = 'Flower' AND stock >= ?";
+    public void addToShop(String shopId, String flowerId) {
+
+        String sql = "INSERT INTO ShopProducts (shopId, productId) VALUES (?, ?)";
 
         try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setInt(1, quantityPurchased);
+            pstmt.setString(1, shopId);
             pstmt.setString(2, flowerId);
-            pstmt.setInt(3, quantityPurchased);
 
-            int rowsAffected = pstmt.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Stock decremented successfully for flower with ID: " + flowerId);
-            } else {
-                System.out.println("Not enough stock to decrement for flower with ID: " + flowerId);
-            }
+            pstmt.executeUpdate();
+            logger.info("Flower added to shop: {} with flower ID: {}", shopId, flowerId);
 
         } catch (SQLException e) {
-            logger.error("SQL Exception occurred while decrementing the stock for flower with ID: " + flowerId, e);
+            logger.error("SQL Exception occurred while adding flower to shop: {} with flower ID: {}", shopId, flowerId, e);
         }
+
     }
 
+    public FlowerDTO get(String flowerId, String shopName) {
 
-    @Override
-    public FlowerDTO get(String flowerId) {
-
-        String sql = "SELECT * FROM products WHERE id = ? AND type = 'Flower'";
+        String sql = "SELECT p.id, p.name, p.color, p.price, p.stock " +
+                "FROM Products p " +
+                "JOIN ShopProducts sp ON p.id = sp.productId " +
+                "JOIN FlowerShop fs ON sp.shopId = fs.id " +
+                "WHERE p.id = ? AND p.type = 'Flower' AND fs.name = ?";
 
         try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, flowerId);
+            pstmt.setString(2, shopName);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
@@ -84,25 +80,29 @@ public final class FlowerSqlRepository implements FlowerGateway {
                         rs.getDouble("price"),
                         rs.getInt("stock")
                 );
-
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("SQL Exception occurred while retrieving the flower with ID: {} from shop: {}", flowerId, shopName, e);
         }
         return null;
     }
 
-    @Override
-    public Collection<FlowerDTO> getAll() {
+    public Collection<FlowerDTO> getAll(String shopName) {
 
-        String sql = "SELECT * FROM products WHERE type = 'Flower'";
+        String sql = "SELECT p.id, p.name, p.color, p.price, p.stock " +
+                "FROM Products p " +
+                "JOIN ShopProducts sp ON p.id = sp.productId " +
+                "JOIN FlowerShop fs ON sp.shopId = fs.id " +
+                "WHERE p.type = 'Flower' AND fs.name = ?";
+
         List<FlowerDTO> flowers = new ArrayList<>();
 
         try (Connection conn = H2DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+            pstmt.setString(1, shopName);
+            ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
                 FlowerDTO flower = new FlowerDTO(
@@ -112,36 +112,36 @@ public final class FlowerSqlRepository implements FlowerGateway {
                         rs.getDouble("price"),
                         rs.getInt("stock")
                 );
-
                 flowers.add(flower);
-
             }
 
         } catch (SQLException e) {
-            logger.error("SQL Exception occurred while getting all Flowers", e);
+            logger.error("SQL Exception occurred while getting all flowers from shop: {}", shopName, e);
         }
 
         return flowers;
-
     }
 
-    @Override
-    public void delete(FlowerDTO flowerDTO) {
+    public void delete(String flowerId, String shopName) {
 
-        String sql = "DELETE FROM products WHERE id = ? AND type = 'Flower'";
+        String sql = "DELETE FROM ShopProducts " +
+                "WHERE productId = ? AND shopId = (SELECT id FROM FlowerShop WHERE name = ?)";
 
         try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, flowerDTO.id());
-            pstmt.executeUpdate();
+            pstmt.setString(1, flowerId);
+            pstmt.setString(2, shopName);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                logger.info("Flower with ID: {} deleted from shop: {}", flowerId, shopName);
+            } else {
+                logger.warn("No flower with ID: {} found in shop: {}", flowerId, shopName);
+            }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("SQL Exception occurred while deleting the flower with ID: {} from shop: {}", flowerId, shopName, e);
         }
     }
-    // New method to decrement stock
 
-    }
-
-
+}

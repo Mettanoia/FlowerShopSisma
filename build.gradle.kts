@@ -23,6 +23,7 @@ dependencies {
     implementation ("org.slf4j:slf4j-api:1.7.32")
     // SLF4J Binding for Logback
     implementation ("ch.qos.logback:logback-classic:1.2.3")
+    implementation("jline:jline:2.14.6")
 }
 
 tasks.test {

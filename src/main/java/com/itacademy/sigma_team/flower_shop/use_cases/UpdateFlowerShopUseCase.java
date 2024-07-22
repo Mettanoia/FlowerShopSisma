@@ -9,9 +9,6 @@ import com.itacademy.sigma_team.trees.repositories.TreeMapper;
 import com.itacademy.sigma_team.trees.use_cases.TreeGateway;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public final class UpdateFlowerShopUseCase {
@@ -19,7 +16,6 @@ public final class UpdateFlowerShopUseCase {
     private final FlowerGateway flowerGateway;
     private final TreeGateway treeGateway;
     private final DecorationGateway decorationGateway;
-
 
     public UpdateFlowerShopUseCase(FlowerGateway flowerGateway, TreeGateway treeGateway, DecorationGateway decorationGateway) {
         this.flowerGateway = flowerGateway;

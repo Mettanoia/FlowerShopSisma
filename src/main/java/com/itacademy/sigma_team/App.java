@@ -1,191 +1,271 @@
 package com.itacademy.sigma_team;
 
-import com.itacademy.sigma_team.cli_controller.CliController;
+import com.itacademy.sigma_team.common.Adder;
 import com.itacademy.sigma_team.decorations.repositories.DecorationMapper;
-import com.itacademy.sigma_team.decorations.use_cases.AddDecorationUseCase;
-import com.itacademy.sigma_team.decorations.use_cases.DeleteDecorationUseCase;
-import com.itacademy.sigma_team.decorations.use_cases.GetAllDecorationsUseCase;
 import com.itacademy.sigma_team.domain.Decoration;
 import com.itacademy.sigma_team.domain.Flower;
+import com.itacademy.sigma_team.domain.Ticket;
 import com.itacademy.sigma_team.domain.Tree;
-import com.itacademy.sigma_team.flower_shop.FlowerShop;
-import com.itacademy.sigma_team.flower_shop.use_cases.UpdateFlowerShopUseCase;
+import com.itacademy.sigma_team.flower_shop.repositories.ShopRepository;
+import com.itacademy.sigma_team.flower_shop.use_cases.FlowerShopGateway;
 import com.itacademy.sigma_team.flowers.repositories.FlowerMapper;
-import com.itacademy.sigma_team.flowers.use_cases.AddFlowerUseCase;
-import com.itacademy.sigma_team.flowers.use_cases.DeleteFlowerUseCase;
 import com.itacademy.sigma_team.flowers.use_cases.FlowerGateway;
 import com.itacademy.sigma_team.decorations.use_cases.DecorationGateway;
-import com.itacademy.sigma_team.flowers.use_cases.GetAllFlowersUseCase;
-import com.itacademy.sigma_team.repositories_factories.DecorationRepositoryFactory;
-import com.itacademy.sigma_team.repositories_factories.TreeRepositoryFactory;
+import com.itacademy.sigma_team.repositories_factories.*;
 import com.itacademy.sigma_team.tickets.use_cases.*;
-import com.itacademy.sigma_team.trees.use_cases.GetAllTreesUseCase;
 import com.itacademy.sigma_team.trees.use_cases.TreeGateway;
-import com.itacademy.sigma_team.print_stock.use_cases.PrintStockUseCase;
-import com.itacademy.sigma_team.repositories_factories.FlowerRepositoryFactory;
 import com.itacademy.sigma_team.tickets.repositories.TicketMappers;
-import com.itacademy.sigma_team.repositories_factories.TicketRepositoryFactory;
 import com.itacademy.sigma_team.trees.repositories.TreeMapper;
-import com.itacademy.sigma_team.trees.use_cases.AddTreeUseCase;
-import com.itacademy.sigma_team.trees.use_cases.DeleteTreeUseCase;
-import org.slf4j.LoggerFactory;
+import com.itacademy.sigma_team.ui.CrudControllerAdapter;
+import com.itacademy.sigma_team.ui.menus.*;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public final class App {
 
     public static void run() {
+
+
+        List<String> shopNames = new ShopRepository().getAllShopNames();
 
         // Repositories to inject in the use cases
         FlowerGateway flowerGateway = FlowerRepositoryFactory.getRepository();
         TicketGateway ticketGateway = TicketRepositoryFactory.getInstance();
         TreeGateway treeGateway = TreeRepositoryFactory.getInstance();
         DecorationGateway decorationGateway = DecorationRepositoryFactory.getInstance();
+        FlowerShopGateway flowerShopGateway = FlowerShopRepositoryFactory.getInstance();
 
 
-        CliController cliController = new CliController(
+        // Flower CRUD Controller
+        FlowersUseCases flowersUseCases = getFlowersUseCases(flowerGateway);
+        CrudControllerAdapter<Flower, String> flowerController =
+                CrudControllerAdapter.<Flower, String>builder()
+                        .addMixin(flowersUseCases.addFlowerUseCase())
+                        .deleteMixin(flowersUseCases.deleteFlowerUseCase())
+                        .getByIdMixin(flowersUseCases.getFlowerByIdMixin())
+                        .getAllMixin(flowersUseCases.getAllFlowersMixin())
+                        .build();
 
-                new AddFlowerUseCase(flower -> {
-                    try {
-                        flowerGateway.add(FlowerMapper.toDto(flower));
-                    } catch (IOException e) {logException(AddFlowerUseCase.class);}
-                }),
 
-                new DeleteFlowerUseCase(flower -> {
+        // Ticket CRUD Controller
+        TicketUseCases ticketUseCases = getTicketUseCases(ticketGateway);
+        CrudControllerAdapter<Ticket, String> ticketController = CrudControllerAdapter.<Ticket, String>builder()
+                .addMixin(ticketUseCases.addTicketUseCase())
+                .deleteMixin(ticketUseCases.deleteTicketUseCase())
+                .getByIdMixin(ticketUseCases.getTicketByIdMixin())
+                .getAllMixin(ticketUseCases.getAllTicketsMixin())
+                .build();
+
+
+        // Tree CRUD Controller
+        TreeUseCases treeUseCases = getTreeUseCases(treeGateway);
+        CrudControllerAdapter<Tree, String> treeController = CrudControllerAdapter.<Tree, String>builder()
+                .addMixin(treeUseCases.addTreeUseCase())
+                .deleteMixin(treeUseCases.deleteTreeUseCase())
+                .getByIdMixin(treeUseCases.getTreeByIdMixin())
+                .getAllMixin(treeUseCases.getAllTreesMixin())
+                .build();
+
+
+        // Decoration CRUD Controller
+        DecorationUseCases decorationUseCases = getDecorationUseCases(decorationGateway);
+        CrudControllerAdapter<Decoration, String> decorationController = CrudControllerAdapter.<Decoration, String>builder()
+                .addMixin(decorationUseCases.addDecorationUseCase())
+                .deleteMixin(decorationUseCases.deleteDecorationUseCase())
+                .getByIdMixin(decorationUseCases.getDecorationByIdMixin())
+                .getAllMixin(decorationUseCases.getAllDecorationsMixin())
+                .build();
+
+
+        new ShopMenu(
+                new FlowerMenu(flowerController),
+                new TreeMenu(treeController),
+                new DecorationMenu(decorationController),
+                new TicketMenu(ticketController, decorationController, treeController, flowerController),
+                shopNames
+        ).showShopMenu();
+
+    }
+
+
+    // Helper methods to get the use cases for every feature
+
+    private static FlowersUseCases getFlowersUseCases(FlowerGateway flowerGateway) {
+
+        Consumer<Flower> deleteFlowerUseCase =
+                flower -> {
                     try {
                         flowerGateway.delete(FlowerMapper.toDto(flower));
-                    } catch (IOException e) {logException(DeleteFlowerUseCase.class);}
-                }),
-
-                new GetAllFlowersUseCase(() -> {
-                    try {
-                        return flowerGateway.getAll().stream().map(FlowerMapper::toDomain).collect(Collectors.toSet());
-                    } catch (IOException e) {logException(GetAllFlowersUseCase.class);}
-                    return Set.of();
-                }),
-
-                new AddDecorationUseCase(decoration -> {
-                    try {
-                        decorationGateway.add(DecorationMapper.toDto(decoration));
-                    } catch (IOException e) {logException(AddDecorationUseCase.class);}
-                }),
-
-                new DeleteDecorationUseCase(decoration -> {
-                    try {
-                        decorationGateway.delete(DecorationMapper.toDto(decoration));
-                    } catch (IOException e) {logException(DeleteDecorationUseCase.class);}
-                }),
-
-                new GetAllDecorationsUseCase(() -> {
-                    try {
-                        return decorationGateway.getAll().stream().map(DecorationMapper::toDomain).collect(Collectors.toSet());
                     } catch (IOException e) {
-                        logException(GetAllDecorationsUseCase.class);
-                        return null;
+                        throw new RuntimeException(e);
                     }
-                }),
+                };
 
-                new PrintStockUseCase(),
+        Adder<Flower> addFlowerUseCase = flower -> {
+            try {
+                flowerGateway.add(FlowerMapper.toDto(flower));
+                return Optional.empty();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        };
 
-                new AddTreeUseCase(tree -> {
+        Function<String, Optional<Flower>> getFlowerByIdMixin =
+                s -> {
                     try {
-                        treeGateway.add(TreeMapper.toDto(tree));
-                    } catch (IOException e) {logException(AddTreeUseCase.class);}
-                }),
-
-                new GetAllTreesUseCase(() -> {
-                    try {
-                        return treeGateway.getAll().stream().map(TreeMapper::toDomain).collect(Collectors.toSet());
+                        return Optional.of(FlowerMapper.toDomain(flowerGateway.get(s)));
                     } catch (IOException e) {
-                        logException(GetAllTreesUseCase.class);
-                        return null;
+                        throw new RuntimeException(e);
                     }
-                }),
+                };
 
-                new AddTicketUseCase(ticket -> {
+        Supplier<Collection<Flower>> getAllFlowersMixin =
+                () -> {
                     try {
-                        ticketGateway.add(TicketMappers.toDto(ticket));
-                    } catch (IOException e) {logException(AddTicketUseCase.class);}
-                }),
+                        return flowerGateway.getAll().stream().map(FlowerMapper::toDomain).toList();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                };
 
-                new DeleteTicketUseCase(ticket -> {
+        return new FlowersUseCases(deleteFlowerUseCase, addFlowerUseCase, getFlowerByIdMixin, getAllFlowersMixin);
+
+    }
+    private static TicketUseCases getTicketUseCases(TicketGateway ticketGateway) {
+
+        Consumer<Ticket> deleteTicketUseCase =
+                ticket -> {
                     try {
                         ticketGateway.delete(TicketMappers.toDto(ticket));
-                    } catch (IOException e) {logException(DeleteTicketUseCase.class);}
-                }),
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                };
 
-                new DeleteTreeUseCase(tree -> {
+        Adder<Ticket> addTicketUseCase =
+                ticket -> {
+                    try {
+                        ticketGateway.add(TicketMappers.toDto(ticket));
+                        return Optional.empty();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                };
+
+        Function<String, Optional<Ticket>> getTicketByIdMixin =
+                s -> {
+                    try {
+                        return Optional.of(TicketMappers.toDomain(ticketGateway.get(s)));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                };
+
+        Supplier<Collection<Ticket>> getAllTicketsMixin =
+                () -> {
+                    try {
+                        return ticketGateway.getAll().stream().map(TicketMappers::toDomain).toList();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                };
+
+        return new TicketUseCases(deleteTicketUseCase, addTicketUseCase, getTicketByIdMixin, getAllTicketsMixin);
+    }
+    private static TreeUseCases getTreeUseCases(TreeGateway treeGateway) {
+
+        Consumer<Tree> deleteTreeUseCase =
+                tree -> {
                     try {
                         treeGateway.delete(TreeMapper.toDto(tree));
-                    } catch (IOException e) {logException(DeleteTreeUseCase.class);}
-                }),
-
-                new GetTicketUseCase(ticketId -> {
-                    try {
-                        return TicketMappers.toDomain(ticketGateway.get(ticketId));
                     } catch (IOException e) {
-                        logException(GetTicketUseCase.class);
-                        return null;
+                        throw new RuntimeException(e);
                     }
-                }),
+                };
 
-                new GetAllTicketsUseCase(() -> {
+        Adder<Tree> addTreeUseCase =
+                tree -> {
                     try {
-                        return ticketGateway.getAll().stream().map(TicketMappers::toDomain).collect(Collectors.toSet());
+                        treeGateway.add(TreeMapper.toDto(tree));
+                        return Optional.empty();
                     } catch (IOException e) {
-                        logException(GetAllTicketsUseCase.class);
-                        return null;
+                        throw new RuntimeException(e);
                     }
-                }),
+                };
 
-                new UpdateFlowerShopUseCase(flowerGateway, treeGateway, decorationGateway),
+        Function<String, Optional<Tree>> getTreeByIdMixin =
+                s -> {
+                    try {
+                        return Optional.of(TreeMapper.toDomain(treeGateway.get(s)));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                };
 
-                new Scanner(System.in),
+        Supplier<Collection<Tree>> getAllTreesMixin =
+                () -> {
+                    try {
+                        return treeGateway.getAll().stream().map(TreeMapper::toDomain).toList();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                };
 
-                getFlowerShop(flowerGateway, treeGateway, decorationGateway)
+        return new TreeUseCases(deleteTreeUseCase, addTreeUseCase, getTreeByIdMixin, getAllTreesMixin);
+    }
+    private static DecorationUseCases getDecorationUseCases(DecorationGateway decorationGateway) {
 
-        );
+        Consumer<Decoration> deleteDecorationUseCase =
+                decoration -> {
+                    try {
+                        decorationGateway.delete(DecorationMapper.toDto(decoration));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                };
 
-        cliController.displayMenu();
+        Adder<Decoration> addDecorationUseCase =
+                decoration -> {
+                    try {
+                        decorationGateway.add(DecorationMapper.toDto(decoration));
+                        return Optional.empty();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                };
 
+        Function<String, Optional<Decoration>> getDecorationByIdMixin =
+                s -> {
+                    try {
+                        return Optional.of(DecorationMapper.toDomain(decorationGateway.get(s)));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                };
+
+        Supplier<Collection<Decoration>> getAllDecorationsMixin =
+                () -> {
+                    try {
+                        return decorationGateway.getAll().stream().map(DecorationMapper::toDomain).toList();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                };
+
+        return new DecorationUseCases(deleteDecorationUseCase, addDecorationUseCase, getDecorationByIdMixin, getAllDecorationsMixin);
     }
 
-    private static FlowerShop getFlowerShop(FlowerGateway flowerGateway, TreeGateway treeGateway, DecorationGateway decorationGateway) {
 
-        Collection<Flower> flowers = null;
-        Collection<Tree> trees = null;
-        Collection<Decoration> decorations = null;
+    // Records to create bundles of use cases to improve readability
 
-        try {
+    private record DecorationUseCases(Consumer<Decoration> deleteDecorationUseCase, Adder<Decoration> addDecorationUseCase, Function<String, Optional<Decoration>> getDecorationByIdMixin, Supplier<Collection<Decoration>> getAllDecorationsMixin) { }
+    private record FlowersUseCases(Consumer<Flower> deleteFlowerUseCase, Adder<Flower> addFlowerUseCase, Function<String, Optional<Flower>> getFlowerByIdMixin, Supplier<Collection<Flower>> getAllFlowersMixin) { }
+    private record TicketUseCases(Consumer<Ticket> deleteTicketUseCase, Adder<Ticket> addTicketUseCase, Function<String, Optional<Ticket>> getTicketByIdMixin, Supplier<Collection<Ticket>> getAllTicketsMixin) { }
+    private record TreeUseCases(Consumer<Tree> deleteTreeUseCase, Adder<Tree> addTreeUseCase, Function<String, Optional<Tree>> getTreeByIdMixin, Supplier<Collection<Tree>> getAllTreesMixin) { }
 
-            flowers = flowerGateway.getAll().stream()
-                    .map(FlowerMapper::toDomain)
-                    .collect(Collectors.toSet());
-
-            trees = treeGateway.getAll().stream()
-                    .map(TreeMapper::toDomain)
-                    .collect(Collectors.toSet());
-
-            decorations = decorationGateway.getAll().stream()
-                    .map(DecorationMapper::toDomain)
-                    .collect(Collectors.toSet());
-
-        } catch (IOException e) {logException(AddFlowerUseCase.class);}
-
-        // Building the FlowerShop
-        return new FlowerShop.FlowerShopBuilder("Sigma Flower Shop")
-                .flowers(flowers)
-                .trees(trees)
-                .decorations(decorations)
-                .build();
-    }
-
-    private static <T> void logException(Class<T> className) {
-        LoggerFactory.getLogger(className).error("Exception thrown while calling the repository.");
-    }
 
 }

@@ -2,7 +2,6 @@ package com.itacademy.sigma_team.decorations.repositories;
 
 import com.itacademy.sigma_team.H2DatabaseConnection;
 import com.itacademy.sigma_team.domain.Material;
-import com.itacademy.sigma_team.decorations.use_cases.DecorationGateway;
 import com.itacademy.sigma_team.dtos.DecorationDTO;
 import com.itacademy.sigma_team.tickets.repositories.TicketSqlRepository;
 import org.slf4j.Logger;
@@ -13,13 +12,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public final class DecorationSqlRepository implements DecorationGateway {
+public final class DecorationSqlRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(DecorationSqlRepository.class);
 
-    @Override
     public void add(DecorationDTO decorationDTO) {
-
         String sql = "INSERT INTO products (id, name, color, height, material, price, stock, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = H2DatabaseConnection.getConnection();
@@ -35,43 +32,69 @@ public final class DecorationSqlRepository implements DecorationGateway {
             pstmt.setString(8, "Decoration"); // Discriminator
 
             pstmt.executeUpdate();
-            System.out.println("Decoración insertada en la base de datos SQL");
+            logger.info("Decoration inserted into SQL database");
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("SQL Exception occurred while inserting the decoration: " + decorationDTO.id(), e);
         }
     }
-    public void decrementStock(String decorationId, int quantityPurchased) {
-        String sql = "UPDATE products SET stock = stock - ? WHERE id = ? AND type = 'Decoration' AND stock >= ?";
+
+    public void addToShop(String shopId, String decorationId) {
+        String sql = "INSERT INTO ShopProducts (shopId, productId) VALUES (?, ?)";
+
+        try (Connection conn = H2DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, shopId);
+            pstmt.setString(2, decorationId);
+
+            pstmt.executeUpdate();
+            logger.info("Decoration added to shop: {} with decoration ID: {}", shopId, decorationId);
+
+        } catch (SQLException e) {
+            logger.error("SQL Exception occurred while adding decoration to shop: " + shopId + " with decoration ID: " + decorationId, e);
+        }
+    }
+
+    public void decrementStock(String decorationId, int quantityPurchased, String shopName) {
+        String sql = "UPDATE Products p " +
+                "JOIN ShopProducts sp ON p.id = sp.productId " +
+                "JOIN FlowerShop fs ON sp.shopId = fs.id " +
+                "SET p.stock = p.stock - ? " +
+                "WHERE p.id = ? AND p.type = 'Decoration' AND fs.name = ? AND p.stock >= ?";
 
         try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, quantityPurchased);
             pstmt.setString(2, decorationId);
-            pstmt.setInt(3, quantityPurchased);
+            pstmt.setString(3, shopName);
+            pstmt.setInt(4, quantityPurchased);
 
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected > 0) {
-                System.out.println("Stock decremented successfully for decoration with ID: " + decorationId);
+                logger.info("Stock decremented successfully for decoration with ID: " + decorationId);
             } else {
-                System.out.println("Not enough stock to decrement for decoration with ID: " + decorationId);
+                logger.warn("Not enough stock to decrement for decoration with ID: " + decorationId);
             }
 
         } catch (SQLException e) {
-            logger.error("SQL Exception occurred while decrementing the stock for decoration with ID: " + decorationId, e);
+            logger.error("SQL Exception occurred while decrementing the stock for decoration with ID: " + decorationId + " in shop: " + shopName, e);
         }
     }
 
-    @Override
-    public DecorationDTO get(String decorationId) {
-
-        String sql = "SELECT * FROM products WHERE id = ? AND type = 'Decoration'";
+    public DecorationDTO get(String decorationId, String shopName) {
+        String sql = "SELECT p.id, p.name, p.material, p.price, p.stock " +
+                "FROM Products p " +
+                "JOIN ShopProducts sp ON p.id = sp.productId " +
+                "JOIN FlowerShop fs ON sp.shopId = fs.id " +
+                "WHERE p.id = ? AND p.type = 'Decoration' AND fs.name = ?";
 
         try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, decorationId);
+            pstmt.setString(2, shopName);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
@@ -85,20 +108,24 @@ public final class DecorationSqlRepository implements DecorationGateway {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("SQL Exception occurred while retrieving the decoration with ID: " + decorationId + " from shop: " + shopName, e);
         }
         return null;
     }
 
-    @Override
-    public Collection<DecorationDTO> getAll() {
-
-        String sql = "SELECT * FROM products WHERE type = 'Decoration'";
+    public Collection<DecorationDTO> getAll(String shopName) {
+        String sql = "SELECT p.id, p.name, p.material, p.price, p.stock " +
+                "FROM Products p " +
+                "JOIN ShopProducts sp ON p.id = sp.productId " +
+                "JOIN FlowerShop fs ON sp.shopId = fs.id " +
+                "WHERE p.type = 'Decoration' AND fs.name = ?";
         List<DecorationDTO> decorations = new ArrayList<>();
 
         try (Connection conn = H2DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, shopName);
+            ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
                 DecorationDTO decoration = new DecorationDTO(
@@ -113,27 +140,33 @@ public final class DecorationSqlRepository implements DecorationGateway {
             }
 
         } catch (SQLException e) {
-            logger.error("SQL Exception occurred while getting all Decorations", e);
+            logger.error("SQL Exception occurred while getting all decorations from shop: " + shopName, e);
         }
+
         return decorations;
     }
 
-    @Override
-    public void delete(DecorationDTO decorationDTO) {
-
-        String sql = "DELETE FROM products WHERE id = ? AND type = 'Decoration'";
+    public void delete(String decorationId, String shopName) {
+        String sql = "DELETE p " +
+                "FROM Products p " +
+                "JOIN ShopProducts sp ON p.id = sp.productId " +
+                "JOIN FlowerShop fs ON sp.shopId = fs.id " +
+                "WHERE p.id = ? AND p.type = 'Decoration' AND fs.name = ?";
 
         try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, decorationDTO.id());
-            pstmt.executeUpdate();
-            System.out.println("Decoración eliminada de la base de datos SQL");
+            pstmt.setString(1, decorationId);
+            pstmt.setString(2, shopName);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                logger.info("Decoration with ID: " + decorationId + " deleted from shop: " + shopName);
+            } else {
+                logger.warn("No decoration with ID: " + decorationId + " found in shop: " + shopName);
+            }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("SQL Exception occurred while deleting the decoration with ID: " + decorationId + " from shop: " + shopName, e);
         }
     }
-
 }
-
