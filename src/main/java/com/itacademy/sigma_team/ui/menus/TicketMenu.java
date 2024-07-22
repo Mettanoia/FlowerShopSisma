@@ -253,30 +253,27 @@ public class TicketMenu {
             if (product instanceof Flower) {
 
                 Flower flower = (Flower) product;
-                ticketDetails.append(String.format("\n%s - Name: %s - Color: %s - Price: %.2f - Stock: %d",
+                ticketDetails.append(String.format("\n%s - Name: %s - Color: %s - Price: %.2f",
                         colorText(flower.getId(), "\033[1;32m"),
                         colorText(flower.getName(), "\033[1;33m"),
                         colorText(flower.getColor(), "\033[1;36m"),
-                        flower.getPrice(),
-                        flower.getStock()));
+                        flower.getPrice()));
             } else if (product instanceof Tree) {
 
                 Tree tree = (Tree) product;
-                ticketDetails.append(String.format("\n%s - Name: %s - Height: %.2f - Price: %.2f - Stock: %d",
+                ticketDetails.append(String.format("\n%s - Name: %s - Height: %.2f - Price: %.2f",
                         colorText(tree.getId(), "\033[1;32m"),
                         colorText(tree.getName(), "\033[1;33m"),
                         tree.getHeight(), // Height for Tree
-                        tree.getPrice(),
-                        tree.getStock()));
+                        tree.getPrice() ));
             } else if (product instanceof Decoration) {
 
                 Decoration decoration = (Decoration) product;
-                ticketDetails.append(String.format("\n%s - Name: %s - Material: %s - Price: %.2f - Stock: %d",
+                ticketDetails.append(String.format("\n%s - Name: %s - Material: %s - Price: %.2f",
                         colorText(decoration.getId(), "\033[1;32m"),
                         colorText(decoration.getName(), "\033[1;33m"),
                         colorText(decoration.getMaterial().toString(), "\033[1;36m"),
-                        decoration.getPrice(),
-                        decoration.getStock()));
+                        decoration.getPrice()));
             }
         }
 

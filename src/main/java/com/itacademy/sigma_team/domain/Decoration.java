@@ -63,7 +63,6 @@ public final class Decoration implements Buyable, Product {
                 ", name='" + name + '\'' +
                 ", material=" + material +
                 ", price=" + price +
-                ", stock=" + stock +
                 '}';
     }
 }

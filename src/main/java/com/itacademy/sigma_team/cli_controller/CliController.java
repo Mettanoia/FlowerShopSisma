@@ -23,7 +23,7 @@ import java.util.*;
 
 @SuppressWarnings("FieldCanBeLocal")
 public final class CliController {
-
+/*
     //Flowers use cases
     private final AddFlowerUseCase addFlowerUseCase;
     private final DeleteFlowerUseCase deleteFlowerUseCase;
@@ -206,8 +206,7 @@ public final class CliController {
                 case 10 -> printBenefits();
                 case 11 -> createTicketMenu();
                 case 12 -> printPurchaseHistory();
-                case 13 -> printBenefits(); // Assuming this method also prints total money earned
-                case 14 -> {
+                case 13 -> {
                     System.out.println(ANSI_RED + "Exiting..." + ANSI_RESET);
                     return;
                 }
@@ -592,5 +591,4 @@ public final class CliController {
         }
 
     }
-
-}
+*/}

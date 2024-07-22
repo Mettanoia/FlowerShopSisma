@@ -6,6 +6,6 @@ import java.sql.SQLException;
 
 public final class H2DatabaseConnection {
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:h2:file:/home/miguel/Descargas/FloweChopSisma/src/main/resources/testdb;AUTO_SERVER=TRUE");
+        return DriverManager.getConnection("jdbc:h2:file:C:\\Users\\oscar\\IdeaProjects\\FlowerShopSisma\\src\\main\\resources\\testdb;AUTO_SERVER=TRUE");
     }
 }

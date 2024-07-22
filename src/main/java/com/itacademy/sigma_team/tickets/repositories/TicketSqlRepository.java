@@ -169,18 +169,16 @@ public final class TicketSqlRepository {
 
                             TicketItem itemDTO;
                             switch (itemType) {
-                                case "Flower":
-                                    itemDTO = new FlowerDTO(itemId, itemName, itemColor, itemPrice, itemStock);
-                                    break;
-                                case "Tree":
-                                    itemDTO = new TreeDTO(itemId, itemName, itemHeight, itemPrice, itemStock);
-                                    break;
-                                case "Decoration":
-                                    itemDTO = new DecorationDTO(itemId, itemName, Material.valueOf(itemMaterial), itemPrice, itemStock);
-                                    break;
-                                default:
+                                case "Flower" ->
+                                        itemDTO = new FlowerDTO(itemId, itemName, itemColor, itemPrice, itemStock);
+                                case "Tree" ->
+                                        itemDTO = new TreeDTO(itemId, itemName, itemHeight, itemPrice, itemStock);
+                                case "Decoration" ->
+                                        itemDTO = new DecorationDTO(itemId, itemName, Material.valueOf(itemMaterial), itemPrice, itemStock);
+                                default -> {
                                     logger.warn("Unsupported item type found in database");
                                     continue;
+                                }
                             }
 
                             items.put(itemDTO, quantity);
@@ -249,18 +247,16 @@ public final class TicketSqlRepository {
 
                             TicketItem itemDTO;
                             switch (itemType) {
-                                case "Flower":
-                                    itemDTO = new FlowerDTO(itemId, itemName, itemColor, itemPrice, itemStock);
-                                    break;
-                                case "Tree":
-                                    itemDTO = new TreeDTO(itemId, itemName, itemHeight, itemPrice, itemStock);
-                                    break;
-                                case "Decoration":
-                                    itemDTO = new DecorationDTO(itemId, itemName, Material.valueOf(itemMaterial), itemPrice, itemStock);
-                                    break;
-                                default:
+                                case "Flower" ->
+                                        itemDTO = new FlowerDTO(itemId, itemName, itemColor, itemPrice, itemStock);
+                                case "Tree" ->
+                                        itemDTO = new TreeDTO(itemId, itemName, itemHeight, itemPrice, itemStock);
+                                case "Decoration" ->
+                                        itemDTO = new DecorationDTO(itemId, itemName, Material.valueOf(itemMaterial), itemPrice, itemStock);
+                                default -> {
                                     logger.warn("Unsupported item type found in database");
                                     continue;
+                                }
                             }
 
                             for (int i = 0; i < quantity; i++) {
