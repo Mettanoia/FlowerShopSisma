@@ -248,44 +248,49 @@ public class TicketMenu {
                 colorText(ticket.getId(), "\033[1;34m"),
                 colorText(ticket.getDateTime().toString(), "\033[1;35m"),
                 ticket.getItems().size()));
-
+        // Contar los productos repetidos
+        Map<Product, Integer> productCount = new HashMap<>();
         for (Product product : ticket.getItems()) {
+            productCount.put(product, productCount.getOrDefault(product, 0) + 1);
+        }
+
+        // Imprimir productos con sus cantidades
+        for (Map.Entry<Product, Integer> entry : productCount.entrySet()) {
+            Product product = entry.getKey();
+            int quantity = entry.getValue();
 
             if (product instanceof Flower) {
-
                 Flower flower = (Flower) product;
-                ticketDetails.append(String.format("\n%s - Name: %s - Color: %s - Price: %.2f ",
+                ticketDetails.append(String.format("\n%s - Name: %s - Color: %s - Quantity: %d - Price: %.2f",
                         colorText(flower.getId(), "\033[1;32m"),
                         colorText(flower.getName(), "\033[1;33m"),
                         colorText(flower.getColor(), "\033[1;36m"),
-                        flower.getPrice()));
+                        quantity,
+                        flower.getPrice() * quantity));
             } else if (product instanceof Tree) {
-
                 Tree tree = (Tree) product;
-                ticketDetails.append(String.format("\n%s - Name: %s - Height: %.2f - Price: %.2f",
+                ticketDetails.append(String.format("\n%s - Name: %s - Height: %.2f - Quantity: %d - Price: %.2f",
                         colorText(tree.getId(), "\033[1;32m"),
                         colorText(tree.getName(), "\033[1;33m"),
                         tree.getHeight(), // Height for Tree
-                        tree.getPrice()));
+                        quantity,
+                        tree.getPrice() * quantity));
             } else if (product instanceof Decoration) {
-
                 Decoration decoration = (Decoration) product;
-                ticketDetails.append(String.format("\n%s - Name: %s - Material: %s - Price: %.2f",
+                ticketDetails.append(String.format("\n%s - Name: %s - Material: %s - Quantity: %d - Price: %.2f",
                         colorText(decoration.getId(), "\033[1;32m"),
                         colorText(decoration.getName(), "\033[1;33m"),
                         colorText(decoration.getMaterial().toString(), "\033[1;36m"),
-                        decoration.getPrice()));
+                        quantity,
+                        decoration.getPrice() * quantity));
             }
 
-            totalPrice += Product.getPrice(product); // Sumar el precio del producto al total
-
+            totalPrice += Product.getPrice(product) * quantity; // Sumar el precio del producto al total
         }
 
-
         ticketDetails.append("\n");
-    // Añadir el precio total al final del ticket
+        // Añadir el precio total al final del ticket
         ticketDetails.append(String.format("\nTotal Price: %.2f", totalPrice));
-
 
         return ticketDetails.toString();
     }
