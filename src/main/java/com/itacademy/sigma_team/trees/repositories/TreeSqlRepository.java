@@ -125,11 +125,8 @@ public final class TreeSqlRepository {
 
     public void delete(String treeId, String shopName) {
 
-        String sql = "DELETE p " +
-                "FROM Products p " +
-                "JOIN ShopProducts sp ON p.id = sp.productId " +
-                "JOIN FlowerShop fs ON sp.shopId = fs.id " +
-                "WHERE p.id = ? AND p.type = 'Tree' AND fs.name = ?";
+        String sql = "DELETE FROM ShopProducts " +
+                "WHERE productId = ? AND shopId = (SELECT id FROM FlowerShop WHERE name = ?)";
 
         try (Connection conn = H2DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
