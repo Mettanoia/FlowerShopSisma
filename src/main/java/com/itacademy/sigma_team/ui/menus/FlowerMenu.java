@@ -99,8 +99,17 @@ public class FlowerMenu {
             System.out.println("Enter flower price:");
             double price = Double.parseDouble(scanner.nextLine());
 
-            System.out.println("Enter flower stock:");
-            int stock = Integer.parseInt(scanner.nextLine());
+            int stock;
+            while (true) {
+                System.out.print("Enter flower stock: ");
+                stock = Integer.parseInt(scanner.nextLine());
+                if (stock == 0) {
+                    System.out.println(colorText("Stock cannot be zero. Please enter a valid stock amount","\033[0m"));
+                } else {
+                    break;
+                }
+            }
+
 
             addFlowerUseCase.add(new Flower(name, color, price, stock));
             System.out.println(colorText("Flower added successfully.", "\033[0;32m"));

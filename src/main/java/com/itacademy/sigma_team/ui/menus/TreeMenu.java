@@ -98,8 +98,16 @@ public class TreeMenu {
             System.out.println("Enter tree price:");
             double price = Double.parseDouble(scanner.nextLine());
 
-            System.out.println("Enter tree stock:");
-            int stock = Integer.parseInt(scanner.nextLine());
+            int stock;
+            while (true) {
+                System.out.print("Enter tree stock: ");
+                stock = Integer.parseInt(scanner.nextLine());
+                if (stock == 0) {
+                    System.out.println(colorText("Stock cannot be zero. Please enter a valid stock amount","\033[0m"));
+                } else {
+                    break;
+                }
+            }
 
             addTreeUseCase.add(new Tree(name, height, price, stock));
             System.out.println(colorText("Tree added successfully.", "\033[0;32m"));

@@ -92,14 +92,23 @@ public class DecorationMenu {
             System.out.println("Enter decoration name:");
             String name = scanner.nextLine();
 
-            System.out.println("Enter decoration material:");
+            System.out.println("Enter decoration material: Choose - WOOD or PLASTIC ");
             String material = scanner.nextLine();
 
             System.out.println("Enter decoration price:");
             double price = Double.parseDouble(scanner.nextLine());
 
-            System.out.println("Enter decoration stock:");
-            int stock = Integer.parseInt(scanner.nextLine());
+            int stock;
+            while (true) {
+                System.out.print("Enter decoration stock: ");
+                stock = Integer.parseInt(scanner.nextLine());
+                if (stock == 0) {
+                    System.out.println(colorText("Stock cannot be zero. Please enter a valid stock amount","\033[0m"));
+                } else {
+                    break;
+                }
+            }
+
 
             addDecorationUseCase.add(new Decoration(name, Material.valueOf(material), price, stock));
             System.out.println(colorText("Decoration added successfully.", "\033[0;32m"));
