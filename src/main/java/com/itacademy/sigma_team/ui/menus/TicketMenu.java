@@ -242,6 +242,7 @@ public class TicketMenu {
     private String formatTicket(Ticket ticket) {
 
         StringBuilder ticketDetails = new StringBuilder();
+        double totalPrice = 0.0;
 
         ticketDetails.append(String.format("%s - DateTime: %s [%d items]",
                 colorText(ticket.getId(), "\033[1;34m"),
@@ -253,7 +254,7 @@ public class TicketMenu {
             if (product instanceof Flower) {
 
                 Flower flower = (Flower) product;
-                ticketDetails.append(String.format("\n%s - Name: %s - Color: %s - Price: %.2f",
+                ticketDetails.append(String.format("\n%s - Name: %s - Color: %s - Price: %.2f ",
                         colorText(flower.getId(), "\033[1;32m"),
                         colorText(flower.getName(), "\033[1;33m"),
                         colorText(flower.getColor(), "\033[1;36m"),
@@ -265,7 +266,7 @@ public class TicketMenu {
                         colorText(tree.getId(), "\033[1;32m"),
                         colorText(tree.getName(), "\033[1;33m"),
                         tree.getHeight(), // Height for Tree
-                        tree.getPrice() ));
+                        tree.getPrice()));
             } else if (product instanceof Decoration) {
 
                 Decoration decoration = (Decoration) product;
@@ -275,7 +276,16 @@ public class TicketMenu {
                         colorText(decoration.getMaterial().toString(), "\033[1;36m"),
                         decoration.getPrice()));
             }
+
+            totalPrice += Product.getPrice(product); // Sumar el precio del producto al total
+
         }
+
+
+        ticketDetails.append("\n");
+    // Añadir el precio total al final del ticket
+        ticketDetails.append(String.format("\nTotal Price: %.2f", totalPrice));
+
 
         return ticketDetails.toString();
     }
