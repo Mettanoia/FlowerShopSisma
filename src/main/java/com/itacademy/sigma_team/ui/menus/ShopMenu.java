@@ -1,17 +1,21 @@
 package com.itacademy.sigma_team.ui.menus;
 
 import com.itacademy.sigma_team.decorations.repositories.ShopSpecificDecorationRepository;
+import com.itacademy.sigma_team.flower_shop.repositories.FlowerShopDTO;
+import com.itacademy.sigma_team.flower_shop.repositories.ShopRepository;
 import com.itacademy.sigma_team.flowers.repositories.ShopSpecificFlowerRepository;
 import com.itacademy.sigma_team.tickets.repositories.ShopSpecificTicketRepository;
 import com.itacademy.sigma_team.trees.repositories.ShopSpecificTreeRepository;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class ShopMenu {
 
-    private final List<String> shopNames;
+    private List<String> shopNames;
     private final MenuUtils menuUtils;
     private final FlowerMenu flowerMenu;
     private final TreeMenu treeMenu;
@@ -31,6 +35,7 @@ public class ShopMenu {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
+
             menuUtils.clearScreen();
             printHeader();
             printOptions();
@@ -67,7 +72,12 @@ public class ShopMenu {
                     System.out.println(colorText("Enter new shop name:", "\033[1;33m"));
                     String newShopName = scanner.nextLine();
                     if (!newShopName.trim().isEmpty()) {
-                        shopNames.add(newShopName);
+                        try {
+                            new ShopRepository().add(new FlowerShopDTO(UUID.randomUUID().toString(), newShopName));
+                            shopNames = new ShopRepository().getAllShopNames();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                         System.out.println(colorText("Shop added successfully. Please choose a shop from the list.", "\033[0;32m"));
                     } else {
                         System.out.println(colorText("Invalid name. Please try again.", "\033[0;31m"));

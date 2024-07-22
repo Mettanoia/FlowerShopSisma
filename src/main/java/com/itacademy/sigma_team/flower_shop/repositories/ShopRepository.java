@@ -4,6 +4,7 @@ import com.itacademy.sigma_team.H2DatabaseConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,22 @@ import java.util.List;
 public final class ShopRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(ShopRepository.class);
+
+    public void add(FlowerShopDTO dto) throws IOException {
+        String sql = "INSERT INTO flowershop (id, name) VALUES (?, ?)";
+
+        try (Connection conn = H2DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, dto.id());
+            pstmt.setString(2, dto.name());
+
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            LoggerFactory.getLogger(FlowerShopSqlRepository.class).error("SQL Exception occurred while inserting Flower Shop: " + dto.id(), e);
+        }
+    }
 
     public String getShopIdByName(String shopName) {
 

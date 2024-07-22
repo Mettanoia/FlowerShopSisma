@@ -58,8 +58,6 @@ public final class TicketSqlRepository {
                 String itemId = entry.getKey();
                 int quantity = entry.getValue().size();
 
-                logger.error("BUllshit quantity:{}, itemId: {}", quantity, itemId);
-
                 updateProductStockStmt.setInt(1, quantity);
                 updateProductStockStmt.setString(2, itemId);
                 updateProductStockStmt.setInt(3, quantity);
@@ -76,7 +74,6 @@ public final class TicketSqlRepository {
                 updateTicketProductStmt.setInt(1, quantity);
                 updateTicketProductStmt.setString(2, dto.id());
                 updateTicketProductStmt.setString(3, itemId);
-
                 int updateRows = updateTicketProductStmt.executeUpdate();
 
                 if (updateRows > 0) {
@@ -200,41 +197,34 @@ public final class TicketSqlRepository {
 
     public Collection<TicketDTO> getAll(String shopName) {
 
-        String selectTicketSql =
-                "SELECT ticket.id, ticket.dateTime, flowerShop.name AS shopName " +
-                        "FROM tickets ticket " +
-                        "JOIN ShopTickets shopTicket ON ticket.id = shopTicket.ticketId " +
-                        "JOIN FlowerShop flowerShop ON shopTicket.shopId = flowerShop.id " +
-                        "WHERE flowerShop.name = ?";
+        String SELECT_TICKETS_SQL = "SELECT t.id, t.dateTime, fs.name AS shopName " +
+                "FROM tickets t " +
+                "JOIN ShopTickets st ON t.id = st.ticketId " +
+                "JOIN FlowerShop fs ON st.shopId = fs.id " +
+                "WHERE fs.name = ?";
 
-        String selectItemsSql =
-                "SELECT * " +
-                        "FROM TicketProducts ticketProduct " +
-                        "JOIN products product ON ticketProduct.productId = product.id " +
-                        "WHERE ticketProduct.ticketId = ?";
-
+        String SELECT_ITEMS_SQL = "SELECT * FROM TicketProducts tp " +
+                "JOIN products p ON tp.productId = p.id " +
+                "WHERE tp.ticketId = ?";
 
         List<TicketDTO> tickets = new ArrayList<>();
 
         try (Connection connection = H2DatabaseConnection.getConnection();
-             PreparedStatement ticketsStmt = connection.prepareStatement(selectTicketSql);
-             PreparedStatement itemsStmt = connection.prepareStatement(selectItemsSql)) {
+             PreparedStatement ticketsStmt = connection.prepareStatement(SELECT_TICKETS_SQL);
+             PreparedStatement itemsStmt = connection.prepareStatement(SELECT_ITEMS_SQL)) {
 
             ticketsStmt.setString(1, shopName);
-
             try (ResultSet ticketsRs = ticketsStmt.executeQuery()) {
 
                 while (ticketsRs.next()) {
-
                     String ticketId = ticketsRs.getString("id");
                     LocalDateTime dateTime = ticketsRs.getTimestamp("dateTime").toLocalDateTime();
-                    List<TicketItem> items = new ArrayList<>();
+                    Map<TicketItem, Integer> items = new HashMap<>();
 
                     itemsStmt.setString(1, ticketId);
                     try (ResultSet itemsRs = itemsStmt.executeQuery()) {
 
                         while (itemsRs.next()) {
-
                             String itemId = itemsRs.getString("id");
                             String itemName = itemsRs.getString("name");
                             String itemColor = itemsRs.getString("color");
@@ -259,13 +249,11 @@ public final class TicketSqlRepository {
                                 }
                             }
 
-                            for (int i = 0; i < quantity; i++) {
-                                items.add(itemDTO);
-                            }
+                            items.put(itemDTO, quantity);
                         }
                     }
 
-                    TicketDTO ticketDTO = new TicketDTO(ticketId, dateTime, items);
+                    TicketDTO ticketDTO = new TicketDTO(ticketId, dateTime, items.keySet());
                     tickets.add(ticketDTO);
                 }
             }
