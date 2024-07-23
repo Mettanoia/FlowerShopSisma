@@ -29,9 +29,6 @@ public final class App {
 
     public static void run() {
 
-
-        List<String> shopNames = new ShopRepository().getAllShopNames();
-
         // Repositories to inject in the use cases
         FlowerGateway flowerGateway = FlowerRepositoryFactory.getRepository();
         TicketGateway ticketGateway = TicketRepositoryFactory.getInstance();
@@ -81,11 +78,16 @@ public final class App {
                 .build();
 
 
+        ShopRepository shopRepository = new ShopRepository();
+
+        List<String> shopNames = shopRepository.getAllShopNames();
+
         new ShopMenu(
                 new FlowerMenu(flowerController),
                 new TreeMenu(treeController),
                 new DecorationMenu(decorationController),
                 new TicketMenu(ticketController, decorationController, treeController, flowerController),
+                shopRepository,
                 shopNames
         ).showShopMenu();
 
