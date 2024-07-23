@@ -15,6 +15,7 @@ import java.util.function.Supplier;
 
 public class ShopMenu {
 
+    private final ShopRepository shopRepository;
     private List<String> shopNames;
     private final MenuUtils menuUtils;
     private final FlowerMenu flowerMenu;
@@ -22,7 +23,8 @@ public class ShopMenu {
     private final DecorationMenu decorationMenu;
     private final TicketMenu ticketMenu;
 
-    public ShopMenu(FlowerMenu flowerMenu, TreeMenu treeMenu, DecorationMenu decorationMenu, TicketMenu ticketMenu, List<String> shopNames) {
+    public ShopMenu(FlowerMenu flowerMenu, TreeMenu treeMenu, DecorationMenu decorationMenu, TicketMenu ticketMenu, ShopRepository shopRepository, List<String> shopNames) {
+        this.shopRepository = shopRepository;
         this.shopNames = shopNames;
         this.menuUtils = MenuUtils.getInstance();
         this.flowerMenu = flowerMenu;
@@ -73,8 +75,8 @@ public class ShopMenu {
                     String newShopName = scanner.nextLine();
                     if (!newShopName.trim().isEmpty()) {
                         try {
-                            new ShopRepository().add(new FlowerShopDTO(UUID.randomUUID().toString(), newShopName));
-                            shopNames = new ShopRepository().getAllShopNames();
+                            shopRepository.add(new FlowerShopDTO(UUID.randomUUID().toString(), newShopName));
+                            shopNames = shopRepository.getAllShopNames();
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
