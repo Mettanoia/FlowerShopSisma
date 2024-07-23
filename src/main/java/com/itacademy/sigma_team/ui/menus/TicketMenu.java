@@ -257,17 +257,15 @@ public class TicketMenu {
                 ticket.getItems().size()));
 
         // Contar los productos repetidos
-        Map<Product, Integer> productCount = ticket.getItems().stream()
+        Map<String, Integer> productCount = ticket.getItems().stream()
                 .collect(
-                        Collectors.toMap(e -> e, e -> 1, Integer::sum)
+                        Collectors.toMap(Product::getId, e -> 1, Integer::sum)
                 );
 
-
         // Imprimir productos con sus cantidades
-        for (Map.Entry<Product, Integer> entry : productCount.entrySet()) {
+        for (Product product : Set.copyOf(ticket.getItems())) {
 
-            Product product = entry.getKey();
-            int quantity = entry.getValue();
+            int quantity = productCount.get(Product.getId(product));
 
             if (product instanceof Flower flower) {
 
