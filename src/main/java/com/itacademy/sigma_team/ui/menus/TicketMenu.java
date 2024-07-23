@@ -256,14 +256,19 @@ public class TicketMenu {
                 colorText(ticket.getDateTime().toString(), "\033[1;35m"),
                 ticket.getItems().size()));
 
+
         // Contar los productos repetidos
         Map<String, Integer> productCount = ticket.getItems().stream()
                 .collect(
                         Collectors.toMap(Product::getId, e -> 1, Integer::sum)
                 );
 
+
+        TreeSet<Product> nonRepeatedProducts = new TreeSet<>(Comparator.comparing(Product::getId));
+        nonRepeatedProducts.addAll(ticket.getItems());
+
         // Imprimir productos con sus cantidades
-        for (Product product : Set.copyOf(ticket.getItems())) {
+        for (Product product : nonRepeatedProducts) {
 
             int quantity = productCount.get(Product.getId(product));
 
