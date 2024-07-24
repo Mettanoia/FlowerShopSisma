@@ -46,10 +46,23 @@ public class ShopMenu {
             String input = scanner.nextLine().toLowerCase();
 
             switch (input) {
-                case "1":
-                case "2":
-                case "3":
 
+                case "c":
+                    System.out.println(colorText("Enter new shop name:", "\033[1;33m"));
+                    String newShopName = scanner.nextLine();
+                    if (!newShopName.trim().isEmpty()) {
+                        try {
+                            shopRepository.add(new FlowerShopDTO(UUID.randomUUID().toString(), newShopName));
+                            shopNames = shopRepository.getAllShopNames();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        System.out.println(colorText("Shop added successfully. Please choose a shop from the list.", "\033[0;32m"));
+                    } else {
+                        System.out.println(colorText("Invalid name. Please try again.", "\033[0;31m"));
+                    }
+                    break;
+                default:
                     int shopIndex = Integer.parseInt(input) - 1;
 
                     if (shopIndex >= 0 && shopIndex < shopNames.size()) {
@@ -69,24 +82,6 @@ public class ShopMenu {
                     } else {
                         System.out.println(colorText("Invalid selection. Please try again.", "\033[0;31m"));
                     }
-                    break;
-                case "c":
-                    System.out.println(colorText("Enter new shop name:", "\033[1;33m"));
-                    String newShopName = scanner.nextLine();
-                    if (!newShopName.trim().isEmpty()) {
-                        try {
-                            shopRepository.add(new FlowerShopDTO(UUID.randomUUID().toString(), newShopName));
-                            shopNames = shopRepository.getAllShopNames();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                        System.out.println(colorText("Shop added successfully. Please choose a shop from the list.", "\033[0;32m"));
-                    } else {
-                        System.out.println(colorText("Invalid name. Please try again.", "\033[0;31m"));
-                    }
-                    break;
-                default:
-                    System.out.println(colorText("Invalid choice. Please try again.", "\033[0;31m"));
                     break;
             }
         }
